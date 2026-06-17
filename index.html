@@ -247,6 +247,60 @@ button ruby rt{color:inherit}
 .site-footer .footer-disc{color:#888;font-size:10.5px;line-height:1.9}
 .site-footer .footer-disc span{display:block}
 
+/* ===== PRINT BUTTON AREA ===== */
+.print-section{background:#fff8e1;border:1px solid #f0c040;border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1rem;}
+.print-section h3{font-size:14px;font-weight:700;color:#854f0b;margin-bottom:.85rem;display:flex;align-items:center;gap:6px;}
+.print-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;}
+.print-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;background:#fff;border:1.5px solid #e0c050;border-radius:var(--rsm);cursor:pointer;font-size:12px;font-weight:700;color:#5a4000;transition:background .15s,border-color .15s;}
+.print-btn:hover{background:#fef9e7;border-color:#c89a00;}
+.print-btn .pb-icon{font-size:1.4rem;}
+.print-btn .pb-label{text-align:center;line-height:1.4;}
+.print-sep{width:100%;border:none;border-top:1px dashed #e0c050;margin:.65rem 0;}
+
+/* ===== @media print ===== */
+@media print{
+  /* 印刷時に非表示にするUI */
+  .nav,
+  .login-overlay,
+  .back-btn,
+  .action-row,
+  .prog-wrap,
+  .prog-label,
+  .restore-msg,
+  .print-section,
+  .photo-submit-box,
+  #restore-msg,
+  .site-footer{display:none!important;}
+
+  /* ページ全体 */
+  body{background:#fff;font-size:12px;color:#000;}
+  .page{display:block!important;max-width:100%;padding:.5rem 1rem 1rem;margin:0;}
+
+  /* 印刷対象以外の大問ページを隠す */
+  .page[data-print-hide]{display:none!important;}
+
+  /* 著作権ヘッダー（印刷時のみ表示） */
+  .print-header{display:block!important;border-bottom:2px solid #1a3a6e;padding-bottom:.4rem;margin-bottom:.8rem;}
+
+  /* 著作権フッター（印刷時のみ表示） */
+  .print-footer{display:block!important;border-top:1px solid #ccc;padding-top:.4rem;margin-top:1rem;font-size:10px;color:#555;text-align:center;}
+
+  /* 選択肢・解説の印刷調整 */
+  .choice,.lis-choice{border:1px solid #aaa;background:#fff!important;}
+  .choice.show-ans,.lis-choice.show-ans{background:#e1f5ee!important;border-color:#0f6e56!important;}
+  .choice.wrong,.lis-choice.wrong{background:#faece7!important;border-color:#993c1d!important;}
+  .result-area{display:block!important;}
+  .result-area.show{display:block!important;}
+  .passage-box,.email-box,.conv-box{border:1px solid #aaa;page-break-inside:avoid;}
+  .q-block,.result-q{page-break-inside:avoid;}
+
+  /* ページ余白設定 */
+  @page{margin:15mm 12mm;}
+}
+
+/* 印刷時のみ表示する要素（通常時は非表示） */
+.print-header,.print-footer{display:none;}
+
 /* ===== LOGIN SCREEN ===== */
 .login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#f7f6f3;z-index:9999;display:flex;align-items:center;justify-content:center;}
 .login-box{background:#fff;border:1px solid #e2e0da;border-radius:12px;padding:2.5rem 2rem;max-width:380px;width:90%;box-shadow:0 4px 20px rgba(0,0,0,.08);}
@@ -268,8 +322,8 @@ button ruby rt{color:inherit}
   <div class="login-box">
     <div class="login-logo">🎧 英検<span style="color:#2563c4">準2級</span> Set1</div>
     <div class="login-sub">東進こども英語塾 本部確認用</div>
-    <label class="login-label">🔢 生徒番号</label>
-    <input type="text" id="login-id" class="login-input" placeholder="生徒番号を入力" autocomplete="off">
+    <label class="login-label">🔢 <ruby>生徒番号<rt>せいとばんごう</rt></ruby>（8<ruby>桁<rt>けた</rt></ruby>）</label>
+    <input type="text" id="login-id" class="login-input" placeholder="例：00000001" maxlength="8" autocomplete="off">
     <label class="login-label">👤 氏名</label>
     <input type="text" id="login-name" class="login-input" placeholder="氏名を入力" autocomplete="off"
       onkeydown="if(event.key==='Enter')doLogin()">
@@ -304,14 +358,18 @@ button ruby rt{color:inherit}
     <div class="home-sub">Set 1 ― <ruby>大問<rt>だいもん</rt></ruby>1〜6 ＋ <ruby>リスニング<rt></rt></ruby></div>
   </div>
 
-  <!-- 氏名入力 -->
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem;">
-    <label style="font-size:13px;font-weight:700;display:block;margin-bottom:.5rem;">🔢 <ruby>生徒番号<rt>せいとばんごう</rt></ruby>を<ruby>入力<rt>にゅうりょく</rt></ruby>してください</label>
-    <input type="text" id="student-id" placeholder="例：12345" style="width:100%;border:1px solid var(--border2);border-radius:var(--rsm);padding:.6rem .9rem;font-size:15px;font-family:inherit;outline:none;margin-bottom:.75rem;" oninput="saveState()">
-    <label style="font-size:13px;font-weight:700;display:block;margin-bottom:.5rem;">👤 <ruby>氏名<rt>しめい</rt></ruby>を<ruby>入力<rt>にゅうりょく</rt></ruby>してください</label>
-    <input type="text" id="student-name" placeholder="例：山田 太郎" style="width:100%;border:1px solid var(--border2);border-radius:var(--rsm);padding:.6rem .9rem;font-size:15px;font-family:inherit;outline:none;" oninput="saveState()">
-    <p style="font-size:12px;color:var(--hint);margin-top:.4rem;">※ <ruby>結果<rt>けっか</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby>するときに<ruby>使用<rt>しよう</rt></ruby>します</p>
+  <div id="restore-msg" style="display:none;background:#e1f5ee;border:1px solid #0f6e56;border-radius:var(--rsm);padding:.6rem 1rem;font-size:13px;color:#0f6e56;margin-bottom:1rem;"></div>
+
+  <!-- 端末保存の注記 -->
+  <div style="background:#fafaf8;border:1px solid var(--border);border-radius:var(--rsm);padding:.65rem 1rem;margin-bottom:1rem;font-size:12px;color:var(--muted);line-height:1.8;">
+    📱 <strong style="color:var(--text);">学習データはこの端末のブラウザにのみ保存されます</strong><br>
+    ・同じ端末なら、次回も<ruby>続<rt>つづ</rt></ruby>きから<ruby>学習<rt>がくしゅう</rt></ruby>できます<br>
+    ・<strong><ruby>別<rt>べつ</rt></ruby>の<ruby>端末<rt>たんまつ</rt></ruby>では<ruby>続<rt>つづ</rt></ruby>きができません</strong>（<ruby>最初<rt>さいしょ</rt></ruby>からになります）<br>
+    ・<ruby>途中<rt>とちゅう</rt></ruby>で<ruby>端末<rt>たんまつ</rt></ruby>を<ruby>変<rt>か</rt></ruby>えると、それぞれの<ruby>端末<rt>たんまつ</rt></ruby>に<ruby>別々<rt>べつべつ</rt></ruby>に<ruby>保存<rt>ほぞん</rt></ruby>されます
   </div>
+
+  <input type="hidden" id="student-id">
+  <input type="hidden" id="student-name">
 
   <div class="prog-wrap"><div class="prog-fill" id="total-bar" style="width:0%"></div></div>
   <div class="prog-label" id="total-label">0 / 61 <ruby>問<rt>もん</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby></div>
@@ -400,7 +458,61 @@ button ruby rt{color:inherit}
     📧 <ruby>大問<rt>だいもん</rt></ruby>5・6の<ruby>ライティング<rt></rt></ruby>は、<ruby>手書<rt>てが</rt></ruby>きの<ruby>写真<rt>しゃしん</rt></ruby>をメールで<ruby>提出<rt>ていしゅつ</rt></ruby>することもできます。
   </div>
 
-  <div id="restore-msg" style="display:none;background:#e1f5ee;border:1px solid #0f6e56;border-radius:var(--rsm);padding:.6rem 1rem;font-size:13px;color:#0f6e56;margin-bottom:1rem;"></div>
+  <!-- 印刷・PDF -->
+  <div class="print-section">
+    <h3>🖨️ <ruby>印刷<rt>いんさつ</rt></ruby>・PDF<ruby>出力<rt>しゅつりょく</rt></ruby></h3>
+    <p style="font-size:12px;color:#5a4000;margin-bottom:.9rem;line-height:1.7;"><ruby>大問<rt>だいもん</rt></ruby>ごとに「<ruby>問題用紙<rt>もんだいようし</rt></ruby>」または「<ruby>解答<rt>かいとう</rt></ruby>・<ruby>解説<rt>かいせつ</rt></ruby>」を<ruby>印刷<rt>いんさつ</rt></ruby>できます。<br>ブラウザの<ruby>印刷<rt>いんさつ</rt></ruby>ダイアログで「PDF<ruby>に保存<rt>にほぞん</rt></ruby>」を<ruby>選<rt>えら</rt></ruby>ぶとPDFになります。</p>
+    <div class="print-grid">
+      <button class="print-btn" onclick="printSection('q1','question')">
+        <span class="pb-icon">📄</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>1<br><ruby>問題用紙<rt>もんだいようし</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q1','answer')">
+        <span class="pb-icon">✅</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>1<br><ruby>解答<rt>かいとう</rt></ruby>・<ruby>解説<rt>かいせつ</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q2','question')">
+        <span class="pb-icon">📄</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>2<br><ruby>問題用紙<rt>もんだいようし</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q2','answer')">
+        <span class="pb-icon">✅</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>2<br><ruby>解答<rt>かいとう</rt></ruby>・<ruby>解説<rt>かいせつ</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q3','question')">
+        <span class="pb-icon">📄</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>3<br><ruby>問題用紙<rt>もんだいようし</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q3','answer')">
+        <span class="pb-icon">✅</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>3<br><ruby>解答<rt>かいとう</rt></ruby>・<ruby>解説<rt>かいせつ</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q4','question')">
+        <span class="pb-icon">📄</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>4<br><ruby>問題用紙<rt>もんだいようし</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q4','answer')">
+        <span class="pb-icon">✅</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>4<br><ruby>解答<rt>かいとう</rt></ruby>・<ruby>解説<rt>かいせつ</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q5','question')">
+        <span class="pb-icon">📄</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>5<br><ruby>問題用紙<rt>もんだいようし</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q5','answer')">
+        <span class="pb-icon">✅</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>5<br><ruby>解答<rt>かいとう</rt></ruby>・<ruby>解説<rt>かいせつ</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q6','question')">
+        <span class="pb-icon">📄</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>6<br><ruby>問題用紙<rt>もんだいようし</rt></ruby></span>
+      </button>
+      <button class="print-btn" onclick="printSection('q6','answer')">
+        <span class="pb-icon">✅</span>
+        <span class="pb-label"><ruby>大問<rt>だいもん</rt></ruby>6<br><ruby>解答<rt>かいとう</rt></ruby>・<ruby>解説<rt>かいせつ</rt></ruby></span>
+      </button>
+    </div>
+  </div>
 
   <!-- 送信ボタン -->
   <div style="background:#eef3fc;border:1px solid #b8d0f5;border-radius:var(--radius);padding:1.25rem 1.5rem;">
@@ -413,6 +525,12 @@ button ruby rt{color:inherit}
 
 <!-- ===== 大問1〜6（既存のまま） ===== -->
 <div class="page" id="page-q1">
+  <div class="print-header">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+      <span style="font-size:13px;font-weight:700;color:#1a3a6e;">英検準2級 演習アプリ Set1 ― 大問1</span>
+      <span style="font-size:10px;color:#555;">© 2026 東進こども英語塾</span>
+    </div>
+  </div>
   <button class="back-btn" onclick="goPage('home')">← <ruby>ホーム<rt></rt></ruby>へ</button>
   <div class="sec-hdr">
     <h2><ruby>大問<rt>だいもん</rt></ruby>1 ― <ruby>語彙<rt>ごい</rt></ruby>・<ruby>文法<rt>ぶんぽう</rt></ruby>・<ruby>熟語<rt>じゅくご</rt></ruby>・<ruby>会話文<rt>かいわぶん</rt></ruby></h2>
@@ -425,9 +543,18 @@ button ruby rt{color:inherit}
     <button class="retry-btn" onclick="sendResults('q1')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>この結果<rt>このけっか</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
   </div>
   <div class="result-area" id="q1-result"></div>
+  <div class="print-footer">
+    © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
+  </div>
 </div>
 
 <div class="page" id="page-q2">
+  <div class="print-header">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+      <span style="font-size:13px;font-weight:700;color:#1a3a6e;">英検準2級 演習アプリ Set1 ― 大問2</span>
+      <span style="font-size:10px;color:#555;">© 2026 東進こども英語塾</span>
+    </div>
+  </div>
   <button class="back-btn" onclick="goPage('home')">← <ruby>ホーム<rt></rt></ruby>へ</button>
   <div class="sec-hdr">
     <h2><ruby>大問<rt>だいもん</rt></ruby>2 ― <ruby>会話文<rt>かいわぶん</rt></ruby><ruby>空欄<rt>くうらん</rt></ruby><ruby>補充<rt>ほじゅう</rt></ruby></h2>
@@ -440,9 +567,18 @@ button ruby rt{color:inherit}
     <button class="retry-btn" onclick="sendResults('q2')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>この結果<rt>このけっか</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
   </div>
   <div class="result-area" id="q2-result"></div>
+  <div class="print-footer">
+    © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
+  </div>
 </div>
 
 <div class="page" id="page-q3">
+  <div class="print-header">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+      <span style="font-size:13px;font-weight:700;color:#1a3a6e;">英検準2級 演習アプリ Set1 ― 大問3</span>
+      <span style="font-size:10px;color:#555;">© 2026 東進こども英語塾</span>
+    </div>
+  </div>
   <button class="back-btn" onclick="goPage('home')">← <ruby>ホーム<rt></rt></ruby>へ</button>
   <div class="sec-hdr">
     <h2><ruby>大問<rt>だいもん</rt></ruby>3 ― <ruby>長文<rt>ちょうぶん</rt></ruby><ruby>読解<rt>どっかい</rt></ruby></h2>
@@ -462,9 +598,18 @@ button ruby rt{color:inherit}
     <button class="retry-btn" onclick="sendResults('q3')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>この結果<rt>このけっか</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
   </div>
   <div class="result-area" id="q3-result"></div>
+  <div class="print-footer">
+    © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
+  </div>
 </div>
 
 <div class="page" id="page-q4">
+  <div class="print-header">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+      <span style="font-size:13px;font-weight:700;color:#1a3a6e;">英検準2級 演習アプリ Set1 ― 大問4</span>
+      <span style="font-size:10px;color:#555;">© 2026 東進こども英語塾</span>
+    </div>
+  </div>
   <button class="back-btn" onclick="goPage('home')">← <ruby>ホーム<rt></rt></ruby>へ</button>
   <div class="sec-hdr">
     <h2><ruby>大問<rt>だいもん</rt></ruby>4 ― <ruby>長文<rt>ちょうぶん</rt></ruby>A・B</h2>
@@ -503,9 +648,18 @@ button ruby rt{color:inherit}
     <button class="retry-btn" onclick="sendResults('q4')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>この結果<rt>このけっか</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
   </div>
   <div class="result-area" id="q4-result"></div>
+  <div class="print-footer">
+    © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
+  </div>
 </div>
 
 <div class="page" id="page-q5">
+  <div class="print-header">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+      <span style="font-size:13px;font-weight:700;color:#1a3a6e;">英検準2級 演習アプリ Set1 ― 大問5</span>
+      <span style="font-size:10px;color:#555;">© 2026 東進こども英語塾</span>
+    </div>
+  </div>
   <button class="back-btn" onclick="goPage('home')">← <ruby>ホーム<rt></rt></ruby>へ</button>
   <div class="sec-hdr">
     <h2><ruby>大問<rt>だいもん</rt></ruby>5 ― <ruby>ライティング<rt></rt></ruby>（E<ruby>メール<rt></rt></ruby>）</h2>
@@ -557,9 +711,18 @@ button ruby rt{color:inherit}
       <div class="mail-addr">✉️ online-eigojuku@toshin.com</div>
     </div>
   </div>
+  <div class="print-footer">
+    © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
+  </div>
 </div>
 
 <div class="page" id="page-q6">
+  <div class="print-header">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+      <span style="font-size:13px;font-weight:700;color:#1a3a6e;">英検準2級 演習アプリ Set1 ― 大問6</span>
+      <span style="font-size:10px;color:#555;">© 2026 東進こども英語塾</span>
+    </div>
+  </div>
   <button class="back-btn" onclick="goPage('home')">← <ruby>ホーム<rt></rt></ruby>へ</button>
   <div class="sec-hdr">
     <h2><ruby>大問<rt>だいもん</rt></ruby>6 ― <ruby>ライティング<rt></rt></ruby>（<ruby>意見<rt>いけん</rt></ruby>）</h2>
@@ -599,6 +762,9 @@ button ruby rt{color:inherit}
       </ol>
       <div class="mail-addr">✉️ online-eigojuku@toshin.com</div>
     </div>
+  </div>
+  <div class="print-footer">
+    © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
   </div>
 </div>
 
@@ -1383,6 +1549,59 @@ function sendResults(mode){
 }
 
 // =========================================================
+// ★ 印刷機能
+// =========================================================
+function printSection(section, mode){
+  // 対象ページ以外を一時的に非表示
+  const pages = document.querySelectorAll('.page');
+  const targetPage = document.getElementById('page-' + section);
+
+  // 解答・解説モードなら result-area を強制表示
+  const resultArea = document.getElementById(section + '-result');
+  let resultWasHidden = false;
+  if(mode === 'answer' && resultArea){
+    if(!resultArea.classList.contains('show')){
+      resultArea.classList.add('show');
+      resultWasHidden = true;
+    }
+  }
+
+  // 問題用紙モードなら result-area を一時非表示
+  let resultWasShown = false;
+  if(mode === 'question' && resultArea){
+    if(resultArea.classList.contains('show')){
+      resultArea.classList.remove('show');
+      resultWasShown = true;
+    }
+  }
+
+  // 対象外ページを隠す
+  pages.forEach(p => {
+    if(p !== targetPage) p.setAttribute('data-print-hide','1');
+  });
+
+  // 対象ページを表示
+  targetPage.classList.add('active');
+
+  // 印刷タイトルをwindow.documentのtitleに一時設定
+  const origTitle = document.title;
+  const labelMap = {q1:'大問1',q2:'大問2',q3:'大問3',q4:'大問4',q5:'大問5',q6:'大問6'};
+  const modeLabel = mode === 'answer' ? '解答解説' : '問題用紙';
+  document.title = '英検準2級 Set1 ' + (labelMap[section]||section) + ' ' + modeLabel;
+
+  window.print();
+
+  // 元に戻す
+  document.title = origTitle;
+  pages.forEach(p => p.removeAttribute('data-print-hide'));
+  if(resultWasHidden && resultArea) resultArea.classList.remove('show');
+  if(resultWasShown && resultArea) resultArea.classList.add('show');
+
+  // ページ表示状態は goPage には戻さず、表示中のページを維持
+  // （ホームから呼ばれることが多いので、home の active を保持）
+}
+
+// =========================================================
 // ★ 初期化
 // =========================================================
 
@@ -1390,12 +1609,11 @@ function sendResults(mode){
 function doLogin(){
   const id   = document.getElementById('login-id').value.trim();
   const name = document.getElementById('login-name').value.trim();
-  if(id === '00000' && name === '本部確認用'){
+  if(id === '00000000' && name === '本部確認用'){
     document.getElementById('login-overlay').style.display = 'none';
-    // 生徒番号・氏名を自動入力
     const sid = document.getElementById('student-id');
     const sname = document.getElementById('student-name');
-    if(sid) sid.value = '00000';
+    if(sid) sid.value = '00000000';
     if(sname) sname.value = '本部確認用';
     saveState();
   } else {
