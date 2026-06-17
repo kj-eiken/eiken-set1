@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>英検<ruby>準<rt>じゅん</rt></ruby>2<ruby>級<rt>きゅう</rt></ruby> <ruby>演習<rt>えんしゅう</rt></ruby>アプリ Set1</title>
+<title>英検準2級 演習アプリ Set1</title>
 <style>
 :root{
   --bg:#f7f6f3;--surface:#fff;--border:#e2e0da;--border2:#cccac3;
@@ -1401,6 +1401,11 @@ const TTS_TEXT = {
   29:"Kevin wanted to visit his grandmother for her birthday, but he had no money for the train ticket. He asked his older sister if she could lend him some money, but she was also short of cash. In the end, his parents offered to drive him there, and they all spent the afternoon together celebrating. Question: How did Kevin get to his grandmother's house?"
 };
 let currentUtterance=null;
+// ブラウザによってはvoicesが非同期で読み込まれるため事前にロードしておく
+if(window.speechSynthesis){
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+}
 
 function lisPlayAudio(idx,speed){
   speed=speed||1.0;
@@ -1445,20 +1450,60 @@ function lisPlayAudio(idx,speed){
   if(!window.speechSynthesis){alert('このブラウザはTTSに対応していません。');return;}
   speechSynthesis.cancel();
   if(currentAudio){currentAudio.pause();currentAudio=null;}
-  const text=TTS_TEXT[idx]||'No text available.';
-  const utter=new SpeechSynthesisUtterance(text);
-  currentUtterance=utter;
-  utter.lang='en-US';
-  utter.rate=speed;
-  utter.pitch=1.0;
-  // 英語音声を優先して選ぶ
+
   const voices=speechSynthesis.getVoices();
-  const enVoice=voices.find(v=>v.lang==='en-US')||voices.find(v=>v.lang.startsWith('en'))||null;
-  if(enVoice)utter.voice=enVoice;
-  utter.onstart=onStart;
-  utter.onend=onEnd;
-  utter.onerror=onEnd;
-  speechSynthesis.speak(utter);
+  // 男声・女声を選ぶ（en-US優先）
+  const enVoices=voices.filter(v=>v.lang==='en-US'||v.lang.startsWith('en'));
+  // 女声：名前にFemale/Samantha/Victoria/Karen/Moira/Tessa/Allisonを含むもの優先
+  const femaleVoice=enVoices.find(v=>/female|samantha|victoria|karen|moira|tessa|allison/i.test(v.name))
+    ||enVoices.find(v=>/zira|susan|hazel/i.test(v.name))
+    ||enVoices[1]||enVoices[0]||null;
+  // 男声：名前にMale/Daniel/David/Alex/Ricky/Thomasを含むもの優先
+  const maleVoice=enVoices.find(v=>/male|daniel|david|alex|ricky|thomas|fred/i.test(v.name))
+    ||enVoices.find(v=>v!==femaleVoice)
+    ||enVoices[0]||null;
+
+  const rawScript=q.script||'';
+  const hasDialog=rawScript.includes('M:')&&rawScript.includes('F:');
+
+  if(hasDialog){
+    // 会話スクリプトを行ごとに分割して男女交互に読み上げ
+    const lines=rawScript.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+    let lineIdx=0;
+    function speakNextLine(){
+      if(lineIdx>=lines.length){onEnd();return;}
+      const line=lines[lineIdx];
+      const isMale=line.startsWith('M:');
+      const isFemale=line.startsWith('F:');
+      const text=line.replace(/^[MF]:\s*/,'');
+      const utter=new SpeechSynthesisUtterance(text);
+      currentUtterance=utter;
+      utter.lang='en-US';
+      utter.rate=speed;
+      if(isMale&&maleVoice){utter.voice=maleVoice;utter.pitch=0.85;}
+      else if(isFemale&&femaleVoice){utter.voice=femaleVoice;utter.pitch=1.15;}
+      else{if(enVoices[0])utter.voice=enVoices[0];utter.pitch=1.0;}
+      lineIdx++;
+      utter.onend=speakNextLine;
+      utter.onerror=onEnd;
+      speechSynthesis.speak(utter);
+    }
+    onStart();
+    speakNextLine();
+  } else {
+    // 第3部・ナレーション → 男声1名で読み上げ
+    const text=TTS_TEXT[idx]||rawScript||'No text available.';
+    const utter=new SpeechSynthesisUtterance(text);
+    currentUtterance=utter;
+    utter.lang='en-US';
+    utter.rate=speed;
+    utter.pitch=0.95;
+    if(maleVoice)utter.voice=maleVoice;
+    utter.onstart=onStart;
+    utter.onend=onEnd;
+    utter.onerror=onEnd;
+    speechSynthesis.speak(utter);
+  }
 }
 
 function toggleScript(btn){
