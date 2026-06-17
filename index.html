@@ -696,6 +696,7 @@ button ruby rt{color:inherit}
     <div class="action-row">
       <button class="submit-btn" id="q5-submit" onclick="checkQ5()"><ruby>解答<rt>かいとう</rt></ruby>する</button>
       <button class="retry-btn" onclick="resetQ5()">もう<ruby>一度<rt>いちど</rt></ruby></button>
+      <button class="retry-btn" onclick="sendResults('q5')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>解答<rt>かいとう</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
     </div>
     <div class="result-area" id="q5-result"></div>
   </div>
@@ -748,6 +749,7 @@ button ruby rt{color:inherit}
     <div class="action-row">
       <button class="submit-btn" id="q6-submit" onclick="checkQ6()"><ruby>解答<rt>かいとう</rt></ruby>する</button>
       <button class="retry-btn" onclick="resetQ6()">もう<ruby>一度<rt>いちど</rt></ruby></button>
+      <button class="retry-btn" onclick="sendResults('q6')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>解答<rt>かいとう</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
     </div>
     <div class="result-area" id="q6-result"></div>
   </div>
@@ -775,29 +777,29 @@ button ruby rt{color:inherit}
     <h2>🎧 <ruby>リスニング<rt></rt></ruby> <ruby>演習<rt>えんしゅう</rt></ruby>（<ruby>全<rt>ぜん</rt></ruby>30<ruby>問<rt>もん</rt></ruby>）</h2>
   </div>
 
+  <!-- 部ナビタブ（筆記と同じ形式） -->
+  <div style="display:flex;gap:0;margin-bottom:1rem;border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;">
+    <button id="lis-tab-all" onclick="startListening(0)" style="padding:11px 14px 10px;font-size:13px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid #1a4a8a;color:#1a4a8a;margin-bottom:-2px;white-space:nowrap;">▶ <ruby>全部<rt>ぜんぶ</rt></ruby></button>
+    <button id="lis-tab-1" onclick="startListening(1)" style="padding:11px 14px 10px;font-size:13px;font-weight:600;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);margin-bottom:-2px;white-space:nowrap;"><ruby>第<rt>だい</rt></ruby>1<ruby>部<rt>ぶ</rt></ruby></button>
+    <button id="lis-tab-2" onclick="startListening(2)" style="padding:11px 14px 10px;font-size:13px;font-weight:600;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);margin-bottom:-2px;white-space:nowrap;"><ruby>第<rt>だい</rt></ruby>2<ruby>部<rt>ぶ</rt></ruby></button>
+    <button id="lis-tab-3" onclick="startListening(3)" style="padding:11px 14px 10px;font-size:13px;font-weight:600;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);margin-bottom:-2px;white-space:nowrap;"><ruby>第<rt>だい</rt></ruby>3<ruby>部<rt>ぶ</rt></ruby></button>
+  </div>
+
   <!-- スタート画面 -->
   <div id="lis-start">
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem;">
-      <p style="font-size:14px;font-weight:700;color:#1a4a8a;margin-bottom:.75rem;">📋 <ruby>試験<rt>しけん</rt></ruby><ruby>構成<rt>こうせい</rt></ruby>（<ruby>部<rt>ぶ</rt></ruby>ごとに<ruby>選択<rt>せんたく</rt></ruby>して<ruby>演習<rt>えんしゅう</rt></ruby>できます）</p>
+      <p style="font-size:14px;font-weight:700;color:#1a4a8a;margin-bottom:.75rem;">📋 <ruby>試験<rt>しけん</rt></ruby><ruby>構成<rt>こうせい</rt></ruby></p>
       <div class="section-scores">
         <div class="ss-item"><div class="ss-l"><ruby>第<rt>だい</rt></ruby>1<ruby>部<rt>ぶ</rt></ruby></div><div class="ss-v">10<ruby>問<rt>もん</rt></ruby></div><div style="font-size:.68rem;color:var(--muted);margin-top:2px;"><ruby>会話<rt>かいわ</rt></ruby>の<ruby>応答<rt>おうとう</rt></ruby></div></div>
         <div class="ss-item"><div class="ss-l"><ruby>第<rt>だい</rt></ruby>2<ruby>部<rt>ぶ</rt></ruby></div><div class="ss-v">10<ruby>問<rt>もん</rt></ruby></div><div style="font-size:.68rem;color:var(--muted);margin-top:2px;"><ruby>会話<rt>かいわ</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby></div></div>
-        <div class="ss-item"><div class="ss-l"><ruby>第<rt>だい</rt></ruby>3<ruby>部<rt>ぶ</rt></ruby></div><div class="ss-v">10<ruby>問<rt>もん</rt></ruby></div><div style="font-size:.68rem;color:var(--muted);margin-top:2px;"><ruby>文の内容<rt>ぶんのないよう</rt></ruby></div></div>
+        <div class="ss-item"><div class="ss-l"><ruby>第<rt>だい</rt></ruby>3<ruby>部<rt>ぶ</rt></ruby></div><div class="ss-v">10<ruby>問<rt>もん</rt></ruby></div><div style="font-size:.68rem;color:var(--muted);margin-top:2px;"><ruby>文<rt>ぶん</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby></div></div>
       </div>
       <div style="background:#fff8e1;border:1px solid #f0c040;border-radius:8px;padding:.9rem 1rem;margin-top:.75rem;font-size:.82rem;color:#5a4000;">
         <strong>⚠️ <ruby>音声<rt>おんせい</rt></ruby>について（<ruby>開発用<rt>かいはつよう</rt></ruby>ダミー<ruby>版<rt>ばん</rt></ruby>）</strong><br>
         <ruby>現在<rt>げんざい</rt></ruby>、<ruby>音声<rt>おんせい</rt></ruby>ファイルは<ruby>未収録<rt>みしゅうろく</rt></ruby>です。▶ ボタンで<ruby>音声<rt>おんせい</rt></ruby>イメージを<ruby>確認<rt>かくにん</rt></ruby>できます。<ruby>本番<rt>ほんばん</rt></ruby>MP3が<ruby>準備<rt>じゅんび</rt></ruby>でき<ruby>次第<rt>しだい</rt></ruby>、audioSrc<ruby>属性<rt>ぞくせい</rt></ruby>に<ruby>差<rt>さ</rt></ruby>し<ruby>替<rt>か</rt></ruby>えてください。
       </div>
     </div>
-    <!-- 全部スタート -->
-    <button onclick="startListening(0)" style="width:100%;padding:14px;background:linear-gradient(135deg,#1a4a8a,#2563c0);color:#fff;border:none;border-radius:var(--rsm);font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(37,99,192,.35);margin-bottom:.6rem;">▶ <ruby>全部<rt>ぜんぶ</rt></ruby>（<ruby>第<rt>だい</rt></ruby>1〜3<ruby>部<rt>ぶ</rt></ruby>）<ruby>通<rt>とお</rt></ruby>しで<ruby>演習<rt>えんしゅう</rt></ruby>する</button>
-    <!-- 部ごとスタート -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.6rem;">
-      <button onclick="startListening(1)" style="padding:11px 4px;background:#fff;color:#1a4a8a;border:2px solid #2563c0;border-radius:var(--rsm);font-size:.85rem;font-weight:700;cursor:pointer;"><ruby>第<rt>だい</rt></ruby>1<ruby>部<rt>ぶ</rt></ruby>のみ<br><span style="font-size:.72rem;font-weight:400;"><ruby>会話<rt>かいわ</rt></ruby>の<ruby>応答<rt>おうとう</rt></ruby></span></button>
-      <button onclick="startListening(2)" style="padding:11px 4px;background:#fff;color:#1a4a8a;border:2px solid #2563c0;border-radius:var(--rsm);font-size:.85rem;font-weight:700;cursor:pointer;"><ruby>第<rt>だい</rt></ruby>2<ruby>部<rt>ぶ</rt></ruby>のみ<br><span style="font-size:.72rem;font-weight:400;"><ruby>会話<rt>かいわ</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby></span></button>
-      <button onclick="startListening(3)" style="padding:11px 4px;background:#fff;color:#1a4a8a;border:2px solid #2563c0;border-radius:var(--rsm);font-size:.85rem;font-weight:700;cursor:pointer;"><ruby>第<rt>だい</rt></ruby>3<ruby>部<rt>ぶ</rt></ruby>のみ<br><span style="font-size:.72rem;font-weight:400;"><ruby>文<rt>ぶん</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby></span></button>
-    </div>
-    <div id="lis-continue-btn" style="display:none;margin-top:.6rem;">
+    <div id="lis-continue-btn" style="display:none;margin-bottom:.6rem;">
       <button onclick="continueListening()" style="width:100%;padding:11px;background:var(--surface);color:#2563c0;border:2px solid #2563c0;border-radius:var(--rsm);font-size:.9rem;font-weight:700;cursor:pointer;">📂 <ruby>途中<rt>とちゅう</rt></ruby>から<ruby>再開<rt>さいかい</rt></ruby>する（<ruby>問<rt>もん</rt></ruby><span id="lis-continue-no"></span>〜）</button>
     </div>
   </div>
@@ -814,23 +816,8 @@ button ruby rt{color:inherit}
     </div>
   </div>
 
-  <!-- 結果画面 -->
-  <div id="lis-result" style="display:none;">
-    <div class="lis-result-card">
-      <p style="text-align:center;font-size:1.1rem;font-weight:700;color:#1a4a8a;margin-bottom:14px;">🏆 <ruby>結果<rt>けっか</rt></ruby><ruby>発表<rt>はっぴょう</rt></ruby></p>
-      <div class="score-circle"><span class="sc-n" id="lis-total-score">0</span><span class="sc-d">/ 30</span></div>
-      <div class="section-scores">
-        <div class="ss-item"><div class="ss-l"><ruby>第<rt>だい</rt></ruby>1<ruby>部<rt>ぶ</rt></ruby></div><div class="ss-v" id="lis-s1">0/10</div></div>
-        <div class="ss-item"><div class="ss-l"><ruby>第<rt>だい</rt></ruby>2<ruby>部<rt>ぶ</rt></ruby></div><div class="ss-v" id="lis-s2">0/10</div></div>
-        <div class="ss-item"><div class="ss-l"><ruby>第<rt>だい</rt></ruby>3<ruby>部<rt>ぶ</rt></ruby></div><div class="ss-v" id="lis-s3">0/10</div></div>
-      </div>
-      <p style="text-align:center;font-size:.88rem;color:var(--muted);line-height:1.7;" id="lis-grade-msg"></p>
-    </div>
-    <button onclick="sendResults('listening')" class="send-btn-blue">📩 <ruby>リスニング<rt></rt></ruby><ruby>結果<rt>けっか</rt></ruby>を<ruby>本部<rt>ほんぶ</rt></ruby>に<ruby>送信<rt>そうしん</rt></ruby>する</button>
-    <button onclick="showLisReview()" style="width:100%;padding:11px;background:var(--surface);color:#2563c0;border:2px solid #2563c0;border-radius:var(--rsm);font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:.6rem;">📝 <ruby>復習<rt>ふくしゅう</rt></ruby>リストを<ruby>見<rt>み</rt></ruby>る</button>
-    <button onclick="restartListening()" style="width:100%;padding:10px;background:var(--surface);color:var(--muted);border:1px solid var(--border2);border-radius:var(--rsm);font-size:.85rem;cursor:pointer;">🔄 もう<ruby>一度<rt>いちど</rt></ruby><ruby>挑戦<rt>ちょうせん</rt></ruby>する</button>
-    <div id="lis-review-list" style="display:none;margin-top:1rem;"></div>
-  </div>
+  <!-- 結果画面（JSで動的生成） -->
+  <div id="lis-result" style="display:none;"></div>
 </div>
 
 <script>
@@ -1181,6 +1168,7 @@ function renderLisQ(){
   // Script toggle button (全問共通)
   const rawScript = q.script || TTS_TEXT[lisIdx] || '';
   const scriptFormatted = rawScript.replace(/\\n/g,'<br>').replace(/\n/g,'<br>');
+  const questionLine = q.question ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid #c8daf5;font-size:.78rem;color:#1a4a8a;font-weight:700;">${q.question}</div>` : '';
   const scriptHTML=`
     <button class="script-toggle-btn" onclick="toggleScript(this)">
       📄 <ruby>スクリプト<rt></rt></ruby>を<ruby>見<rt>み</rt></ruby>る
@@ -1188,22 +1176,19 @@ function renderLisQ(){
     <div class="script-box" style="display:none">
       <div style="font-size:.72rem;color:#2563c0;font-weight:700;margin-bottom:6px;">📝 <ruby>音声<rt>おんせい</rt></ruby>スクリプト</div>
       <div style="line-height:1.9;white-space:pre-wrap">${scriptFormatted}</div>
+      ${questionLine}
     </div>
   `;
 
   // Choices
   const chHTML=q.choices.map((c,i)=>{
     let cls='lis-choice';
-    if(lisAnswered[lisIdx]!==null){if(i===q.answer)cls+=' show-ans';else if(i===lisAnswered[lisIdx]&&i!==q.answer)cls+=' wrong';}
+    if(lisAnswered[lisIdx]!==null && i===lisAnswered[lisIdx]){cls+=' selected';}
     return `<div class="${cls}" onclick="lisSelect(${i})" ${lisAnswered[lisIdx]!==null?'style="pointer-events:none"':''}><span class="lis-cn">${i+1}</span><span>${c}</span></div>`;
   }).join('');
 
-  // Feedback
+  // Feedback（部の途中では表示しない）
   let fbHTML='';
-  if(lisAnswered[lisIdx]!==null){
-    const ok=lisAnswered[lisIdx]===q.answer;
-    fbHTML=`<div class="lis-feedback ${ok?'correct':'wrong'}">${ok?'✅ <ruby>正解<rt>せいかい</rt></ruby>！':'❌ <ruby>不正解<rt>ふせいかい</rt></ruby>。<ruby>正解<rt>せいかい</rt></ruby>は<ruby>選択肢<rt>せんたくし</rt></ruby> '+(q.answer+1)+' です。'}<br><small>${q.explanation}</small></div>`;
-  }
 
   const pc=lisPlayCount[lisIdx];
   document.getElementById('lis-card').innerHTML=`
@@ -1229,7 +1214,7 @@ function renderLisQ(){
       </div>
     </div>
     ${scriptHTML}
-    <div style="font-size:.9rem;color:var(--muted);margin-bottom:12px;font-weight:600">${q.question}</div>
+    <div style="display:none">${q.question}</div>
     <div>${chHTML}</div>
     ${fbHTML}
   `;
@@ -1246,11 +1231,141 @@ function lisSelect(choiceIdx){
   lisAnswered[lisIdx]=choiceIdx;
   renderLisQ();
 }
+
 function lisNext(){
-  if(lisIdx<lisRange[1]){lisIdx++;renderLisQ();window.scrollTo(0,0);}
-  else{showLisResult();}
+  if(lisIdx<lisRange[1]){
+    lisIdx++;renderLisQ();window.scrollTo(0,0);
+  } else {
+    // 部の最後 → 解答確認画面へ
+    showLisPartResult();
+  }
 }
 function lisPrev(){if(lisIdx>lisRange[0]){lisIdx--;renderLisQ();window.scrollTo(0,0);}}
+
+// 部ごとの解答確認画面
+function showLisPartResult(){
+  const part=LIS_Q[lisRange[0]].part;
+  const partQs=LIS_Q.filter(q=>q.part===part);
+  const partStart=LIS_Q.findIndex(q=>q.part===part);
+  let correct=0;
+  partQs.forEach((q,i)=>{if(lisAnswered[partStart+i]===q.answer)correct++;});
+
+  // スコア保存
+  if(part===1)lisScores.p1=correct;
+  else if(part===2)lisScores.p2=correct;
+  else lisScores.p3=correct;
+  lisScores.total=lisScores.p1+lisScores.p2+lisScores.p3;
+
+  // 全問終了かどうか
+  const isLast=(lisRange[1]===LIS_Q.length-1);
+
+  const card=document.getElementById('lis-card');
+  const pct=Math.round(correct/10*100);
+  let msg='';
+  if(pct>=80)msg='🎉 よくできました！';
+  else if(pct>=60)msg='👍 もう少し！復習しましょう。';
+  else msg='📚 音声をくり返し聴いて復習しましょう。';
+
+  const reviewHTML=partQs.map((q,i)=>{
+    const ans=lisAnswered[partStart+i];
+    const ok=ans===q.answer;
+    const rawScript=q.script||TTS_TEXT[partStart+i]||'';
+    const scriptFormatted=rawScript.replace(/\\n/g,'<br>').replace(/\n/g,'<br>');
+    const questionLine=q.question?`<div style="margin-top:6px;padding-top:6px;border-top:1px solid #c8daf5;font-size:.76rem;color:#1a4a8a;font-weight:700;">${q.question}</div>`:'';
+    return `<div class="lis-review-item ${ok?'ok':'ng'}" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px;">
+        <span style="color:var(--muted)">No. ${q.no}</span>
+        <span style="padding:2px 8px;border-radius:10px;font-size:.72rem;font-weight:700;background:${ok?'#d1fae5':'#fee2e2'};color:${ok?'var(--green)':'var(--red)'}">${ok?'✅ 正解':'❌ 不正解'}</span>
+      </div>
+      <div style="background:#f0f6ff;border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:.76rem;color:#1a3a6e;line-height:1.8;">
+        <div style="font-size:.72rem;color:#2563c0;font-weight:700;margin-bottom:4px;">📝 スクリプト</div>
+        <div style="white-space:pre-wrap">${scriptFormatted}</div>
+        ${questionLine}
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:2px"><strong>正解：</strong>${q.choices[q.answer]}</p>
+      ${!ok?`<p style="font-size:.82rem;color:var(--muted);margin-bottom:2px"><strong>あなたの答え：</strong>${ans!==null?q.choices[ans]:'未回答'}</p>`:''}
+      <div style="margin:6px 0 4px;">
+        ${q.choices.map((c,ci)=>{
+          let bg='#fafaf8';let border='#cccac3';let fw='400';
+          if(ci===q.answer){bg='#e1f5ee';border='#0f6e56';fw='700';}
+          else if(ci===ans&&!ok){bg='#faece7';border='#993c1d';}
+          return `<div style="display:flex;gap:8px;align-items:flex-start;padding:6px 10px;margin-bottom:4px;border:1px solid ${border};border-radius:4px;background:${bg};font-size:.78rem;font-weight:${fw};">
+            <span style="flex-shrink:0;font-weight:700;">${ci+1}.</span><span>${c}</span>
+          </div>`;
+        }).join('')}
+      </div>
+      <p style="font-size:.76rem;color:var(--hint)">${q.explanation}</p>
+    </div>`;
+  }).join('');
+
+  const sendMode=part===1?'listening-p1':part===2?'listening-p2':'listening-p3';
+  const partLabel=['','第1部','第2部','第3部'][part];
+  const nextPartLabel=part===1?'第2部へ進む →':part===2?'第3部へ進む →':'';
+  const otherPartsHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:.6rem;">
+      <button onclick="startListening(1)" style="padding:9px 4px;background:${part===1?'#1a4a8a':'#fff'};color:${part===1?'#fff':'#1a4a8a'};border:2px solid #2563c0;border-radius:var(--rsm);font-size:.82rem;font-weight:700;cursor:pointer;">第1部</button>
+      <button onclick="startListening(2)" style="padding:9px 4px;background:${part===2?'#1a4a8a':'#fff'};color:${part===2?'#fff':'#1a4a8a'};border:2px solid #2563c0;border-radius:var(--rsm);font-size:.82rem;font-weight:700;cursor:pointer;">第2部</button>
+      <button onclick="startListening(3)" style="padding:9px 4px;background:${part===3?'#1a4a8a':'#fff'};color:${part===3?'#fff':'#1a4a8a'};border:2px solid #2563c0;border-radius:var(--rsm);font-size:.82rem;font-weight:700;cursor:pointer;">第3部</button>
+    </div>`;
+
+  document.getElementById('lis-quiz').style.display='none';
+  const result=document.getElementById('lis-result');
+  result.style.display='block';
+  result.innerHTML=`
+    <div class="lis-result-card">
+      <p style="text-align:center;font-size:1rem;font-weight:700;color:#1a4a8a;margin-bottom:12px;">📊 ${PART_LABELS_LIS[part]} 結果</p>
+      <div class="score-circle"><span class="sc-n">${correct}</span><span class="sc-d">/ 10</span></div>
+      <p style="text-align:center;font-size:.88rem;color:var(--muted);margin-bottom:1rem;">${msg}</p>
+      <div style="margin-top:1rem;">${reviewHTML}</div>
+    </div>
+    <button onclick="sendResults('${sendMode}')" class="send-btn-blue">📩 ${partLabel}の結果を送信する</button>
+    ${!isLast?`<button onclick="startNextPart(${part})" style="width:100%;padding:13px;background:linear-gradient(135deg,#1a4a8a,#2563c0);color:#fff;border:none;border-radius:var(--rsm);font-size:.95rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(37,99,192,.35);margin-bottom:.6rem;">${nextPartLabel}</button>`:''}
+    ${isLast?`<button onclick="showLisAllResult()" style="width:100%;padding:13px;background:linear-gradient(135deg,#1a4a8a,#2563c0);color:#fff;border:none;border-radius:var(--rsm);font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:.6rem;">🏆 全体の結果を見る</button>`:''}
+    ${otherPartsHTML}
+    <button onclick="restartListening()" style="width:100%;padding:10px;background:var(--surface);color:var(--muted);border:1px solid var(--border2);border-radius:var(--rsm);font-size:.85rem;cursor:pointer;">🔄 もう一度挑戦する</button>
+  `;
+  updateScore();saveState();
+}
+
+// 全部終了後の全体結果
+function showLisAllResult(){
+  lisSubmitted=true;
+  const result=document.getElementById('lis-result');
+  const total=lisScores.p1+lisScores.p2+lisScores.p3;
+  lisScores.total=total;
+  const pct=Math.round(total/30*100);
+  let msg='';
+  if(pct>=80)msg='🎉 素晴らしい成績です！合格ラインを十分クリアしています。';
+  else if(pct>=60)msg='👍 もう少しで合格ライン！苦手な問題を復習しましょう。';
+  else msg='📚 復習が大切です。音声をくり返し聴いてみましょう。';
+  result.innerHTML=`
+    <div class="lis-result-card">
+      <p style="text-align:center;font-size:1.1rem;font-weight:700;color:#1a4a8a;margin-bottom:14px;">🏆 リスニング 全体結果</p>
+      <div class="score-circle"><span class="sc-n">${total}</span><span class="sc-d">/ 30</span></div>
+      <div class="section-scores">
+        <div class="ss-item"><div class="ss-l">第1部</div><div class="ss-v">${lisScores.p1}/10</div></div>
+        <div class="ss-item"><div class="ss-l">第2部</div><div class="ss-v">${lisScores.p2}/10</div></div>
+        <div class="ss-item"><div class="ss-l">第3部</div><div class="ss-v">${lisScores.p3}/10</div></div>
+      </div>
+      <p style="text-align:center;font-size:.88rem;color:var(--muted);line-height:1.7;">${msg}</p>
+    </div>
+    <button onclick="sendResults('listening')" class="send-btn-blue">📩 リスニング全体の結果を送信する</button>
+    <button onclick="restartListening()" style="width:100%;padding:10px;background:var(--surface);color:var(--muted);border:1px solid var(--border2);border-radius:var(--rsm);font-size:.85rem;cursor:pointer;">🔄 もう一度挑戦する</button>
+  `;
+  updateScore();saveState();
+}
+
+// 次の部へ進む
+function startNextPart(currentPart){
+  const nextPart=currentPart+1;
+  const nextStart=LIS_Q.findIndex(q=>q.part===nextPart);
+  const nextEnd=LIS_Q.map((q,i)=>q.part===nextPart?i:-1).filter(i=>i>=0).pop();
+  lisRange=[nextStart,nextEnd];
+  lisIdx=nextStart;
+  document.getElementById('lis-result').style.display='none';
+  document.getElementById('lis-quiz').style.display='block';
+  renderLisQ();window.scrollTo(0,0);
+}
 
 // TTS用テキストマップ（第1・2部の会話内容）
 const TTS_TEXT = {
@@ -1475,15 +1590,18 @@ function clearState(){
 function sendResults(mode){
   const studentId=document.getElementById('student-id').value.trim();
   const name=document.getElementById('student-name').value.trim();
-  if(!studentId){alert('<ruby>ホーム<rt></rt></ruby><ruby>画面<rt>がめん</rt></ruby>で<ruby>生徒番号<rt>せいとばんごう</rt></ruby>を<ruby>入力<rt>にゅうりょく</rt></ruby>してください。');goPage('home');return;}
-  if(!name){alert('<ruby>ホーム<rt></rt></ruby><ruby>画面<rt>がめん</rt></ruby>で<ruby>氏名<rt>しめい</rt></ruby>を<ruby>入力<rt>にゅうりょく</rt></ruby>してください。');goPage('home');return;}
+  if(!studentId){alert('ログインしなおしてください。');return;}
+  if(!name){alert('ログインしなおしてください。');return;}
+
+  const q5text=(document.getElementById('q5-textarea')||{}).value||'';
+  const q6text=(document.getElementById('q6-textarea')||{}).value||'';
 
   const s1=submitted.q1?scores.q1+'/15':'未解答';
   const s2=submitted.q2?scores.q2+'/5':'未解答';
   const s3=submitted.q3?scores.q3+'/2':'未解答';
   const s4=submitted.q4?scores.q4+'/7':'未解答';
-  const s5=submitted.q5?'提出済み':'未提出';
-  const s6=submitted.q6?'提出済み':'未提出';
+  const s5=submitted.q5?(q5text?'提出済み（タイプ）':'提出済み（写メ）'):'未提出';
+  const s6=submitted.q6?(q6text?'提出済み（タイプ）':'提出済み（写メ）'):'未提出';
   const sl=lisSubmitted?lisScores.total+'/30（第1部:'+lisScores.p1+'/10 第2部:'+lisScores.p2+'/10 第3部:'+lisScores.p3+'/10）':'未受験';
   const writingTotal=(submitted.q1?scores.q1:0)+(submitted.q2?scores.q2:0)+(submitted.q3?scores.q3:0)+(submitted.q4?scores.q4:0);
   const now=new Date();
@@ -1510,18 +1628,22 @@ function sendResults(mode){
 ━━━━━━━━━━━━━━━━━━
 ■ ライティング
 ━━━━━━━━━━━━━━━━━━
-大問5（Eメール）　：${s5}
-大問6（意見文）　　：${s6}
+大問5（Eメール）　：${s5}${q5text?'\n【大問5 解答本文】\n'+q5text:''}
+大問6（意見文）　　：${s6}${q6text?'\n【大問6 解答本文】\n'+q6text:''}
 ━━━━━━━━━━━━━━━━━━
 ■ リスニング
 ━━━━━━━━━━━━━━━━━━
-リスニング合計　　：${sl}
+第1部（会話の応答）：${lisSubmitted?lisScores.p1+'/10':'未受験'}
+第2部（会話内容）　：${lisSubmitted?lisScores.p2+'/10':'未受験'}
+第3部（文の内容）　：${lisSubmitted?lisScores.p3+'/10':'未受験'}
+─────────────────
+リスニング合計　　：${lisSubmitted?lisScores.total+'/30':'未受験'}
 ━━━━━━━━━━━━━━━━━━
-※大問5・6の手書き写メは別途メールで送付してください。`;
+${(!q5text||!q6text)?'※手書き写メは別途メールで送付してください。':''}`;
 
   }else if(mode==='listening'){
     if(!lisSubmitted){alert('リスニングをすべて解答してから送信してください。');return;}
-    subject=`【Set1 リスニング結果】${studentId} ${name}`;
+    subject=`【Set1 リスニング全体結果】${studentId} ${name}`;
     body=`【英検準2級 Set1 リスニング結果】
 
 生徒番号：${studentId}
@@ -1538,10 +1660,55 @@ function sendResults(mode){
 合計　　　　　　　：${lisScores.total} / 30
 ━━━━━━━━━━━━━━━━━━`;
 
+  }else if(mode==='listening-p1'||mode==='listening-p2'||mode==='listening-p3'){
+    const pNum=mode==='listening-p1'?1:mode==='listening-p2'?2:3;
+    const pLabel=['','第1部（会話の応答）','第2部（会話内容）','第3部（文の内容）'][pNum];
+    const pScore=[0,lisScores.p1,lisScores.p2,lisScores.p3][pNum];
+    subject=`【Set1 リスニング${pLabel}】${studentId} ${name}`;
+    body=`【英検準2級 Set1 リスニング結果】
+
+生徒番号：${studentId}
+氏名　　：${name}
+送信日時：${dateStr}
+
+━━━━━━━━━━━━━━━━━━
+■ リスニング ${pLabel}
+━━━━━━━━━━━━━━━━━━
+スコア　：${pScore} / 10
+━━━━━━━━━━━━━━━━━━`;
+
+  }else if(mode==='q5'){
+    if(!submitted.q5){alert('先に「解答する」ボタンを押してください。');return;}
+    subject=`【Set1 大問5（Eメール）】${studentId} ${name}`;
+    body=`【英検準2級 Set1 大問5（Eメール）】
+
+生徒番号：${studentId}
+氏名　　：${name}
+送信日時：${dateStr}
+
+━━━━━━━━━━━━━━━━━━
+■ 大問5（Eメール）　${s5}
+━━━━━━━━━━━━━━━━━━
+${q5text?'【解答本文】\n'+q5text:'※手書き写メは別途メールで送付してください。'}`;
+
+  }else if(mode==='q6'){
+    if(!submitted.q6){alert('先に「解答する」ボタンを押してください。');return;}
+    subject=`【Set1 大問6（意見文）】${studentId} ${name}`;
+    body=`【英検準2級 Set1 大問6（意見文）】
+
+生徒番号：${studentId}
+氏名　　：${name}
+送信日時：${dateStr}
+
+━━━━━━━━━━━━━━━━━━
+■ 大問6（意見文）　${s6}
+━━━━━━━━━━━━━━━━━━
+${q6text?'【解答本文】\n'+q6text:'※手書き写メは別途メールで送付してください。'}`;
+
   }else{
-    const labelMap={q1:'大問1（語彙・文法・熟語）',q2:'大問2（会話文空欄補充）',q3:'大問3（長文読解）',q4:'大問4（長文A・B）',q5:'大問5（Eメール）',q6:'大問6（意見文）'};
-    const scoreMap={q1:s1,q2:s2,q3:s3,q4:s4,q5:s5,q6:s6};
-    if(!submitted[mode]&&mode!=='q5'&&mode!=='q6'){alert('先に解答して「解答する」ボタンを押してください。');return;}
+    const labelMap={q1:'大問1（語彙・文法・熟語）',q2:'大問2（会話文空欄補充）',q3:'大問3（長文読解）',q4:'大問4（長文A・B）'};
+    const scoreMap={q1:s1,q2:s2,q3:s3,q4:s4};
+    if(!submitted[mode]){alert('先に解答して「解答する」ボタンを押してください。');return;}
     subject=`【Set1 ${labelMap[mode]}】${studentId} ${name}`;
     body=`【英検準2級 Set1 学習結果】\n\n生徒番号：${studentId}\n氏名　　：${name}\n送信日時：${dateStr}\n\n━━━━━━━━━━━━━━\n■ ${labelMap[mode]}\nスコア：${scoreMap[mode]}\n━━━━━━━━━━━━━━`;
   }
