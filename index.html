@@ -1876,7 +1876,7 @@ function printSection(section, mode){
 // ===== ログイン =====
 const GAS_URL='https://script.google.com/macros/s/AKfycbzcapAkU0H0YZF4_SATjIceILBA07K5e-GgFG-9vRTd2SH21YkIZkbaBewgtdE-BiJBmA/exec';
 
-function doLogin(){
+async function doLogin(){
   const id=document.getElementById('login-id').value.trim();
   const name=document.getElementById('login-name').value.trim();
   if(!id||!name){
@@ -1891,58 +1891,59 @@ function doLogin(){
   btn.disabled=true;
   btn.textContent='確認中…';
 
-  // GASをGETで呼び出し（JSONP方式でCORSを回避）
-  const cbName='_gasCallback_'+Date.now();
-  window[cbName]=function(data){
-    cleanup();
-    if(data.ok){
-      document.getElementById('login-overlay').style.display='none';
-      const sid=document.getElementById('student-id');
-      const sname=document.getElementById('student-name');
-      const semail=document.getElementById('student-email');
-      if(sid)sid.value=id;
-      if(sname)sname.value=name;
-      if(semail)semail.value=data.email||'';
-      saveState();
-    }else{
-      const err=document.getElementById('login-error');
-      err.textContent=data.error||'生徒番号または氏名が一致しません。';
-      err.style.display='block';
-      setTimeout(()=>err.style.display='none',4000);
-      btn.disabled=false;
-      btn.innerHTML=origHTML;
-    }
-  };
-
-  const timer=setTimeout(()=>{
-    cleanup();
+  function loginSuccess(email){
+    document.getElementById('login-overlay').style.display='none';
+    const sid=document.getElementById('student-id');
+    const sname=document.getElementById('student-name');
+    const semail=document.getElementById('student-email');
+    if(sid)sid.value=id;
+    if(sname)sname.value=name;
+    if(semail)semail.value=email||'';
+    saveState();
+  }
+  function loginError(msg){
     const err=document.getElementById('login-error');
-    err.textContent='通信タイムアウトです。時間をおいて再度お試しください。';
+    err.textContent=msg||'生徒番号または氏名が一致しません。';
     err.style.display='block';
     setTimeout(()=>err.style.display='none',4000);
     btn.disabled=false;
     btn.innerHTML=origHTML;
-  },15000);
+  }
 
+  // まずfetchで試みる
+  try{
+    const res=await fetch(GAS_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'login',studentId:id,name:name})
+    });
+    const data=await res.json();
+    if(data.ok){loginSuccess(data.email);}
+    else{loginError(data.error);}
+    return;
+  }catch(e){
+    // fetchが失敗した場合はJSONPにフォールバック
+  }
+
+  // JSONPフォールバック
+  const cbName='_gasCallback_'+Date.now();
+  const timer=setTimeout(()=>{
+    cleanup();
+    loginError('通信タイムアウトです。時間をおいて再度お試しください。');
+  },15000);
+  window[cbName]=function(data){
+    cleanup();
+    if(data.ok){loginSuccess(data.email);}
+    else{loginError(data.error);}
+  };
   const script=document.createElement('script');
   const params=new URLSearchParams({action:'login',studentId:id,name:name,callback:cbName});
   script.src=GAS_URL+'?'+params.toString();
-  script.onerror=()=>{
-    cleanup();
-    const err=document.getElementById('login-error');
-    err.textContent='通信エラーが発生しました。時間をおいて再度お試しください。';
-    err.style.display='block';
-    setTimeout(()=>err.style.display='none',4000);
-    btn.disabled=false;
-    btn.innerHTML=origHTML;
-  };
-
+  script.onerror=()=>{cleanup();loginError('通信エラーが発生しました。');};
   function cleanup(){
-    clearTimeout(timer);
-    delete window[cbName];
+    clearTimeout(timer);delete window[cbName];
     if(script.parentNode)script.parentNode.removeChild(script);
   }
-
   document.head.appendChild(script);
 }
 
