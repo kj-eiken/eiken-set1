@@ -544,6 +544,9 @@ button ruby rt{color:inherit}
     <button class="retry-btn" onclick="sendResults('q1')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>この結果<rt>このけっか</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
   </div>
   <div class="result-area" id="q1-result"></div>
+  <div id="q1-send-bottom" style="display:none;margin-top:1rem;">
+    <button class="send-btn-blue" onclick="sendResults('q1')">📩 この結果を送信する</button>
+  </div>
   <div class="print-footer">
     © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
   </div>
@@ -568,6 +571,9 @@ button ruby rt{color:inherit}
     <button class="retry-btn" onclick="sendResults('q2')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>この結果<rt>このけっか</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
   </div>
   <div class="result-area" id="q2-result"></div>
+  <div id="q2-send-bottom" style="display:none;margin-top:1rem;">
+    <button class="send-btn-blue" onclick="sendResults('q2')">📩 この結果を送信する</button>
+  </div>
   <div class="print-footer">
     © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
   </div>
@@ -599,6 +605,9 @@ button ruby rt{color:inherit}
     <button class="retry-btn" onclick="sendResults('q3')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>この結果<rt>このけっか</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
   </div>
   <div class="result-area" id="q3-result"></div>
+  <div id="q3-send-bottom" style="display:none;margin-top:1rem;">
+    <button class="send-btn-blue" onclick="sendResults('q3')">📩 この結果を送信する</button>
+  </div>
   <div class="print-footer">
     © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
   </div>
@@ -649,6 +658,9 @@ button ruby rt{color:inherit}
     <button class="retry-btn" onclick="sendResults('q4')" style="background:#eef3fc;color:var(--accent);border-color:#b8d0f5;">📩 <ruby>この結果<rt>このけっか</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby></button>
   </div>
   <div class="result-area" id="q4-result"></div>
+  <div id="q4-send-bottom" style="display:none;margin-top:1rem;">
+    <button class="send-btn-blue" onclick="sendResults('q4')">📩 この結果を送信する</button>
+  </div>
   <div class="print-footer">
     © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
   </div>
@@ -1055,8 +1067,11 @@ function resultCardHtml(qid,ansNum,label){
 
 function checkSection(secKey){
   const all=getAllQids(secKey);
-  if(Object.keys(sel[secKey]).length<all.length){alert(all.length+'<ruby>問<rt>もん</rt></ruby>すべて<ruby>解答<rt>かいとう</rt></ruby>してから「<ruby>解答<rt>かいとう</rt></ruby>する」を<ruby>押<rt>お</rt></ruby>してください。');return;}
-  submitted[secKey]=true;document.getElementById(secKey+'-submit').disabled=true;
+  if(Object.keys(sel[secKey]).length<all.length){alert(all.length+'問すべて解答してから「解答する」を押してください。');return;}
+  submitted[secKey]=true;
+  // 解答後：下部送信ボタンを表示
+  const bottomSend=document.getElementById(secKey+'-send-bottom');
+  if(bottomSend)bottomSend.style.display='block';document.getElementById(secKey+'-submit').disabled=true;
   let correct=0;all.forEach(qid=>{const ans=sel[secKey][qid],d=QD[qid];if(ans===d.correct)correct++;document.getElementById('ch-'+qid+'-'+d.correct)?.classList.add('show-ans');if(ans!==d.correct)document.getElementById('ch-'+qid+'-'+ans)?.classList.add('wrong');});
   scores[secKey]=correct;
   const pct=Math.round(correct/all.length*100);const bc=pct===100?'perfect':pct>=60?'partial':'low';
@@ -1068,7 +1083,10 @@ function checkSection(secKey){
 }
 
 function resetSection(secKey){
-  submitted[secKey]=false;scores[secKey]=0;sel[secKey]={};
+  submitted[secKey]=false;
+  // リセット時：下部送信ボタンを非表示
+  const bottomSendReset=document.getElementById(secKey+'-send-bottom');
+  if(bottomSendReset)bottomSendReset.style.display='none';scores[secKey]=0;sel[secKey]={};
   document.getElementById(secKey+'-submit').disabled=false;
   const ra=document.getElementById(secKey+'-result');ra.classList.remove('show');ra.innerHTML='';
   ({q1:buildQ1,q2:buildQ2,q3:buildQ3,q4:buildQ4})[secKey]();
