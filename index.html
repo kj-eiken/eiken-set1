@@ -382,36 +382,42 @@ button ruby rt{color:inherit}
       <div class="sc-title"><ruby>語彙<rt>ごい</rt></ruby>・<ruby>文法<rt>ぶんぽう</rt></ruby>・<ruby>熟語<rt>じゅくご</rt></ruby></div>
       <div class="sc-sub"><ruby>会話文<rt>かいわぶん</rt></ruby>6<ruby>問<rt>もん</rt></ruby><ruby>含<rt>ふく</rt></ruby>む</div>
       <div class="sc-count">4<ruby>択<rt>たく</rt></ruby> × 15</div>
+      <div class="sc-score not-done" id="home-score-q1">未解答</div>
     </div>
     <div class="sec-card" onclick="goPage('q2')">
       <div class="sc-top"><div class="sc-num">2</div><div class="sc-badge">5<ruby>問<rt>もん</rt></ruby></div></div>
       <div class="sc-title"><ruby>会話文<rt>かいわぶん</rt></ruby><ruby>空欄<rt>くうらん</rt></ruby><ruby>補充<rt>ほじゅう</rt></ruby></div>
       <div class="sc-sub"><ruby>単問<rt>たんもん</rt></ruby>3＋<ruby>長文会話<rt>ちょうぶんかいわ</rt></ruby>1</div>
       <div class="sc-count">4<ruby>択<rt>たく</rt></ruby> × 5</div>
+      <div class="sc-score not-done" id="home-score-q2">未解答</div>
     </div>
     <div class="sec-card" onclick="goPage('q3')">
       <div class="sc-top"><div class="sc-num">3</div><div class="sc-badge">2<ruby>問<rt>もん</rt></ruby></div></div>
       <div class="sc-title"><ruby>長文<rt>ちょうぶん</rt></ruby><ruby>読解<rt>どっかい</rt></ruby></div>
       <div class="sc-sub">The New Club Member</div>
       <div class="sc-count">4<ruby>択<rt>たく</rt></ruby> × 2</div>
+      <div class="sc-score not-done" id="home-score-q3">未解答</div>
     </div>
     <div class="sec-card" onclick="goPage('q4')">
       <div class="sc-top"><div class="sc-num">4</div><div class="sc-badge">7<ruby>問<rt>もん</rt></ruby></div></div>
       <div class="sc-title"><ruby>長文<rt>ちょうぶん</rt></ruby>A・B</div>
       <div class="sc-sub">E<ruby>メール<rt></rt></ruby>＋<ruby>説明文<rt>せつめいぶん</rt></ruby></div>
       <div class="sc-count">4<ruby>択<rt>たく</rt></ruby> × 7</div>
+      <div class="sc-score not-done" id="home-score-q4">未解答</div>
     </div>
     <div class="sec-card" onclick="goPage('q5')">
       <div class="sc-top"><div class="sc-num">5</div><div class="sc-badge">1<ruby>問<rt>もん</rt></ruby></div></div>
       <div class="sc-title"><ruby>英作文<rt>えいさくぶん</rt></ruby>（E<ruby>メール<rt></rt></ruby>）</div>
       <div class="sc-sub"><ruby>返信<rt>へんしん</rt></ruby><ruby>メール<rt></rt></ruby>＋<ruby>質問<rt>しつもん</rt></ruby>2つ</div>
       <div class="sc-count">40〜50<ruby>語<rt>ご</rt></ruby></div>
+      <div class="sc-score not-done" id="home-score-q5">未提出</div>
     </div>
     <div class="sec-card" onclick="goPage('q6')">
       <div class="sc-top"><div class="sc-num">6</div><div class="sc-badge">1<ruby>問<rt>もん</rt></ruby></div></div>
       <div class="sc-title"><ruby>英作文<rt>えいさくぶん</rt></ruby>（<ruby>意見<rt>いけん</rt></ruby>）</div>
       <div class="sc-sub"><ruby>意見<rt>いけん</rt></ruby>＋<ruby>理由<rt>りゆう</rt></ruby>2つ</div>
       <div class="sc-count">50〜60<ruby>語<rt>ご</rt></ruby></div>
+      <div class="sc-score not-done" id="home-score-q6">未提出</div>
     </div>
   </div>
   <!-- 筆記合計バー -->
@@ -435,6 +441,7 @@ button ruby rt{color:inherit}
           <div style="font-size:10px;color:#1a4a8a;font-weight:700;"><ruby>第<rt>だい</rt></ruby>1<ruby>部<rt>ぶ</rt></ruby></div>
           <div style="font-size:11px;color:var(--muted);margin:2px 0;"><ruby>会話<rt>かいわ</rt></ruby>の<ruby>応答<rt>おうとう</rt></ruby></div>
           <div style="font-size:14px;font-weight:700;color:#1a4a8a;">10<ruby>問<rt>もん</rt></ruby></div>
+          <div class="sc-score not-done" id="home-score-lp1" style="font-size:12px;">未受験</div>
         </div>
         <div style="background:#fff;border:1px solid var(--blue-light);border-radius:var(--rsm);padding:6px 4px;text-align:center;">
           <div style="font-size:10px;color:#1a4a8a;font-weight:700;"><ruby>第<rt>だい</rt></ruby>2<ruby>部<rt>ぶ</rt></ruby></div>
@@ -1108,6 +1115,35 @@ function updateScore(){
   document.getElementById('nav-score').innerHTML=total+' / 61<ruby>問<rt>もん</rt></ruby>';
   document.getElementById('total-bar').style.width=Math.round(total/61*100)+'%';
   document.getElementById('total-label').innerHTML=total+' / 61 <ruby>問<rt>もん</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby>';
+
+  // ホーム画面スコア更新
+  function setHomeScore(id, val, max, done){
+    const el=document.getElementById(id);
+    if(!el)return;
+    if(done){
+      const pct=max>0?Math.round(val/max*100):0;
+      el.textContent=val+'/'+max+'（'+pct+'%）';
+      el.className='sc-score done';
+    }else{
+      el.textContent=max>0?'未解答':'未提出';
+      el.className='sc-score not-done';
+    }
+  }
+  setHomeScore('home-score-q1',scores.q1,15,submitted.q1);
+  setHomeScore('home-score-q2',scores.q2,5,submitted.q2);
+  setHomeScore('home-score-q3',scores.q3,2,submitted.q3);
+  setHomeScore('home-score-q4',scores.q4,7,submitted.q4);
+  // 大問5・6
+  const el5=document.getElementById('home-score-q5');
+  if(el5){if(submitted.q5){el5.textContent='提出済み';el5.className='sc-score done';}else{el5.textContent='未提出';el5.className='sc-score not-done';}}
+  const el6=document.getElementById('home-score-q6');
+  if(el6){if(submitted.q6){el6.textContent='提出済み';el6.className='sc-score done';}else{el6.textContent='未提出';el6.className='sc-score not-done';}}
+  // リスニング部ごと
+  const elp1=document.getElementById('home-score-lp1');
+  if(elp1){
+    if(lisSubmitted||lisScores.p1>0){const pct=Math.round(lisScores.p1/10*100);elp1.textContent=lisScores.p1+'/10（'+pct+'%）';elp1.className='sc-score done';}
+    else{elp1.textContent='未受験';elp1.className='sc-score not-done';}
+  }
 }
 
 // Writing
@@ -1662,14 +1698,16 @@ async function sendResults(mode){
   const q5text=(document.getElementById('q5-textarea')||{}).value||'';
   const q6text=(document.getElementById('q6-textarea')||{}).value||'';
 
-  const s1=submitted.q1?scores.q1+'/15':'未解答';
-  const s2=submitted.q2?scores.q2+'/5':'未解答';
-  const s3=submitted.q3?scores.q3+'/2':'未解答';
-  const s4=submitted.q4?scores.q4+'/7':'未解答';
+  const pct=(v,m)=>Math.round(v/m*100)+'%';
+  const s1=submitted.q1?scores.q1+'/15（'+pct(scores.q1,15)+'）':'未解答';
+  const s2=submitted.q2?scores.q2+'/5（'+pct(scores.q2,5)+'）':'未解答';
+  const s3=submitted.q3?scores.q3+'/2（'+pct(scores.q3,2)+'）':'未解答';
+  const s4=submitted.q4?scores.q4+'/7（'+pct(scores.q4,7)+'）':'未解答';
   const s5=submitted.q5?(q5text?'提出済み（タイプ）':'提出済み（写メ）'):'未提出';
   const s6=submitted.q6?(q6text?'提出済み（タイプ）':'提出済み（写メ）'):'未提出';
-  const sl=lisSubmitted?lisScores.total+'/30（第1部:'+lisScores.p1+'/10 第2部:'+lisScores.p2+'/10 第3部:'+lisScores.p3+'/10）':'未受験';
+  const sl=lisSubmitted?lisScores.total+'/30（'+pct(lisScores.total,30)+'） 第1部:'+lisScores.p1+'/10（'+pct(lisScores.p1,10)+'） 第2部:'+lisScores.p2+'/10（'+pct(lisScores.p2,10)+'） 第3部:'+lisScores.p3+'/10（'+pct(lisScores.p3,10)+'）':'未受験';
   const writingTotal=(submitted.q1?scores.q1:0)+(submitted.q2?scores.q2:0)+(submitted.q3?scores.q3:0)+(submitted.q4?scores.q4:0);
+  const writingPct=pct(writingTotal,29);
   const now=new Date();
   const dateStr=now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
 
@@ -1690,7 +1728,7 @@ async function sendResults(mode){
 大問3（長文読解）　　　　：${s3}
 大問4（長文A・B）　　　：${s4}
 ─────────────────
-筆記合計（大問1〜4）　　：${writingTotal} / 29
+筆記合計（大問1〜4）　　：${writingTotal} / 29（${writingPct}）
 ━━━━━━━━━━━━━━━━━━
 ■ ライティング
 ━━━━━━━━━━━━━━━━━━
