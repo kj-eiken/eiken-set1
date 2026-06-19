@@ -2094,6 +2094,7 @@ async function doLogin(){
       adminTab.classList.add('visible');
       // 管理者はアイドルタイムアウト・期限制限を無効化
       window._isAdmin = true;
+      window._adminStudentId = id; // ログイン時のIDを保存
     }
     saveState();
   }
@@ -2324,7 +2325,7 @@ function adminLoad() {
   fetch(GAS_URL, {
     method: 'POST',
     headers: {'Content-Type': 'text/plain'},
-    body: JSON.stringify({action: 'getResults', studentId: document.getElementById('student-id').value.trim()})
+    body: JSON.stringify({action: 'getResults', studentId: window._adminStudentId || '00000000'})
   }).then(r => r.json()).then(data => {
     clearTimeout(timer);
     delete window[cbName];
@@ -2337,7 +2338,7 @@ function adminLoad() {
   }).catch(() => {
     // JSONPフォールバック
     const script = document.createElement('script');
-    const params = new URLSearchParams({action: 'getResults', studentId: document.getElementById('student-id').value.trim(), callback: cbName});
+    const params = new URLSearchParams({action: 'getResults', studentId: window._adminStudentId || '00000000', callback: cbName});
     script.src = GAS_URL + '?' + params.toString();
     script.onerror = () => { cleanup(); showAdminError('通信エラーが発生しました。'); };
     document.head.appendChild(script);
