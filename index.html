@@ -296,6 +296,41 @@ button ruby rt{color:inherit}
 
   /* ページ余白設定 */
   @page{margin:15mm 12mm;}
+
+  /* ===== ライティング解答欄（印刷時） ===== */
+  /* 罫線ボックスを印刷でも表示 */
+  #page-q5 .email-body > div[style*="position:relative"],
+  #page-q6 div[style*="position:relative"][style*="border"] {
+    border: 1.5px solid #999 !important;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  /* 罫線の背景画像を印刷でも表示 */
+  #page-q5 .email-body div[style*="repeating-linear-gradient"],
+  #page-q6 div[style*="repeating-linear-gradient"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent calc(100%/15 - 1px), #d0cdc7 calc(100%/15 - 1px), #d0cdc7 calc(100%/15)) !important;
+  }
+  /* textareaのサイズを固定・印刷用に調整 */
+  #q5-textarea, #q6-textarea {
+    min-height: 14cm !important;
+    height: 14cm !important;
+    font-size: 13px !important;
+    line-height: calc(14cm/15) !important;
+    color: #000 !important;
+    background: transparent !important;
+    border: none !important;
+    resize: none !important;
+    overflow: hidden !important;
+  }
+  /* タイプ送信パネルのみ表示、写メパネルは非表示 */
+  #panel-photo { display: none !important; }
+  #panel-type { display: block !important; }
+  /* タブ行を非表示 */
+  #page-q5 > .page > div[style*="border-bottom"],
+  div[style*="border-bottom:2px solid var(--border)"] { display: none !important; }
 }
 
 /* 印刷時のみ表示する要素（通常時は非表示） */
@@ -807,7 +842,7 @@ button ruby rt{color:inherit}
     <div class="photo-submit-box">
       <h3>📷 <ruby>手書<rt>てが</rt></ruby>き<ruby>写メ<rt>しゃめ</rt></ruby><ruby>提出<rt>ていしゅつ</rt></ruby>の<ruby>手順<rt>てじゅん</rt></ruby></h3>
       <ol class="photo-submit-steps">
-        <li><span class="step-num">1</span><span><strong><ruby>解答<rt>かいとう</rt></ruby>を<ruby>手書<rt>てが</rt></ruby>きで<ruby>書<rt>か</rt></ruby>く</strong>（40〜50<ruby>語<rt>ご</rt></ruby>）<br><span style="font-size:12px;color:#6b4c00;line-height:1.8;">・<strong>15<ruby>行以内<rt>ぎょういない</rt></ruby></strong>に<ruby>収<rt>おさ</rt></ruby>める・<ruby>鉛筆<rt>えんぴつ</rt></ruby>HB/Bを<ruby>使用<rt>しよう</rt></ruby>・<ruby>濃<rt>こ</rt></ruby>く<ruby>大<rt>おお</rt></ruby>きめに<ruby>書<rt>か</rt></ruby>く</span></span></li>
+        <li><span class="step-num">1</span><span><strong><ruby>解答<rt>かいとう</rt></ruby>を<ruby>手書<rt>てが</rt></ruby>きで<ruby>書<rt>か</rt></ruby>く</strong>（40〜50<ruby>語<rt>ご</rt></ruby>）<br><span style="font-size:12px;color:#6b4c00;line-height:1.8;">・<ruby>自分<rt>じぶん</rt></ruby>のノートに<ruby>書<rt>か</rt></ruby>く、または<ruby>問題用紙<rt>もんだいようし</rt></ruby>を<ruby>印刷<rt>いんさつ</rt></ruby>して<ruby>書<rt>か</rt></ruby>くことができます<br>・<strong>15<ruby>行以内<rt>ぎょういない</rt></ruby></strong>に<ruby>収<rt>おさ</rt></ruby>める・<ruby>鉛筆<rt>えんぴつ</rt></ruby>HB/Bを<ruby>使用<rt>しよう</rt></ruby>・<ruby>濃<rt>こ</rt></ruby>く<ruby>大<rt>おお</rt></ruby>きめに<ruby>書<rt>か</rt></ruby>く</span></span></li>
         <li><span class="step-num">2</span><span><strong><ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮影<rt>さつえい</rt></ruby>・<ruby>確認<rt>かくにん</rt></ruby>する</strong><br><span style="font-size:12px;color:#6b4c00;line-height:1.8;"><ruby>明<rt>あか</rt></ruby>るい<ruby>場所<rt>ばしょ</rt></ruby>で・<ruby>真上<rt>まうえ</rt></ruby>から・ピント<ruby>確認<rt>かくにん</rt></ruby></span></span></li>
         <li><span class="step-num">3</span><span><strong><ruby>件名<rt>けんめい</rt></ruby>：「Set1 <ruby>大問<rt>だいもん</rt></ruby>5　<ruby>氏名<rt>しめい</rt></ruby>」でメール<ruby>送信<rt>そうしん</rt></ruby></strong></span></li>
         <li><span class="step-num">4</span><span><ruby>先生<rt>せんせい</rt></ruby>からコメント<ruby>入<rt>い</rt></ruby>りの<ruby>返信<rt>へんしん</rt></ruby>が<ruby>届<rt>とど</rt></ruby>きます</span></li>
@@ -860,7 +895,7 @@ button ruby rt{color:inherit}
     <div class="photo-submit-box">
       <h3>📷 <ruby>手書<rt>てが</rt></ruby>き<ruby>写メ<rt>しゃめ</rt></ruby><ruby>提出<rt>ていしゅつ</rt></ruby>の<ruby>手順<rt>てじゅん</rt></ruby></h3>
       <ol class="photo-submit-steps">
-        <li><span class="step-num">1</span><span><strong><ruby>解答<rt>かいとう</rt></ruby>を<ruby>手書<rt>てが</rt></ruby>きで<ruby>書<rt>か</rt></ruby>く</strong>（50〜60<ruby>語<rt>ご</rt></ruby>）</span></li>
+        <li><span class="step-num">1</span><span><strong><ruby>解答<rt>かいとう</rt></ruby>を<ruby>手書<rt>てが</rt></ruby>きで<ruby>書<rt>か</rt></ruby>く</strong>（50〜60<ruby>語<rt>ご</rt></ruby>）<br><span style="font-size:12px;color:#6b4c00;line-height:1.8;">・<ruby>自分<rt>じぶん</rt></ruby>のノートに<ruby>書<rt>か</rt></ruby>く、または<ruby>問題用紙<rt>もんだいようし</rt></ruby>を<ruby>印刷<rt>いんさつ</rt></ruby>して<ruby>書<rt>か</rt></ruby>くことができます</span></span></li>
         <li><span class="step-num">2</span><span><strong><ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮影<rt>さつえい</rt></ruby>・<ruby>確認<rt>かくにん</rt></ruby>する</strong></span></li>
         <li><span class="step-num">3</span><span><strong><ruby>件名<rt>けんめい</rt></ruby>：「Set1 <ruby>大問<rt>だいもん</rt></ruby>6　<ruby>氏名<rt>しめい</rt></ruby>」でメール<ruby>送信<rt>そうしん</rt></ruby></strong></span></li>
         <li><span class="step-num">4</span><span><ruby>先生<rt>せんせい</rt></ruby>からコメント<ruby>入<rt>い</rt></ruby>りの<ruby>返信<rt>へんしん</rt></ruby>が<ruby>届<rt>とど</rt></ruby>きます</span></li>
