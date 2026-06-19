@@ -2278,8 +2278,7 @@ function adminShowDetail(studentId) {
     if (row.q5answer) lines.push(row.q5answer);
     if (row.q6status) lines.push('【大問6（意見文）】' + row.q6status);
     if (row.q6answer) lines.push(row.q6answer);
-    body.textContent = lines.join('
-');
+    body.textContent = lines.join('\n');
     card.appendChild(body);
     recEl.appendChild(card);
   });
@@ -2418,36 +2417,9 @@ function renderAdminTable(rows) {
   });
 }
 
-function scorehill(val, pct, max) { return scoreill_inner(val, pct, max); }
-function scoreill_inner(val, pct) {
-  if (pct === null || isNaN(val)) return '<span class="admin-score-pill admin-score-none">未提出</span>';
-  const cls = pct >= 70 ? 'admin-score-high' : pct >= 50 ? 'admin-score-mid' : 'admin-score-low';
-  return '<span class="admin-score-pill ' + cls + '">' + val + '（' + pct + '%）</span>';
-}
-function scoreill(val, pct) { return scoreill_inner(val, pct); }
-function scoreill2(val, pct) { return scoreill_inner(val, pct); }
-function scoreill3(val, pct) { return scoreill_inner(val, pct); }
-function scoreill4(val, pct) { return scoreill_inner(val, pct); }
-function scoreill5(val, pct) { return scoreill_inner(val, pct); }
-function scoreill6(val, pct) { return scoreill_inner(val, pct); }
-function scoreill7(val, pct) { return scoreill_inner(val, pct); }
-function scoreill8(val, pct) { return scoreill_inner(val, pct); }
 
-function scoreill_inner2(val, pct, max) {
-  if (pct === null || isNaN(val)) return '<span class="admin-score-pill admin-score-none">未提出</span>';
-  const cls = pct >= 70 ? 'admin-score-high' : pct >= 50 ? 'admin-score-mid' : 'admin-score-low';
-  return '<span class="admin-score-pill ' + cls + '">' + val + '/' + max + '（' + pct + '%）</span>';
-}
-function scoreill_base(val, pct, max) {
-  if (pct === null || isNaN(val)) return '<span class="admin-score-pill admin-score-none">未提出</span>';
-  const cls = pct >= 70 ? 'admin-score-high' : pct >= 50 ? 'admin-score-mid' : 'admin-score-low';
-  return '<span class="admin-score-pill ' + cls + '">' + val + '/' + max + '（' + pct + '%）</span>';
-}
-function scorehill(val, pct, max) { return scoreill_base(val, pct, max); }
-function scoreill(val, pct, max) { return scoreill_base(val, pct, max); }
-function scoreill_w(val, pct, max) { return scoreill_base(val, pct, max); }
-function scoreill_l(val, pct, max) { return scoreill_base(val, pct, max); }
-function scoreill2(val, pct, max) { return scoreill_base(val, pct, max); }
+
+
 // スコアpill表示（共通）
 function scoreill_simple(val, max) {
   const n = parseInt(val);
@@ -2469,8 +2441,7 @@ function adminDownloadCSV() {
     r.lis, r.lp1, r.lp2, r.lp3,
     r.q5status, r.q5answer, r.q6status, r.q6answer
   ].map(v => '"' + String(v||'').replace(/"/g,'""') + '"'));
-  const csv = '﻿' + [header, ...rows].map(r => r.join(',')).join('
-');
+  const csv = '﻿' + [header, ...rows].map(r => r.join(',')).join('\n');
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
