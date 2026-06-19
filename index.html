@@ -312,6 +312,68 @@ button ruby rt{color:inherit}
 .login-btn{width:100%;padding:12px;background:#1a3a6e;color:#fff;border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.03em;}
 .login-btn:hover{background:#2563c4;}
 .login-error{color:#993c1d;font-size:13px;text-align:center;margin-top:.75rem;display:none;}
+/* ===== DEADLINE EXPIRED / IDLE TIMEOUT ===== */
+.login-expired{background:#faece7;border:1px solid #e8b4a0;border-radius:8px;padding:1rem 1.1rem;margin-bottom:1.25rem;text-align:center;color:#993c1d;font-size:13px;line-height:1.7;}
+.login-expired strong{display:block;font-size:15px;margin-bottom:.3rem;}
+/* idle timeout modal overlay */
+.idle-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);z-index:99998;display:none;align-items:center;justify-content:center;}
+.idle-modal.show{display:flex;}
+.idle-modal-box{background:#fff;border-radius:12px;padding:2rem 1.75rem;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+.idle-modal-icon{font-size:2.5rem;margin-bottom:.6rem;}
+.idle-modal-title{font-size:17px;font-weight:700;color:#1a3a6e;margin-bottom:.5rem;}
+.idle-modal-msg{font-size:13px;color:#6b6960;line-height:1.7;margin-bottom:1.25rem;}
+.idle-modal-btn{width:100%;padding:11px;background:#1a3a6e;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;}
+.idle-modal-btn:hover{background:#2563c4;}
+
+/* ===== ADMIN DASHBOARD ===== */
+.admin-header{background:linear-gradient(135deg,#1a3a6e 0%,#2563c4 100%);color:#fff;padding:1.5rem 1.75rem;border-radius:var(--radius);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.admin-header h2{font-size:20px;font-weight:700;margin:0;}
+.admin-header p{font-size:13px;opacity:.85;margin-top:3px;}
+.admin-header-left{}
+.admin-header-right{display:flex;gap:8px;flex-wrap:wrap;}
+.admin-dl-btn{padding:9px 16px;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.admin-dl-btn.csv{background:#e1f5ee;color:#0f6e56;}
+.admin-dl-btn.csv:hover{background:#c3edd8;}
+.admin-dl-btn.excel{background:#dbeafe;color:#1a4a8a;}
+.admin-dl-btn.excel:hover{background:#bfdbfe;}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem;}
+.admin-stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;text-align:center;}
+.admin-stat-num{font-size:28px;font-weight:800;color:var(--accent);line-height:1;}
+.admin-stat-label{font-size:12px;color:var(--muted);margin-top:4px;}
+.admin-table-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem;}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px;}
+.admin-table th{background:#f0f4ff;color:#1a3a6e;font-weight:700;padding:10px 12px;text-align:left;border-bottom:2px solid #dbeafe;white-space:nowrap;}
+.admin-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:#fafbff;cursor:pointer;}
+.admin-score-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600;}
+.admin-score-high{background:#d1fae5;color:#065f46;}
+.admin-score-mid{background:#fef3c7;color:#92400e;}
+.admin-score-low{background:#fee2e2;color:#991b1b;}
+.admin-score-none{background:#f1f0ec;color:#9b9890;}
+.admin-submit-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#dbeafe;color:#1a4a8a;}
+/* 生徒詳細 */
+.admin-detail-header{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.admin-detail-back{padding:8px 16px;background:#fff;border:1px solid var(--border2);border-radius:6px;font-size:13px;cursor:pointer;font-weight:600;color:var(--muted);}
+.admin-detail-back:hover{background:var(--bg);}
+.admin-detail-title{font-size:20px;font-weight:700;color:#1a3a6e;}
+.admin-detail-sub{font-size:13px;color:var(--muted);}
+.admin-score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem;}
+.admin-score-item{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;text-align:center;}
+.admin-score-item .asi-label{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.admin-score-item .asi-val{font-size:22px;font-weight:800;color:#1a3a6e;line-height:1;}
+.admin-score-item .asi-max{font-size:11px;color:var(--hint);}
+.admin-score-item .asi-pct{font-size:13px;font-weight:600;margin-top:3px;}
+.admin-record-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden;}
+.admin-record-head{background:#f5f4f1;padding:.75rem 1.1rem;font-size:13px;font-weight:700;color:#1a3a6e;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.admin-record-body{padding:1rem 1.1rem;font-size:13px;color:var(--text);line-height:1.8;white-space:pre-wrap;word-break:break-all;}
+.admin-loading{text-align:center;padding:3rem;color:var(--muted);font-size:14px;}
+.admin-error{background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:1rem 1.1rem;color:#991b1b;font-size:13px;margin-bottom:1rem;}
+.admin-refresh-btn{padding:9px 16px;background:#fff;border:1.5px solid var(--border2);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);}
+.admin-refresh-btn:hover{background:var(--bg);}
+/* 管理タブ（通常時は非表示） */
+.nav-tab-admin{display:none;}
+.nav-tab-admin.visible{display:flex;}
 
 </style>
 </head>
@@ -322,13 +384,31 @@ button ruby rt{color:inherit}
   <div class="login-box">
     <div class="login-logo">🎧 英検<span style="color:#2563c4">準2級</span> Set1</div>
     <div class="login-sub">東進こども英語塾 本部確認用</div>
-    <label class="login-label">🔢 <ruby>生徒番号<rt>せいとばんごう</rt></ruby>（8<ruby>桁<rt>けた</rt></ruby>）</label>
-    <input type="text" id="login-id" class="login-input" placeholder="例：00000001" maxlength="8" autocomplete="off">
-    <label class="login-label">👤 氏名</label>
-    <input type="text" id="login-name" class="login-input" placeholder="氏名を入力" autocomplete="off"
-      onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">ログインして確認する</button>
-    <div class="login-error" id="login-error">⚠️ 生徒番号または氏名が正しくありません。</div>
+    <!-- 期限切れメッセージ（期限後に表示） -->
+    <div class="login-expired" id="login-expired" style="display:none;">
+      <strong>⏰ 利用期間が終了しました</strong>
+      2026年度英検第3回1次試験（2027年1月24日）が終了したため、このアプリは現在ご利用いただけません。
+    </div>
+    <!-- 通常ログインフォーム -->
+    <div id="login-form-body">
+      <label class="login-label">🔢 <ruby>生徒番号<rt>せいとばんごう</rt></ruby>（8<ruby>桁<rt>けた</rt></ruby>）</label>
+      <input type="text" id="login-id" class="login-input" placeholder="例：00000001" maxlength="8" autocomplete="off">
+      <label class="login-label">👤 氏名</label>
+      <input type="text" id="login-name" class="login-input" placeholder="氏名を入力" autocomplete="off"
+        onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="login-btn" onclick="doLogin()">ログインして確認する</button>
+      <div class="login-error" id="login-error">⚠️ 生徒番号または氏名が正しくありません。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== アイドルタイムアウト モーダル ===== -->
+<div class="idle-modal" id="idle-modal">
+  <div class="idle-modal-box">
+    <div class="idle-modal-icon">🔒</div>
+    <div class="idle-modal-title">セッションがタイムアウトしました</div>
+    <div class="idle-modal-msg">15分間操作がなかったため、セキュリティのため自動的にログアウトしました。<br>続けるには再度ログインしてください。</div>
+    <button class="idle-modal-btn" onclick="doIdleLogout()">ログイン画面へ</button>
   </div>
 </div>
 
@@ -346,6 +426,7 @@ button ruby rt{color:inherit}
       <button class="nav-tab" onclick="goPage('q5')"><ruby>大問<rt>だいもん</rt></ruby>5</button>
       <button class="nav-tab" onclick="goPage('q6')"><ruby>大問<rt>だいもん</rt></ruby>6</button>
       <button class="nav-tab listening" onclick="goPage('listening')">🎧 <ruby>リスニング<rt></rt></ruby></button>
+      <button class="nav-tab nav-tab-admin" id="nav-tab-admin" onclick="goPage('admin')">📊 管理</button>
     </div>
     <div class="nav-score" id="nav-score">0 / 61<ruby>問<rt>もん</rt></ruby></div>
   </div>
@@ -1993,7 +2074,7 @@ async function doLogin(){
   btn.disabled=true;
   btn.textContent='確認中…';
 
-  function loginSuccess(email){
+  function loginSuccess(email, isAdmin){
     document.getElementById('login-overlay').style.display='none';
     const sid=document.getElementById('student-id');
     const sname=document.getElementById('student-name');
@@ -2001,6 +2082,13 @@ async function doLogin(){
     if(sid)sid.value=id;
     if(sname)sname.value=name;
     if(semail)semail.value=email||'';
+    // 管理者タブ表示
+    const adminTab=document.getElementById('nav-tab-admin');
+    if(isAdmin && adminTab){
+      adminTab.classList.add('visible');
+      // 管理者はアイドルタイムアウト・期限制限を無効化
+      window._isAdmin = true;
+    }
     saveState();
   }
   function loginError(msg){
@@ -2020,7 +2108,7 @@ async function doLogin(){
       body:JSON.stringify({action:'login',studentId:id,name:name})
     });
     const data=await res.json();
-    if(data.ok){loginSuccess(data.email);}
+    if(data.ok){loginSuccess(data.email, data.isAdmin);}
     else{loginError(data.error);}
     return;
   }catch(e){
@@ -2035,7 +2123,7 @@ async function doLogin(){
   },15000);
   window[cbName]=function(data){
     cleanup();
-    if(data.ok){loginSuccess(data.email);}
+    if(data.ok){loginSuccess(data.email, data.isAdmin);}
     else{loginError(data.error);}
   };
   const script=document.createElement('script');
@@ -2049,8 +2137,444 @@ async function doLogin(){
   document.head.appendChild(script);
 }
 
+// =========================================================
+// ★ アクセス期限チェック（クライアント側）
+// =========================================================
+(function checkDeadline() {
+  // 2027-01-25 00:00:00 JST
+  const DEADLINE = new Date('2027-01-25T00:00:00+09:00');
+  if (new Date() >= DEADLINE) {
+    // ログインフォームを隠して期限切れメッセージを表示
+    const formBody = document.getElementById('login-form-body');
+    const expiredBox = document.getElementById('login-expired');
+    if (formBody)   formBody.style.display = 'none';
+    if (expiredBox) expiredBox.style.display = 'block';
+    // ログインオーバーレイを強制表示（念のため）
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) overlay.style.display = 'flex';
+  }
+})();
+
+// =========================================================
+// ★ アイドルタイムアウト（15分 = 900,000ms）
+// =========================================================
+(function setupIdleTimeout() {
+  const IDLE_MS = 15 * 60 * 1000; // 15分
+  let idleTimer = null;
+
+  function isLoggedIn() {
+    const overlay = document.getElementById('login-overlay');
+    return overlay && overlay.style.display === 'none';
+  }
+
+  function resetTimer() {
+    if (!isLoggedIn()) return; // 未ログイン時は監視不要
+    if (window._isAdmin) return; // 管理者はタイムアウトなし
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(showIdleModal, IDLE_MS);
+  }
+
+  function showIdleModal() {
+    if (!isLoggedIn()) return;
+    document.getElementById('idle-modal').classList.add('show');
+  }
+
+  // ユーザー操作を検知するイベント
+  const events = ['mousemove','mousedown','keydown','touchstart','touchmove','scroll','click'];
+  events.forEach(ev => document.addEventListener(ev, resetTimer, {passive:true}));
+
+  // ログイン成功時にタイマーを開始するためのオブザーバー
+  const overlay = document.getElementById('login-overlay');
+  if (overlay) {
+    new MutationObserver(function() {
+      if (overlay.style.display === 'none') {
+        resetTimer(); // ログイン直後にタイマースタート
+      }
+    }).observe(overlay, {attributes:true, attributeFilter:['style']});
+  }
+})();
+
+function doIdleLogout() {
+  // モーダルを閉じてログイン画面に戻す
+  document.getElementById('idle-modal').classList.remove('show');
+  const overlay = document.getElementById('login-overlay');
+  if (overlay) overlay.style.display = 'flex';
+  // 入力フィールドをクリア
+  const idInput = document.getElementById('login-id');
+  const nameInput = document.getElementById('login-name');
+  if (idInput)   idInput.value = '';
+  if (nameInput) nameInput.value = '';
+}
+
+
+// =========================================================
+// ★ 管理ダッシュボード
+// =========================================================
+let adminData = []; // 結果集計の全行
+
+function adminShowList() {
+  document.getElementById('admin-list-view').style.display = 'block';
+  document.getElementById('admin-detail-view').style.display = 'none';
+}
+
+function adminShowDetail(studentId) {
+  // 該当生徒の全行を取得
+  const rows = adminData.filter(r => r.studentId === studentId);
+  if (!rows.length) return;
+
+  // 最新行（最終送信）
+  const latest = rows[rows.length - 1];
+
+  document.getElementById('admin-list-view').style.display = 'none';
+  document.getElementById('admin-detail-view').style.display = 'block';
+  document.getElementById('admin-detail-name').textContent = latest.name + '（' + latest.studentId + '）';
+  document.getElementById('admin-detail-sub').textContent =
+    '提出回数：' + rows.length + '回　最終送信：' + latest.date;
+
+  // スコアグリッド（最新行）
+  const scoreItems = [
+    { label:'大問1', val:latest.q1, max:15 },
+    { label:'大問2', val:latest.q2, max:5 },
+    { label:'大問3', val:latest.q3, max:2 },
+    { label:'大問4', val:latest.q4, max:7 },
+    { label:'筆記合計', val:latest.q1to4, max:29 },
+    { label:'リスニング', val:latest.lis, max:30 },
+    { label:'L第1部', val:latest.lp1, max:10 },
+    { label:'L第2部', val:latest.lp2, max:10 },
+    { label:'L第3部', val:latest.lp3, max:10 },
+  ];
+  const grid = document.getElementById('admin-score-grid');
+  grid.innerHTML = scoreItems.map(item => {
+    const numVal = parseInt(item.val);
+    const hasVal = !isNaN(numVal) && item.val !== '';
+    const pct = hasVal ? Math.round(numVal / item.max * 100) : null;
+    const pctColor = pct === null ? '#9b9890' : pct >= 70 ? '#065f46' : pct >= 50 ? '#92400e' : '#991b1b';
+    return '<div class="admin-score-item">' +
+      '<div class="asi-label">' + item.label + '</div>' +
+      '<div class="asi-val" style="color:' + pctColor + '">' + (hasVal ? numVal : '—') + '</div>' +
+      '<div class="asi-max">/ ' + item.max + '</div>' +
+      (pct !== null ? '<div class="asi-pct" style="color:' + pctColor + '">' + pct + '%</div>' : '') +
+      '</div>';
+  }).join('');
+
+  // 送信履歴
+  const recEl = document.getElementById('admin-detail-records');
+  recEl.innerHTML = '';
+
+  // 大問5・6の記述（全送信分）
+  rows.forEach((row, idx) => {
+    const recNo = idx + 1;
+    // 各送信の記録カード
+    const card = document.createElement('div');
+    card.className = 'admin-record-card';
+    card.innerHTML = '<div class="admin-record-head"><span>送信 #' + recNo + '</span><span style="font-weight:400;color:#6b6960">' + row.date + '</span></div>';
+
+    const body = document.createElement('div');
+    body.className = 'admin-record-body';
+    const lines = [];
+    lines.push('【筆記スコア】　大問1:' + fmtScore(row.q1, 15) + '　大問2:' + fmtScore(row.q2, 5) + '　大問3:' + fmtScore(row.q3, 2) + '　大問4:' + fmtScore(row.q4, 7) + '　合計:' + fmtScore(row.q1to4, 29));
+    lines.push('【リスニング】　合計:' + fmtScore(row.lis, 30) + '　第1部:' + fmtScore(row.lp1, 10) + '　第2部:' + fmtScore(row.lp2, 10) + '　第3部:' + fmtScore(row.lp3, 10));
+    if (row.q5status) lines.push('【大問5（Eメール）】' + row.q5status);
+    if (row.q5answer) lines.push(row.q5answer);
+    if (row.q6status) lines.push('【大問6（意見文）】' + row.q6status);
+    if (row.q6answer) lines.push(row.q6answer);
+    body.textContent = lines.join('
+');
+    card.appendChild(body);
+    recEl.appendChild(card);
+  });
+
+  window.scrollTo(0, 0);
+}
+
+function fmtScore(val, max) {
+  const n = parseInt(val);
+  if (isNaN(n) || val === '') return '未提出';
+  return n + '/' + max + '（' + Math.round(n / max * 100) + '%）';
+}
+
+function adminLoad() {
+  document.getElementById('admin-tbody').innerHTML =
+    '<tr><td colspan="8" class="admin-loading">データを読み込んでいます…</td></tr>';
+  document.getElementById('admin-error').style.display = 'none';
+  document.getElementById('admin-last-updated').textContent = '読み込み中…';
+
+  const cbName = '_adminCb_' + Date.now();
+  const timer = setTimeout(() => {
+    cleanup();
+    showAdminError('タイムアウトしました。再度お試しください。');
+  }, 20000);
+
+  window[cbName] = function(data) {
+    cleanup();
+    if (data.ok) {
+      adminData = data.rows || [];
+      renderAdminTable(adminData);
+    } else {
+      showAdminError(data.error || 'データ取得に失敗しました。');
+    }
+  };
+
+  // まずfetchで試みる
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify({action: 'getResults'})
+  }).then(r => r.json()).then(data => {
+    clearTimeout(timer);
+    delete window[cbName];
+    if (data.ok) {
+      adminData = data.rows || [];
+      renderAdminTable(adminData);
+    } else {
+      showAdminError(data.error || 'データ取得に失敗しました。');
+    }
+  }).catch(() => {
+    // JSONPフォールバック
+    const script = document.createElement('script');
+    const params = new URLSearchParams({action: 'getResults', callback: cbName});
+    script.src = GAS_URL + '?' + params.toString();
+    script.onerror = () => { cleanup(); showAdminError('通信エラーが発生しました。'); };
+    document.head.appendChild(script);
+
+    function cleanup() {
+      clearTimeout(timer); delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+  });
+
+  function cleanup() {
+    clearTimeout(timer); delete window[cbName];
+  }
+}
+
+function showAdminError(msg) {
+  const el = document.getElementById('admin-error');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+  document.getElementById('admin-tbody').innerHTML =
+    '<tr><td colspan="8" style="text-align:center;color:#6b6960;padding:2rem;">データなし</td></tr>';
+}
+
+function renderAdminTable(rows) {
+  // 生徒ごとに集計（最新行を代表に）
+  const byStudent = {};
+  rows.forEach(row => {
+    if (!byStudent[row.studentId]) byStudent[row.studentId] = [];
+    byStudent[row.studentId].push(row);
+  });
+
+  const students = Object.values(byStudent);
+  const totalSubmits = rows.length;
+  const totalStudents = students.length;
+
+  // 平均スコア計算
+  let writeSum = 0, writeCount = 0, lisSum = 0, lisCount = 0;
+  rows.forEach(r => {
+    const w = parseInt(r.q1to4); if (!isNaN(w)) { writeSum += w; writeCount++; }
+    const l = parseInt(r.lis);   if (!isNaN(l)) { lisSum += l;   lisCount++; }
+  });
+
+  document.getElementById('admin-stat-total').textContent = totalSubmits;
+  document.getElementById('admin-stat-students').textContent = totalStudents;
+  document.getElementById('admin-stat-avg-write').textContent = writeCount ? (writeSum / writeCount).toFixed(1) : '—';
+  document.getElementById('admin-stat-avg-lis').textContent = lisCount ? (lisSum / lisCount).toFixed(1) : '—';
+
+  const now = new Date();
+  document.getElementById('admin-last-updated').textContent =
+    '最終更新：' + now.getFullYear() + '/' + (now.getMonth()+1) + '/' + now.getDate() +
+    ' ' + now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+
+  if (students.length === 0) {
+    document.getElementById('admin-tbody').innerHTML =
+      '<tr><td colspan="8" style="text-align:center;color:#6b6960;padding:2rem;">まだ提出データがありません</td></tr>';
+    return;
+  }
+
+  const tbody = document.getElementById('admin-tbody');
+  tbody.innerHTML = '';
+
+  students.forEach(sRows => {
+    const latest = sRows[sRows.length - 1];
+    const count = sRows.length;
+    const tr = document.createElement('tr');
+    tr.onclick = () => adminShowDetail(latest.studentId);
+
+    const w = parseInt(latest.q1to4);
+    const l = parseInt(latest.lis);
+    const wPct = isNaN(w) ? null : Math.round(w / 29 * 100);
+    const lPct = isNaN(l) ? null : Math.round(l / 30 * 100);
+
+    tr.innerHTML =
+      '<td style="font-weight:600">' + latest.studentId + '</td>' +
+      '<td>' + latest.name + '</td>' +
+      '<td style="color:#6b6960">' + latest.date + '</td>' +
+      '<td style="text-align:center"><span class="admin-submit-badge">' + count + '回</span></td>' +
+      '<td>' + scorepill(w, wPct, 29) + '</td>' +
+      '<td>' + scorehill(l, lPct, 30) + '</td>' +
+      '<td style="font-size:12px;color:#6b6960">' + (latest.q5status || '—') + '</td>' +
+      '<td style="font-size:12px;color:#6b6960">' + (latest.q6status || '—') + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function scorehill(val, pct, max) { return scoreill_inner(val, pct, max); }
+function scoreill_inner(val, pct) {
+  if (pct === null || isNaN(val)) return '<span class="admin-score-pill admin-score-none">未提出</span>';
+  const cls = pct >= 70 ? 'admin-score-high' : pct >= 50 ? 'admin-score-mid' : 'admin-score-low';
+  return '<span class="admin-score-pill ' + cls + '">' + val + '（' + pct + '%）</span>';
+}
+function scoreill(val, pct) { return scoreill_inner(val, pct); }
+function scoreill2(val, pct) { return scoreill_inner(val, pct); }
+function scoreill3(val, pct) { return scoreill_inner(val, pct); }
+function scoreill4(val, pct) { return scoreill_inner(val, pct); }
+function scoreill5(val, pct) { return scoreill_inner(val, pct); }
+function scoreill6(val, pct) { return scoreill_inner(val, pct); }
+function scoreill7(val, pct) { return scoreill_inner(val, pct); }
+function scoreill8(val, pct) { return scoreill_inner(val, pct); }
+
+function scoreill_inner2(val, pct, max) {
+  if (pct === null || isNaN(val)) return '<span class="admin-score-pill admin-score-none">未提出</span>';
+  const cls = pct >= 70 ? 'admin-score-high' : pct >= 50 ? 'admin-score-mid' : 'admin-score-low';
+  return '<span class="admin-score-pill ' + cls + '">' + val + '/' + max + '（' + pct + '%）</span>';
+}
+function scoreill_base(val, pct, max) {
+  if (pct === null || isNaN(val)) return '<span class="admin-score-pill admin-score-none">未提出</span>';
+  const cls = pct >= 70 ? 'admin-score-high' : pct >= 50 ? 'admin-score-mid' : 'admin-score-low';
+  return '<span class="admin-score-pill ' + cls + '">' + val + '/' + max + '（' + pct + '%）</span>';
+}
+function scorehill(val, pct, max) { return scoreill_base(val, pct, max); }
+function scoreill(val, pct, max) { return scoreill_base(val, pct, max); }
+function scoreill_w(val, pct, max) { return scoreill_base(val, pct, max); }
+function scoreill_l(val, pct, max) { return scoreill_base(val, pct, max); }
+function scoreill2(val, pct, max) { return scoreill_base(val, pct, max); }
+// スコアpill表示（共通）
+function scoreill_simple(val, max) {
+  const n = parseInt(val);
+  if (isNaN(n) || String(val) === '') return '<span class="admin-score-pill admin-score-none">未提出</span>';
+  const pct = Math.round(n / max * 100);
+  const cls = pct >= 70 ? 'admin-score-high' : pct >= 50 ? 'admin-score-mid' : 'admin-score-low';
+  return '<span class="admin-score-pill ' + cls + '">' + n + '/' + max + '（' + pct + '%）</span>';
+}
+function scorepill(val, pct, max) { return scoreill_simple(val, max); }
+function scorehill(val, pct2, max) { return scoreill_simple(val, max); }
+
+// ─── CSV / Excel ダウンロード ───
+function adminDownloadCSV() {
+  if (!adminData.length) { alert('データがありません。先に更新してください。'); return; }
+  const header = ['送信日時','生徒番号','氏名','大問1','大問2','大問3','大問4','筆記合計','リスニング','L第1部','L第2部','L第3部','大問5状況','大問5回答','大問6状況','大問6回答'];
+  const rows = adminData.map(r => [
+    r.date, r.studentId, r.name,
+    r.q1, r.q2, r.q3, r.q4, r.q1to4,
+    r.lis, r.lp1, r.lp2, r.lp3,
+    r.q5status, r.q5answer, r.q6status, r.q6answer
+  ].map(v => '"' + String(v||'').replace(/"/g,'""') + '"'));
+  const csv = '﻿' + [header, ...rows].map(r => r.join(',')).join('
+');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = '英検準2級Set1_結果_' + fmtDateFile() + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function adminDownloadExcel() {
+  if (!adminData.length) { alert('データがありません。先に更新してください。'); return; }
+  // TSV形式でExcelに貼れるデータ + xlsとして出力
+  const header = ['送信日時','生徒番号','氏名','大問1','大問2','大問3','大問4','筆記合計','リスニング','L第1部','L第2部','L第3部','大問5状況','大問5回答','大問6状況','大問6回答'];
+  const rows = adminData.map(r => [
+    r.date, r.studentId, r.name,
+    r.q1, r.q2, r.q3, r.q4, r.q1to4,
+    r.lis, r.lp1, r.lp2, r.lp3,
+    r.q5status, r.q5answer, r.q6status, r.q6answer
+  ]);
+  // HTML tableとしてxls出力（Excelで直接開ける）
+  let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+  html += '<head><meta charset="UTF-8"><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>結果集計</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body>';
+  html += '<table><tr>' + header.map(h => '<th>' + h + '</th>').join('') + '</tr>';
+  rows.forEach(r => { html += '<tr>' + r.map(v => '<td>' + String(v||'') + '</td>').join('') + '</tr>'; });
+  html += '</table></body></html>';
+  const blob = new Blob(['﻿' + html], {type:'application/vnd.ms-excel;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = '英検準2級Set1_結果_' + fmtDateFile() + '.xls';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function fmtDateFile() {
+  const d = new Date();
+  return d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
+}
+
+// 管理ページ表示時に自動ロード
+const _origGoPage = goPage;
+function goPage(id) {
+  _origGoPage(id);
+  if (id === 'admin' && window._isAdmin) {
+    adminShowList();
+    adminLoad();
+  }
+}
+
 buildQ1();buildQ2();buildQ3();buildQ4();loadState();updateScore();
 </script>
+
+<!-- ===== 管理ダッシュボード ===== -->
+<div class="page" id="page-admin">
+  <!-- 生徒一覧ビュー -->
+  <div id="admin-list-view">
+    <div class="admin-header">
+      <div class="admin-header-left">
+        <h2>📊 本部管理ダッシュボード</h2>
+        <p id="admin-last-updated">読み込み中…</p>
+      </div>
+      <div class="admin-header-right">
+        <button class="admin-refresh-btn" onclick="adminLoad()">🔄 更新</button>
+        <button class="admin-dl-btn csv" onclick="adminDownloadCSV()">⬇️ CSV</button>
+        <button class="admin-dl-btn excel" onclick="adminDownloadExcel()">⬇️ Excel</button>
+      </div>
+    </div>
+    <!-- サマリー -->
+    <div class="admin-stats">
+      <div class="admin-stat-card"><div class="admin-stat-num" id="admin-stat-total">—</div><div class="admin-stat-label">総提出件数</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num" id="admin-stat-students">—</div><div class="admin-stat-label">提出生徒数</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num" id="admin-stat-avg-write">—</div><div class="admin-stat-label">筆記平均（/29）</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num" id="admin-stat-avg-lis">—</div><div class="admin-stat-label">リスニング平均（/30）</div></div>
+    </div>
+    <div id="admin-error" class="admin-error" style="display:none;"></div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>生徒番号</th>
+            <th>氏名</th>
+            <th>最終送信</th>
+            <th>提出回数</th>
+            <th>大問1-4</th>
+            <th>リスニング</th>
+            <th>大問5</th>
+            <th>大問6</th>
+          </tr>
+        </thead>
+        <tbody id="admin-tbody">
+          <tr><td colspan="8" class="admin-loading">データを読み込んでいます…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- 生徒詳細ビュー -->
+  <div id="admin-detail-view" style="display:none;">
+    <div class="admin-detail-header">
+      <button class="admin-detail-back" onclick="adminShowList()">← 一覧に戻る</button>
+      <div>
+        <div class="admin-detail-title" id="admin-detail-name">—</div>
+        <div class="admin-detail-sub" id="admin-detail-sub">—</div>
+      </div>
+    </div>
+    <div class="admin-score-grid" id="admin-score-grid"></div>
+    <div id="admin-detail-records"></div>
+  </div>
+</div>
 
 <!-- ===== 著作権・免責フッター ===== -->
 <footer class="site-footer">
