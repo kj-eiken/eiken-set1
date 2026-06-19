@@ -849,6 +849,10 @@ button ruby rt{color:inherit}
       </ol>
       <div class="mail-addr">✉️ online-eigojuku@toshin.com</div>
     </div>
+    <div class="action-row" style="margin-top:1rem;">
+      <button class="submit-btn" id="q5-photo-submit" onclick="submitPhotoQ5()" style="background:#854f0b;">📷 メール送信しました（提出済みにする）</button>
+    </div>
+    <div id="q5-photo-done" style="display:none;background:var(--green-bg);border:1px solid #86efac;border-radius:var(--rsm);padding:.75rem 1rem;margin-top:.75rem;font-size:13px;color:#065f46;font-weight:600;">✅ 大問5（写メ）提出済みとして記録しました。</div>
   </div>
   <div class="print-footer">
     © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
@@ -902,6 +906,10 @@ button ruby rt{color:inherit}
       </ol>
       <div class="mail-addr">✉️ online-eigojuku@toshin.com</div>
     </div>
+    <div class="action-row" style="margin-top:1rem;">
+      <button class="submit-btn" id="q6-photo-submit" onclick="submitPhotoQ6()" style="background:#854f0b;">📷 メール送信しました（提出済みにする）</button>
+    </div>
+    <div id="q6-photo-done" style="display:none;background:var(--green-bg);border:1px solid #86efac;border-radius:var(--rsm);padding:.75rem 1rem;margin-top:.75rem;font-size:13px;color:#065f46;font-weight:600;">✅ 大問6（写メ）提出済みとして記録しました。</div>
   </div>
   <div class="print-footer">
     © 2026 東進こども英語塾 All rights reserved. 本教材は英検®準2級の出題形式に準拠したオリジナル演習コンテンツです。英検®は公益財団法人日本英語検定協会の登録商標です。本教材の無断転載・複製・再配布を禁じます。
@@ -1805,8 +1813,16 @@ function loadState(){
         if(ans&&ans!==d.correct){const wel=document.getElementById('ch-'+qid+'-'+ans);if(wel)wel.classList.add('wrong');}
       });
     });
-    if(submitted.q5){const b=document.getElementById('q5-submit');if(b)b.disabled=true;}
-    if(submitted.q6){const b=document.getElementById('q6-submit');if(b)b.disabled=true;}
+    if(submitted.q5){
+      const b=document.getElementById('q5-submit');if(b)b.disabled=true;
+      const pb=document.getElementById('q5-photo-submit');if(pb){pb.disabled=true;pb.style.opacity='0.5';}
+      const pd=document.getElementById('q5-photo-done');if(pd&&!state.q5text)pd.style.display='block';
+    }
+    if(submitted.q6){
+      const b=document.getElementById('q6-submit');if(b)b.disabled=true;
+      const pb=document.getElementById('q6-photo-submit');if(pb){pb.disabled=true;pb.style.opacity='0.5';}
+      const pd=document.getElementById('q6-photo-done');if(pd&&!state.q6text)pd.style.display='block';
+    }
     updateScore();
     if(state.savedAt){
       const d=new Date(state.savedAt);
@@ -2520,6 +2536,43 @@ function fmtDateFile() {
 }
 
 // 管理ページ表示時に自動ロード（goPageはすでに定義済みのため直接呼び出し側で処理）
+
+// 写メ提出済みボタン
+function submitPhotoQ5(){
+  if(submitted.q5){
+    alert('すでに提出済みです。');
+    return;
+  }
+  if(!confirm('大問5（写メ）を提出済みとして記録しますか？')){return;}
+  submitted.q5=true;
+  scores.q5=1;
+  const btn=document.getElementById('q5-photo-submit');
+  if(btn){btn.disabled=true;btn.style.opacity='0.5';}
+  const done=document.getElementById('q5-photo-done');
+  if(done){done.style.display='block';}
+  updateScore();
+  saveState();
+  // GASに送信
+  sendResults('q5');
+}
+
+function submitPhotoQ6(){
+  if(submitted.q6){
+    alert('すでに提出済みです。');
+    return;
+  }
+  if(!confirm('大問6（写メ）を提出済みとして記録しますか？')){return;}
+  submitted.q6=true;
+  scores.q6=1;
+  const btn=document.getElementById('q6-photo-submit');
+  if(btn){btn.disabled=true;btn.style.opacity='0.5';}
+  const done=document.getElementById('q6-photo-done');
+  if(done){done.style.display='block';}
+  updateScore();
+  saveState();
+  // GASに送信
+  sendResults('q6');
+}
 
 buildQ1();buildQ2();buildQ3();buildQ4();loadState();updateScore();
 </script>
