@@ -22,17 +22,28 @@ button ruby rt{color:inherit}
 
 /* ===== NAV ===== */
 .nav{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.nav-inner{max-width:820px;margin:0 auto;padding:0 1.25rem;display:flex;align-items:center;gap:0}
-.nav-logo{font-size:13px;font-weight:700;padding:14px 0;margin-right:1rem;white-space:nowrap}
+.nav-inner{max-width:820px;margin:0 auto;padding:0;display:flex;flex-direction:column;}
+.nav-row1{display:flex;align-items:center;padding:0 1.25rem;border-bottom:1px solid var(--border);min-height:44px;}
+.nav-logo{font-size:13px;font-weight:700;white-space:nowrap;margin-right:auto;}
 .nav-logo span{color:var(--accent)}
-.nav-tabs{display:flex;gap:0;flex:1;overflow-x:auto;scrollbar-width:none}
-.nav-tabs::-webkit-scrollbar{display:none}
-.nav-tab{padding:14px 12px 12px;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .15s,border-color .15s}
+.nav-score{font-size:12px;color:var(--muted);white-space:nowrap;padding:0 8px;}
+.nav-row2{display:flex;align-items:center;padding:0 1.25rem;overflow-x:auto;scrollbar-width:none;}
+.nav-row2::-webkit-scrollbar{display:none}
+.nav-tabs{display:flex;gap:0;flex:1;}
+.nav-tab{padding:10px 12px 8px;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .15s,border-color .15s}
 .nav-tab:hover{color:var(--text)}
 .nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
 .nav-tab.listening{color:#1a4a8a}
 .nav-tab.listening.active{color:#1a4a8a;border-bottom-color:#1a4a8a;font-weight:700}
-.nav-score{font-size:12px;color:var(--muted);padding:14px 0;white-space:nowrap;padding-left:8px}
+/* サブタブ（大問1-6、第1-3部） */
+.nav-subtabs{display:flex;gap:0;background:#f7f6f3;border-bottom:1px solid var(--border);padding:0 1.25rem;overflow-x:auto;scrollbar-width:none;}
+.nav-subtabs::-webkit-scrollbar{display:none}
+.nav-subtab{padding:7px 10px 5px;font-size:12px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .15s,border-color .15s;}
+.nav-subtab:hover{color:var(--text)}
+.nav-subtab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.nav-subtab.listening{color:#1a4a8a}
+.nav-subtab.listening.active{color:#1a4a8a;border-bottom-color:#1a4a8a;font-weight:700}
+.nav-subtabs.hidden{display:none;}
 .nav-logout{margin-left:auto;padding:6px 12px;font-size:12px;font-weight:700;color:#993c1d;background:#faece7;border:1px solid #f5c6b8;border-radius:5px;cursor:pointer;white-space:nowrap;align-self:center;margin-left:8px;}
 .nav-logout:hover{background:#f5c6b8;}
 
@@ -408,9 +419,8 @@ button ruby rt{color:inherit}
 .admin-error{background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:1rem 1.1rem;color:#991b1b;font-size:13px;margin-bottom:1rem;}
 .admin-refresh-btn{padding:9px 16px;background:#fff;border:1.5px solid var(--border2);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);}
 .admin-refresh-btn:hover{background:var(--bg);}
-/* 管理タブ（通常時は非表示） */
+/* 管理タブ（通常時は非表示・JS制御） */
 .nav-tab-admin{display:none;}
-.nav-tab-admin.visible{display:flex;}
 
 </style>
 </head>
@@ -453,20 +463,37 @@ button ruby rt{color:inherit}
 <!-- ===== NAV ===== -->
 <nav class="nav">
   <div class="nav-inner">
-    <div class="nav-logo"><ruby>英検<rt>えいけん</rt></ruby><span><ruby>準<rt>じゅん</rt></ruby>2<ruby>級<rt>きゅう</rt></ruby></span> Set1</div>
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="goPage('home')"><ruby>ホーム<rt></rt></ruby></button>
-      <button class="nav-tab" onclick="goPage('q1')"><ruby>大問<rt>だいもん</rt></ruby>1</button>
-      <button class="nav-tab" onclick="goPage('q2')"><ruby>大問<rt>だいもん</rt></ruby>2</button>
-      <button class="nav-tab" onclick="goPage('q3')"><ruby>大問<rt>だいもん</rt></ruby>3</button>
-      <button class="nav-tab" onclick="goPage('q4')"><ruby>大問<rt>だいもん</rt></ruby>4</button>
-      <button class="nav-tab" onclick="goPage('q5')"><ruby>大問<rt>だいもん</rt></ruby>5</button>
-      <button class="nav-tab" onclick="goPage('q6')"><ruby>大問<rt>だいもん</rt></ruby>6</button>
-      <button class="nav-tab listening" onclick="goPage('listening')">🎧 <ruby>リスニング<rt></rt></ruby></button>
+    <!-- 上段：ロゴ・スコア・ログアウト・管理 -->
+    <div class="nav-row1">
+      <div class="nav-logo"><ruby>英検<rt>えいけん</rt></ruby><span><ruby>準<rt>じゅん</rt></ruby>2<ruby>級<rt>きゅう</rt></ruby></span> Set1</div>
+      <div class="nav-score" id="nav-score">0 / 61<ruby>問<rt>もん</rt></ruby></div>
+      <button class="nav-tab-admin nav-logout" id="nav-tab-admin" onclick="goPage('admin')" style="display:none;margin-right:6px;color:#1a3a6e;background:#dbeafe;border:1px solid #b8d0f5;border-radius:5px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;">📊 管理</button>
+      <button class="nav-logout" onclick="doLogout()">ログアウト</button>
     </div>
-    <div class="nav-score" id="nav-score" style="padding-left:8px;">0 / 61<ruby>問<rt>もん</rt></ruby></div>
-    <button class="nav-tab nav-tab-admin" id="nav-tab-admin" onclick="goPage('admin')" style="flex-shrink:0;border-bottom:2px solid transparent;">📊 管理</button>
-    <button class="nav-logout" onclick="doLogout()">ログアウト</button>
+    <!-- 下段：メインタブ -->
+    <div class="nav-row2">
+      <div class="nav-tabs">
+        <button class="nav-tab active" id="maintab-home" onclick="goPage('home')">ホーム</button>
+        <button class="nav-tab" id="maintab-writing" onclick="showWritingSubtabs()">✏️ 筆記</button>
+        <button class="nav-tab listening" id="maintab-listening" onclick="showListeningSubtabs()">🎧 リスニング</button>
+      </div>
+    </div>
+    <!-- サブタブ：筆記 -->
+    <div class="nav-subtabs hidden" id="subtabs-writing">
+      <button class="nav-subtab" id="subtab-q1" onclick="goPage('q1')"><ruby>大問<rt>だいもん</rt></ruby>1</button>
+      <button class="nav-subtab" id="subtab-q2" onclick="goPage('q2')"><ruby>大問<rt>だいもん</rt></ruby>2</button>
+      <button class="nav-subtab" id="subtab-q3" onclick="goPage('q3')"><ruby>大問<rt>だいもん</rt></ruby>3</button>
+      <button class="nav-subtab" id="subtab-q4" onclick="goPage('q4')"><ruby>大問<rt>だいもん</rt></ruby>4</button>
+      <button class="nav-subtab" id="subtab-q5" onclick="goPage('q5')"><ruby>大問<rt>だいもん</rt></ruby>5</button>
+      <button class="nav-subtab" id="subtab-q6" onclick="goPage('q6')"><ruby>大問<rt>だいもん</rt></ruby>6</button>
+    </div>
+    <!-- サブタブ：リスニング -->
+    <div class="nav-subtabs hidden" id="subtabs-listening">
+      <button class="nav-subtab listening" id="subtab-lis" onclick="goPage('listening')">▶ <ruby>全部<rt>ぜんぶ</rt></ruby></button>
+      <button class="nav-subtab listening" onclick="goPage('listening');setTimeout(()=>startListening(0),100)"><ruby>第<rt>だい</rt></ruby>1<ruby>部<rt>ぶ</rt></ruby></button>
+      <button class="nav-subtab listening" onclick="goPage('listening');setTimeout(()=>startListening(10),100)"><ruby>第<rt>だい</rt></ruby>2<ruby>部<rt>ぶ</rt></ruby></button>
+      <button class="nav-subtab listening" onclick="goPage('listening');setTimeout(()=>startListening(20),100)"><ruby>第<rt>だい</rt></ruby>3<ruby>部<rt>ぶ</rt></ruby></button>
+    </div>
   </div>
 </nav>
 
@@ -1232,16 +1259,42 @@ function resetSection(secKey){
 
 function goPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   const target = document.getElementById('page-'+id);
   if(target) target.classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(t=>{if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+id+"'"))t.classList.add('active');});
   window.scrollTo(0,0);
+  // メインタブ・サブタブの更新
+  updateNavTabs(id);
   // 管理ページ表示時に自動ロード
   if(id === 'admin' && window._isAdmin){
     adminShowList();
     adminLoad();
   }
+}
+
+function updateNavTabs(id){
+  const writingPages = ['q1','q2','q3','q4','q5','q6'];
+  const listeningPages = ['listening'];
+  // メインタブのactive
+  document.getElementById('maintab-home').classList.toggle('active', id==='home'||id==='admin');
+  document.getElementById('maintab-writing').classList.toggle('active', writingPages.includes(id));
+  document.getElementById('maintab-listening').classList.toggle('active', listeningPages.includes(id));
+  // サブタブの表示切り替え
+  document.getElementById('subtabs-writing').classList.toggle('hidden', !writingPages.includes(id));
+  document.getElementById('subtabs-listening').classList.toggle('hidden', !listeningPages.includes(id));
+  // サブタブのactive
+  document.querySelectorAll('.nav-subtab').forEach(t=>t.classList.remove('active'));
+  const sub = document.getElementById('subtab-'+id);
+  if(sub) sub.classList.add('active');
+}
+
+function showWritingSubtabs(){
+  // 筆記タブを押したら大問1へ
+  goPage('q1');
+}
+
+function showListeningSubtabs(){
+  // リスニングタブを押したらリスニングページへ
+  goPage('listening');
 }
 
 function updateScore(){
@@ -2145,7 +2198,7 @@ async function doLogin(){
     // 管理者タブ表示
     const adminTab=document.getElementById('nav-tab-admin');
     if(isAdmin && adminTab){
-      adminTab.classList.add('visible');
+      adminTab.style.display = 'block';
       // 管理者はアイドルタイムアウト・期限制限を無効化
       window._isAdmin = true;
       window._adminStudentId = id; // ログイン時のIDを保存
@@ -2262,7 +2315,7 @@ function doLogout() {
   if(overlay) overlay.style.display = 'flex';
   // 管理タブを非表示
   const adminTab = document.getElementById('nav-tab-admin');
-  if(adminTab) adminTab.classList.remove('visible');
+  if(adminTab) adminTab.style.display = 'none';
   window._isAdmin = false;
   window._adminStudentId = '';
   // 入力フィールドをクリア
