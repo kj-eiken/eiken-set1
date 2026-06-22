@@ -407,8 +407,13 @@ button ruby rt{color:inherit}
 .admin-detail-back:hover{background:var(--bg);}
 .admin-detail-title{font-size:20px;font-weight:700;color:#1a3a6e;}
 .admin-detail-sub{font-size:13px;color:var(--muted);}
-.admin-score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem;}
-.admin-score-item{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;text-align:center;}
+.admin-score-grid{margin-bottom:1.5rem;}
+.admin-score-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
+.admin-score-row::-webkit-scrollbar{height:4px;}
+.admin-score-row::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.admin-score-arrow{color:var(--muted);font-size:14px;flex-shrink:0;}
+.admin-score-item{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;text-align:center;flex-shrink:0;min-width:100px;}
+.admin-score-item.total{border-color:var(--accent);background:#eef3fc;}
 .admin-score-item .asi-label{font-size:12px;color:var(--muted);margin-bottom:4px;}
 .admin-score-item .asi-val{font-size:22px;font-weight:800;color:#1a3a6e;line-height:1;}
 .admin-score-item .asi-max{font-size:11px;color:var(--hint);}
@@ -2553,31 +2558,44 @@ function adminShowDetail(studentId) {
   document.getElementById('admin-detail-sub').textContent =
     '提出回数：' + rows.length + '回　最終送信：' + latest.date;
 
-  // スコアグリッド（最新行）
-  const scoreItems = [
+  // スコアグリッド（2行：筆記・リスニング）
+  const writeItems = [
+    { label:'大問1-4合計', val:latest.q1to4, max:29, total:true },
     { label:'大問1', val:latest.q1, max:15 },
     { label:'大問2', val:latest.q2, max:5 },
     { label:'大問3', val:latest.q3, max:2 },
     { label:'大問4', val:latest.q4, max:7 },
-    { label:'大問1-4合計', val:latest.q1to4, max:29 },
-    { label:'リスニング', val:latest.lis, max:30 },
-    { label:'L第1部', val:latest.lp1, max:10 },
-    { label:'L第2部', val:latest.lp2, max:10 },
-    { label:'L第3部', val:latest.lp3, max:10 },
   ];
-  const grid = document.getElementById('admin-score-grid');
-  grid.innerHTML = scoreItems.map(item => {
+  const lisItems = [
+    { label:'リスニング合計', val:latest.lis, max:30, total:true },
+    { label:'第1部', val:latest.lp1, max:10 },
+    { label:'第2部', val:latest.lp2, max:10 },
+    { label:'第3部', val:latest.lp3, max:10 },
+  ];
+
+  function renderScoreItem(item) {
     const numVal = parseInt(item.val);
     const hasVal = !isNaN(numVal) && item.val !== '';
     const pct = hasVal ? Math.round(numVal / item.max * 100) : null;
     const pctColor = pct === null ? '#9b9890' : pct >= 70 ? '#065f46' : pct >= 50 ? '#92400e' : '#991b1b';
-    return '<div class="admin-score-item">' +
+    return '<div class="admin-score-item' + (item.total?' total':'') + '">' +
       '<div class="asi-label">' + item.label + '</div>' +
       '<div class="asi-val" style="color:' + pctColor + '">' + (hasVal ? numVal : '—') + '</div>' +
       '<div class="asi-max">/ ' + item.max + '</div>' +
       (pct !== null ? '<div class="asi-pct" style="color:' + pctColor + '">' + pct + '%</div>' : '') +
       '</div>';
-  }).join('');
+  }
+
+  function renderScoreRow(items) {
+    return '<div class="admin-score-row">' +
+      items.map((item, i) =>
+        (i > 0 ? '<span class="admin-score-arrow">→</span>' : '') + renderScoreItem(item)
+      ).join('') +
+      '</div>';
+  }
+
+  const grid = document.getElementById('admin-score-grid');
+  grid.innerHTML = renderScoreRow(writeItems) + renderScoreRow(lisItems);
 
   // 大問5・6テキスト表示（最新）
   const writingEl = document.getElementById('admin-detail-writing');
