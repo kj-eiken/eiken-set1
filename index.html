@@ -419,6 +419,41 @@ button ruby rt{color:inherit}
 .admin-error{background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:1rem 1.1rem;color:#991b1b;font-size:13px;margin-bottom:1rem;}
 .admin-refresh-btn{padding:9px 16px;background:#fff;border:1.5px solid var(--border2);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);}
 .admin-refresh-btn:hover{background:var(--bg);}
+/* 期間フィルター */
+.admin-filter-bar{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1.1rem;margin-bottom:1.25rem;display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.admin-filter-bar label{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap;}
+.admin-filter-bar select{padding:6px 10px;border:1px solid var(--border2);border-radius:6px;font-size:13px;background:#fff;cursor:pointer;}
+.admin-filter-btn{padding:7px 14px;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;background:var(--accent);color:#fff;}
+.admin-filter-btn:hover{background:#1a4a8a;}
+.admin-filter-reset{padding:7px 14px;border:1.5px solid var(--border2);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:var(--muted);}
+.admin-filter-reset:hover{background:var(--bg);}
+.admin-period-label{font-size:12px;color:var(--accent);font-weight:700;padding:4px 10px;background:#eef3fc;border-radius:10px;}
+/* 推移グラフ */
+.admin-trend-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:1.25rem;}
+.admin-trend-title{font-size:14px;font-weight:700;color:#1a3a6e;margin-bottom:.75rem;}
+.admin-trend-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding-bottom:24px;position:relative;}
+.admin-trend-bar-wrap{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end;}
+.admin-trend-bar{width:100%;border-radius:4px 4px 0 0;transition:height .3s;min-height:3px;position:relative;}
+.admin-trend-bar.write{background:var(--accent);}
+.admin-trend-bar.lis{background:#0f6e56;}
+.admin-trend-label{font-size:10px;color:var(--muted);margin-top:4px;text-align:center;white-space:nowrap;}
+.admin-trend-val{font-size:10px;font-weight:700;text-align:center;margin-bottom:2px;}
+.admin-trend-legend{display:flex;gap:16px;margin-top:.5rem;font-size:12px;color:var(--muted);}
+.admin-trend-legend span{display:flex;align-items:center;gap:5px;}
+.admin-trend-legend i{display:inline-block;width:12px;height:12px;border-radius:3px;}
+/* 生徒別推移 */
+.admin-student-trend{background:#f8f7f4;border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem;}
+.admin-student-trend-title{font-size:13px;font-weight:700;color:#1a3a6e;margin-bottom:.6rem;}
+.admin-mini-chart{display:flex;align-items:flex-end;gap:4px;height:80px;padding-bottom:20px;}
+.admin-mini-bar-wrap{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end;}
+.admin-mini-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;}
+.admin-mini-bar.write{background:var(--accent);opacity:.85;}
+.admin-mini-bar.lis{background:#0f6e56;opacity:.85;}
+.admin-mini-label{font-size:9px;color:var(--muted);margin-top:3px;text-align:center;}
+/* 差分ハイライト */
+.diff-new{background:#fff3cd;border-radius:3px;padding:1px 2px;}
+/* 大問5・6テキスト表示 */
+.admin-writing-box{background:#f8f7f4;border:1px solid var(--border);border-radius:6px;padding:.75rem 1rem;font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-all;margin-top:.4rem;color:var(--text);}
 /* 管理タブ（通常時は非表示・JS制御） */
 .nav-tab-admin{display:none;}
 
@@ -2343,18 +2378,173 @@ function doIdleLogout() {
 // =========================================================
 let adminData = []; // 結果集計の全行
 
+// ===== 管理画面：期間フィルター =====
+let adminFilteredRows = [];
+
+function adminGetPeriodOptions() {
+  if (!adminData.length) return { weeks: [], months: [] };
+  const dates = adminData.map(r => new Date(r.date)).filter(d => !isNaN(d));
+  if (!dates.length) return { weeks: [], months: [] };
+  const minDate = new Date(Math.min(...dates));
+  const maxDate = new Date(Math.max(...dates));
+
+  // 週単位（月曜始まり）
+  const weeks = [];
+  const startMon = new Date(minDate);
+  startMon.setDate(minDate.getDate() - ((minDate.getDay()+6)%7));
+  startMon.setHours(0,0,0,0);
+  let cur = new Date(startMon);
+  while (cur <= maxDate) {
+    const end = new Date(cur); end.setDate(cur.getDate()+6);
+    weeks.push({ label: fmtDateShort(cur) + '〜' + fmtDateShort(end), start: new Date(cur), end: new Date(end.setHours(23,59,59,999)) });
+    cur.setDate(cur.getDate()+7);
+  }
+
+  // 月単位
+  const months = [];
+  let y = minDate.getFullYear(), m = minDate.getMonth();
+  while (y < maxDate.getFullYear() || (y === maxDate.getFullYear() && m <= maxDate.getMonth())) {
+    const start = new Date(y, m, 1);
+    const end = new Date(y, m+1, 0, 23, 59, 59, 999);
+    months.push({ label: y + '年' + (m+1) + '月', start, end });
+    m++; if (m > 11) { m = 0; y++; }
+  }
+  return { weeks, months };
+}
+
+function fmtDateShort(d) {
+  return (d.getMonth()+1) + '/' + d.getDate();
+}
+
+function adminBuildFilter() {
+  const { weeks, months } = adminGetPeriodOptions();
+
+  // 単位選択
+  const unitEl = document.getElementById('admin-filter-unit');
+  // 開始・終了プルダウンを更新
+  function updateRangeOptions() {
+    const unit = unitEl.value;
+    const items = unit === 'week' ? weeks : months;
+    const startEl = document.getElementById('admin-filter-start');
+    const endEl = document.getElementById('admin-filter-end');
+    startEl.innerHTML = items.map((it,i) => '<option value="'+i+'">'+it.label+'</option>').join('');
+    endEl.innerHTML = items.map((it,i) => '<option value="'+i+'">'+it.label+'</option>').join('');
+    endEl.selectedIndex = items.length - 1;
+  }
+  unitEl.onchange = updateRangeOptions;
+  updateRangeOptions();
+}
+
+function adminApplyFilter() {
+  const unit = document.getElementById('admin-filter-unit').value;
+  const { weeks, months } = adminGetPeriodOptions();
+  const items = unit === 'week' ? weeks : months;
+  const si = parseInt(document.getElementById('admin-filter-start').value);
+  const ei = parseInt(document.getElementById('admin-filter-end').value);
+  if (si > ei) { alert('開始は終了より前を選んでください。'); return; }
+  const start = items[si].start;
+  const end = items[ei].end;
+  adminFilteredRows = adminData.filter(r => {
+    const d = new Date(r.date);
+    return d >= start && d <= end;
+  });
+  const label = items[si].label + (si===ei ? '' : ' 〜 ' + items[ei].label);
+  document.getElementById('admin-period-label').textContent = '📅 ' + label;
+  document.getElementById('admin-period-label').style.display = '';
+  renderAdminTable(adminFilteredRows, items, si, ei, unit);
+}
+
+function adminResetFilter() {
+  adminFilteredRows = adminData;
+  document.getElementById('admin-period-label').style.display = 'none';
+  document.getElementById('admin-filter-unit').value = 'week';
+  adminBuildFilter();
+  renderAdminTable(adminData);
+}
+
+// ===== 推移グラフ描画 =====
+function renderTrendChart(allRows, items, si, ei, unit) {
+  const wrap = document.getElementById('admin-trend-wrap');
+  if (!items || items.length === 0) { wrap.style.display='none'; return; }
+  wrap.style.display = '';
+  const chart = document.getElementById('admin-trend-chart');
+  chart.innerHTML = '';
+
+  // 各期間ごとの平均スコアを計算
+  const periodData = items.slice(si, ei+1).map(it => {
+    const pRows = allRows.filter(r => { const d=new Date(r.date); return d>=it.start&&d<=it.end; });
+    let wSum=0,wCnt=0,lSum=0,lCnt=0;
+    pRows.forEach(r => {
+      const w=parseInt(r.q1to4); if(!isNaN(w)){wSum+=w;wCnt++;}
+      const l=parseInt(r.lis);   if(!isNaN(l)){lSum+=l;lCnt++;}
+    });
+    return {
+      label: unit==='week' ? it.label.split('〜')[0] : it.label.replace('年','年\n'),
+      wAvg: wCnt ? wSum/wCnt : null,
+      lAvg: lCnt ? lSum/lCnt : null,
+      count: pRows.length
+    };
+  });
+
+  const maxH = 100; // px
+  periodData.forEach(pd => {
+    const wPct = pd.wAvg !== null ? pd.wAvg/29 : 0;
+    const lPct = pd.lAvg !== null ? pd.lAvg/30 : 0;
+    const wrap2 = document.createElement('div');
+    wrap2.className = 'admin-trend-bar-wrap';
+    wrap2.innerHTML =
+      '<div class="admin-trend-val" style="color:var(--accent);font-size:9px">' + (pd.wAvg!==null?pd.wAvg.toFixed(1):'—') + '</div>' +
+      '<div class="admin-trend-bar write" style="height:'+Math.round(wPct*maxH)+'px;margin-bottom:2px"></div>' +
+      '<div class="admin-trend-val" style="color:#0f6e56;font-size:9px">' + (pd.lAvg!==null?pd.lAvg.toFixed(1):'—') + '</div>' +
+      '<div class="admin-trend-bar lis" style="height:'+Math.round(lPct*maxH)+'px"></div>' +
+      '<div class="admin-trend-label">' + pd.label + '<br><span style="color:#9b9890">'+pd.count+'件</span></div>';
+    chart.appendChild(wrap2);
+  });
+}
+
+// ===== 生徒別推移グラフ =====
+function renderStudentTrend(rows) {
+  const el = document.getElementById('admin-student-trend');
+  if (rows.length < 2) { el.style.display='none'; return; }
+  el.style.display = '';
+  const chart = document.getElementById('admin-mini-chart');
+  chart.innerHTML = '';
+  const maxH = 70;
+  rows.forEach((row, i) => {
+    const w = parseInt(row.q1to4); const l = parseInt(row.lis);
+    const wPct = !isNaN(w) ? w/29 : 0;
+    const lPct = !isNaN(l) ? l/30 : 0;
+    const wrap2 = document.createElement('div');
+    wrap2.className = 'admin-mini-bar-wrap';
+    wrap2.innerHTML =
+      '<div class="admin-mini-bar write" style="height:'+Math.round(wPct*maxH)+'px;margin-bottom:1px"></div>' +
+      '<div class="admin-mini-bar lis" style="height:'+Math.round(lPct*maxH)+'px"></div>' +
+      '<div class="admin-mini-label">#'+(i+1)+'</div>';
+    chart.appendChild(wrap2);
+  });
+}
+
+// ===== 差分ハイライト =====
+function diffHighlight(prev, curr) {
+  if (!prev || !curr) return curr || '';
+  // 文単位で新規追加部分を黄色ハイライト
+  const prevWords = new Set(prev.split(/\s+/));
+  return curr.split(/\s+/).map(w => prevWords.has(w) ? w : '<span class="diff-new">'+w+'</span>').join(' ');
+}
+
 function adminShowList() {
   document.getElementById('admin-list-view').style.display = 'block';
   document.getElementById('admin-detail-view').style.display = 'none';
 }
 
 function adminShowDetail(studentId) {
-  // 該当生徒の全行を取得
-  const rows = adminData.filter(r => r.studentId === studentId);
+  const sourceRows = adminFilteredRows.length ? adminFilteredRows : adminData;
+  const rows = sourceRows.filter(r => r.studentId === studentId);
   if (!rows.length) return;
 
-  // 最新行（最終送信）
-  const latest = rows[rows.length - 1];
+  // 最新順に並べる
+  const sorted = rows.slice().sort((a,b) => new Date(b.date)-new Date(a.date));
+  const latest = sorted[0];
 
   document.getElementById('admin-list-view').style.display = 'none';
   document.getElementById('admin-detail-view').style.display = 'block';
@@ -2368,7 +2558,7 @@ function adminShowDetail(studentId) {
     { label:'大問2', val:latest.q2, max:5 },
     { label:'大問3', val:latest.q3, max:2 },
     { label:'大問4', val:latest.q4, max:7 },
-    { label:'筆記合計', val:latest.q1to4, max:29 },
+    { label:'大問1-4合計', val:latest.q1to4, max:29 },
     { label:'リスニング', val:latest.lis, max:30 },
     { label:'L第1部', val:latest.lp1, max:10 },
     { label:'L第2部', val:latest.lp2, max:10 },
@@ -2388,29 +2578,62 @@ function adminShowDetail(studentId) {
       '</div>';
   }).join('');
 
-  // 送信履歴
+  // 大問5・6テキスト表示（最新）
+  const writingEl = document.getElementById('admin-detail-writing');
+  const wLines = [];
+  if (latest.q5status || latest.q5answer) {
+    wLines.push('<div style="font-size:13px;font-weight:700;color:#1a3a6e;margin-bottom:4px">大問5（Eメールライティング）</div>');
+    if (latest.q5status) wLines.push('<div style="font-size:12px;color:var(--muted);margin-bottom:4px">状況：'+latest.q5status+'</div>');
+    if (latest.q5answer) wLines.push('<div class="admin-writing-box">'+latest.q5answer+'</div>');
+  }
+  if (latest.q6status || latest.q6answer) {
+    wLines.push('<div style="font-size:13px;font-weight:700;color:#1a3a6e;margin:12px 0 4px">大問6（意見文ライティング）</div>');
+    if (latest.q6status) wLines.push('<div style="font-size:12px;color:var(--muted);margin-bottom:4px">状況：'+latest.q6status+'</div>');
+    if (latest.q6answer) wLines.push('<div class="admin-writing-box">'+latest.q6answer+'</div>');
+  }
+  writingEl.innerHTML = wLines.length ? wLines.join('') : '<div style="font-size:13px;color:var(--muted)">大問5・6の提出なし</div>';
+
+  // 生徒別推移グラフ（時系列順）
+  const chronoRows = rows.slice().sort((a,b) => new Date(a.date)-new Date(b.date));
+  renderStudentTrend(chronoRows);
+
+  // 送信履歴（最新順・差分ハイライト付き）
   const recEl = document.getElementById('admin-detail-records');
   recEl.innerHTML = '';
-
-  // 大問5・6の記述（全送信分）
-  rows.forEach((row, idx) => {
-    const recNo = idx + 1;
-    // 各送信の記録カード
+  sorted.forEach((row, idx) => {
+    const recNo = sorted.length - idx;
+    const prevRow = sorted[idx+1] || null;
     const card = document.createElement('div');
     card.className = 'admin-record-card';
-    card.innerHTML = '<div class="admin-record-head"><span>送信 #' + recNo + '</span><span style="font-weight:400;color:#6b6960">' + row.date + '</span></div>';
+    const isNew = idx === 0;
+    card.innerHTML = '<div class="admin-record-head">' +
+      '<span>送信 #' + recNo + (isNew?' <span style="font-size:11px;background:#dbeafe;color:#1a4a8a;border-radius:8px;padding:1px 7px">最新</span>':'') + '</span>' +
+      '<span style="font-weight:400;color:#6b6960">' + row.date + '</span></div>';
 
     const body = document.createElement('div');
     body.className = 'admin-record-body';
     const lines = [];
-    lines.push('【筆記スコア】　大問1:' + fmtScore(row.q1, 15) + '　大問2:' + fmtScore(row.q2, 5) + '　大問3:' + fmtScore(row.q3, 2) + '　大問4:' + fmtScore(row.q4, 7) + '　合計:' + fmtScore(row.q1to4, 29));
-    lines.push('【リスニング】　合計:' + fmtScore(row.lis, 30) + '　第1部:' + fmtScore(row.lp1, 10) + '　第2部:' + fmtScore(row.lp2, 10) + '　第3部:' + fmtScore(row.lp3, 10));
-    if (row.q5status) lines.push('【大問5（Eメール）】' + row.q5status);
-    if (row.q5answer) lines.push(row.q5answer);
-    if (row.q6status) lines.push('【大問6（意見文）】' + row.q6status);
-    if (row.q6answer) lines.push(row.q6answer);
+    lines.push('【大問1-4】　大問1:' + fmtScore(row.q1,15) + '　大問2:' + fmtScore(row.q2,5) + '　大問3:' + fmtScore(row.q3,2) + '　大問4:' + fmtScore(row.q4,7) + '　合計:' + fmtScore(row.q1to4,29));
+    lines.push('【リスニング】　合計:' + fmtScore(row.lis,30) + '　第1部:' + fmtScore(row.lp1,10) + '　第2部:' + fmtScore(row.lp2,10) + '　第3部:' + fmtScore(row.lp3,10));
     body.textContent = lines.join('\n');
     card.appendChild(body);
+
+    // 大問5・6（差分ハイライト）
+    if (row.q5answer || row.q6answer) {
+      const wBox = document.createElement('div');
+      wBox.style.cssText = 'padding:.6rem 1.1rem;border-top:1px solid var(--border);';
+      if (row.q5answer) {
+        const prev5 = prevRow ? prevRow.q5answer : '';
+        wBox.innerHTML += '<div style="font-size:12px;font-weight:700;color:#1a3a6e;margin-bottom:3px">大問5</div>' +
+          '<div class="admin-writing-box">' + diffHighlight(prev5, row.q5answer) + '</div>';
+      }
+      if (row.q6answer) {
+        const prev6 = prevRow ? prevRow.q6answer : '';
+        wBox.innerHTML += '<div style="font-size:12px;font-weight:700;color:#1a3a6e;margin:8px 0 3px">大問6</div>' +
+          '<div class="admin-writing-box">' + diffHighlight(prev6, row.q6answer) + '</div>';
+      }
+      card.appendChild(wBox);
+    }
     recEl.appendChild(card);
   });
 
@@ -2439,13 +2662,14 @@ function adminLoad() {
     cleanup();
     if (data.ok) {
       adminData = data.rows || [];
+      adminFilteredRows = adminData;
+      adminBuildFilter();
       renderAdminTable(adminData);
     } else {
       showAdminError(data.error || 'データ取得に失敗しました。');
     }
   };
 
-  // まずfetchで試みる
   fetch(GAS_URL, {
     method: 'POST',
     headers: {'Content-Type': 'text/plain'},
@@ -2455,18 +2679,18 @@ function adminLoad() {
     delete window[cbName];
     if (data.ok) {
       adminData = data.rows || [];
+      adminFilteredRows = adminData;
+      adminBuildFilter();
       renderAdminTable(adminData);
     } else {
       showAdminError(data.error || 'データ取得に失敗しました。');
     }
   }).catch(() => {
-    // JSONPフォールバック
     const script = document.createElement('script');
     const params = new URLSearchParams({action: 'getResults', studentId: window._adminStudentId || '00000000', callback: cbName});
     script.src = GAS_URL + '?' + params.toString();
     script.onerror = () => { cleanup(); showAdminError('通信エラーが発生しました。'); };
     document.head.appendChild(script);
-
     function cleanup() {
       clearTimeout(timer); delete window[cbName];
       if (script.parentNode) script.parentNode.removeChild(script);
@@ -2486,8 +2710,7 @@ function showAdminError(msg) {
     '<tr><td colspan="8" style="text-align:center;color:#6b6960;padding:2rem;">データなし</td></tr>';
 }
 
-function renderAdminTable(rows) {
-  // 生徒ごとに集計（最新行を代表に）
+function renderAdminTable(rows, items, si, ei, unit) {
   const byStudent = {};
   rows.forEach(row => {
     if (!byStudent[row.studentId]) byStudent[row.studentId] = [];
@@ -2498,22 +2721,25 @@ function renderAdminTable(rows) {
   const totalSubmits = rows.length;
   const totalStudents = students.length;
 
-  // 平均スコア計算
-  let writeSum = 0, writeCount = 0, lisSum = 0, lisCount = 0;
+  let writeSum=0, writeCount=0, lisSum=0, lisCount=0;
   rows.forEach(r => {
-    const w = parseInt(r.q1to4); if (!isNaN(w)) { writeSum += w; writeCount++; }
-    const l = parseInt(r.lis);   if (!isNaN(l)) { lisSum += l;   lisCount++; }
+    const w = parseInt(r.q1to4); if (!isNaN(w)) { writeSum+=w; writeCount++; }
+    const l = parseInt(r.lis);   if (!isNaN(l)) { lisSum+=l;   lisCount++; }
   });
 
   document.getElementById('admin-stat-total').textContent = totalSubmits;
   document.getElementById('admin-stat-students').textContent = totalStudents;
-  document.getElementById('admin-stat-avg-write').textContent = writeCount ? (writeSum / writeCount).toFixed(1) : '—';
-  document.getElementById('admin-stat-avg-lis').textContent = lisCount ? (lisSum / lisCount).toFixed(1) : '—';
+  document.getElementById('admin-stat-avg-write').textContent = writeCount ? (writeSum/writeCount).toFixed(1) : '—';
+  document.getElementById('admin-stat-avg-lis').textContent = lisCount ? (lisSum/lisCount).toFixed(1) : '—';
 
   const now = new Date();
   document.getElementById('admin-last-updated').textContent =
     '最終更新：' + now.getFullYear() + '/' + (now.getMonth()+1) + '/' + now.getDate() +
     ' ' + now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+
+  // 推移グラフ
+  if (items) renderTrendChart(rows, items, si, ei, unit);
+  else document.getElementById('admin-trend-wrap').style.display='none';
 
   if (students.length === 0) {
     document.getElementById('admin-tbody').innerHTML =
@@ -2523,35 +2749,25 @@ function renderAdminTable(rows) {
 
   const tbody = document.getElementById('admin-tbody');
   tbody.innerHTML = '';
-
   students.forEach(sRows => {
-    const latest = sRows[sRows.length - 1];
+    const latest = sRows.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
     const count = sRows.length;
     const tr = document.createElement('tr');
     tr.onclick = () => adminShowDetail(latest.studentId);
-
-    const w = parseInt(latest.q1to4);
-    const l = parseInt(latest.lis);
-    const wPct = isNaN(w) ? null : Math.round(w / 29 * 100);
-    const lPct = isNaN(l) ? null : Math.round(l / 30 * 100);
-
     tr.innerHTML =
       '<td style="font-weight:600">' + latest.studentId + '</td>' +
       '<td>' + latest.name + '</td>' +
       '<td style="color:#6b6960">' + latest.date + '</td>' +
       '<td style="text-align:center"><span class="admin-submit-badge">' + count + '回</span></td>' +
-      '<td>' + scorepill(w, wPct, 29) + '</td>' +
-      '<td>' + scorehill(l, lPct, 30) + '</td>' +
+      '<td>' + scoreill_simple(latest.q1to4, 29) + '</td>' +
+      '<td>' + scoreill_simple(latest.lis, 30) + '</td>' +
       '<td style="font-size:12px;color:#6b6960">' + (latest.q5status || '—') + '</td>' +
       '<td style="font-size:12px;color:#6b6960">' + (latest.q6status || '—') + '</td>';
     tbody.appendChild(tr);
   });
 }
 
-
-
-
-// スコアpill表示（共通）
+// スコアpill表示
 function scoreill_simple(val, max) {
   const n = parseInt(val);
   if (isNaN(n) || String(val) === '') return '<span class="admin-score-pill admin-score-none">未提出</span>';
@@ -2661,13 +2877,41 @@ buildQ1();buildQ2();buildQ3();buildQ4();loadState();updateScore();
         <button class="admin-dl-btn excel" onclick="adminDownloadExcel()">⬇️ Excel</button>
       </div>
     </div>
+
+    <!-- 期間フィルター -->
+    <div class="admin-filter-bar">
+      <label>単位</label>
+      <select id="admin-filter-unit">
+        <option value="week">週単位</option>
+        <option value="month">月単位</option>
+      </select>
+      <label>開始</label>
+      <select id="admin-filter-start"></select>
+      <label>終了</label>
+      <select id="admin-filter-end"></select>
+      <button class="admin-filter-btn" onclick="adminApplyFilter()">絞り込む</button>
+      <button class="admin-filter-reset" onclick="adminResetFilter()">リセット</button>
+      <span id="admin-period-label" class="admin-period-label" style="display:none"></span>
+    </div>
+
     <!-- サマリー -->
     <div class="admin-stats">
       <div class="admin-stat-card"><div class="admin-stat-num" id="admin-stat-total">—</div><div class="admin-stat-label">総提出件数</div></div>
       <div class="admin-stat-card"><div class="admin-stat-num" id="admin-stat-students">—</div><div class="admin-stat-label">提出生徒数</div></div>
-      <div class="admin-stat-card"><div class="admin-stat-num" id="admin-stat-avg-write">—</div><div class="admin-stat-label">筆記平均（/29）</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num" id="admin-stat-avg-write">—</div><div class="admin-stat-label">大問1-4平均（/29）</div></div>
       <div class="admin-stat-card"><div class="admin-stat-num" id="admin-stat-avg-lis">—</div><div class="admin-stat-label">リスニング平均（/30）</div></div>
     </div>
+
+    <!-- 推移グラフ -->
+    <div class="admin-trend-wrap" id="admin-trend-wrap" style="display:none;">
+      <div class="admin-trend-title">📈 期間別スコア推移</div>
+      <div class="admin-trend-chart" id="admin-trend-chart"></div>
+      <div class="admin-trend-legend">
+        <span><i style="background:var(--accent)"></i>大問1-4平均</span>
+        <span><i style="background:#0f6e56"></i>リスニング平均</span>
+      </div>
+    </div>
+
     <div id="admin-error" class="admin-error" style="display:none;"></div>
     <div class="admin-table-wrap">
       <table class="admin-table">
@@ -2689,6 +2933,7 @@ buildQ1();buildQ2();buildQ3();buildQ4();loadState();updateScore();
       </table>
     </div>
   </div>
+
   <!-- 生徒詳細ビュー -->
   <div id="admin-detail-view" style="display:none;">
     <div class="admin-detail-header">
@@ -2698,7 +2943,28 @@ buildQ1();buildQ2();buildQ3();buildQ4();loadState();updateScore();
         <div class="admin-detail-sub" id="admin-detail-sub">—</div>
       </div>
     </div>
+
+    <!-- スコアグリッド -->
     <div class="admin-score-grid" id="admin-score-grid"></div>
+
+    <!-- 大問5・6テキスト -->
+    <div class="admin-record-card" style="margin-bottom:1rem;">
+      <div class="admin-record-head">✍️ ライティング提出内容（最新）</div>
+      <div style="padding:1rem 1.1rem;" id="admin-detail-writing"></div>
+    </div>
+
+    <!-- 生徒別推移グラフ -->
+    <div class="admin-student-trend" id="admin-student-trend" style="display:none;">
+      <div class="admin-student-trend-title">📈 この生徒のスコア推移（送信順）
+        <span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:8px">青:大問1-4　緑:リスニング</span>
+      </div>
+      <div class="admin-mini-chart" id="admin-mini-chart"></div>
+    </div>
+
+    <!-- 送信履歴 -->
+    <div style="font-size:13px;font-weight:700;color:#1a3a6e;margin-bottom:.75rem;">📋 送信履歴（最新順）
+      <span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:8px">黄色ハイライト＝前回から変更された箇所</span>
+    </div>
     <div id="admin-detail-records"></div>
   </div>
 </div>
