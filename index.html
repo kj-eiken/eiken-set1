@@ -2757,13 +2757,13 @@ function renderAdminTable(rows, items, si, ei, unit) {
     tr.onclick = (e) => { if (!e.target.closest('.proofread-cb-wrap')) adminShowDetail(latest.studentId); };
 
     // 大問5・6の提出日を判定（タイプ送信 or 写メ）
-    function getSubmitDate(status, photoDate) {
+    function getSubmitDate(status, photoDate, rowDate) {
       if (photoDate) return fmtDateOnly(photoDate);
-      if (status && status !== '未提出' && status !== '') return fmtDateOnly(status);
+      if (status && status !== '未提出' && status !== '') return fmtDateOnly(rowDate);
       return '<span style="color:#9b9890">未提出</span>';
     }
-    const q5date = getSubmitDate(latest.q5status, latest.q5photoDate);
-    const q6date = getSubmitDate(latest.q6status, latest.q6photoDate);
+    const q5date = getSubmitDate(latest.q5status, latest.q5photoDate, latest.date);
+    const q6date = getSubmitDate(latest.q6status, latest.q6photoDate, latest.date);
 
     // 添削済チェックボックス
     function proofreadCell(q, proofreadDate, studentId) {
@@ -2793,6 +2793,8 @@ function renderAdminTable(rows, items, si, ei, unit) {
 
 function fmtDateOnly(str) {
   if (!str) return '—';
+  const d = new Date(str);
+  if (!isNaN(d)) return (d.getMonth()+1) + '/' + d.getDate();
   const m = String(str).match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
   if (m) return parseInt(m[2]) + '/' + parseInt(m[3]);
   return str;
@@ -2800,13 +2802,16 @@ function fmtDateOnly(str) {
 
 function fmtDateJP(str) {
   if (!str) return '—';
-  // yyyy/MM/dd HH:mm:ss → yyyy年M月d日(曜) HH:mm
+  const days = ['日','月','火','水','木','金','土'];
+  const d = new Date(str);
+  if (!isNaN(d)) {
+    return d.getFullYear() + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日(' + days[d.getDay()] + ')' +
+      String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
   const m = String(str).match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})[^\d](\d{1,2}):(\d{2})/);
   if (!m) return str;
-  const days = ['日','月','火','水','木','金','土'];
-  const d = new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
-  const dow = days[d.getDay()];
-  return m[1] + '年' + parseInt(m[2]) + '月' + parseInt(m[3]) + '日(' + dow + ')' + m[4] + ':' + m[5];
+  const d2 = new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
+  return m[1] + '年' + parseInt(m[2]) + '月' + parseInt(m[3]) + '日(' + days[d2.getDay()] + ')' + m[4] + ':' + m[5];
 }
 
 // 添削済チェックボックス操作
