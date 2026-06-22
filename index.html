@@ -2779,7 +2779,7 @@ function renderAdminTable(rows, items, si, ei, unit) {
     tr.innerHTML =
       '<td style="font-weight:600">' + latest.studentId + '</td>' +
       '<td>' + latest.name + '</td>' +
-      '<td style="color:#6b6960;font-size:12px">' + latest.date + '</td>' +
+      '<td style="color:#6b6960;font-size:12px">' + fmtDateJP(latest.date) + '</td>' +
       '<td style="text-align:center"><span class="admin-submit-badge">' + count + '回</span></td>' +
       '<td>' + scoreill_simple(latest.q1to4, 29) + '</td>' +
       '<td>' + scoreill_simple(latest.lis, 30) + '</td>' +
@@ -2793,10 +2793,20 @@ function renderAdminTable(rows, items, si, ei, unit) {
 
 function fmtDateOnly(str) {
   if (!str) return '—';
-  // yyyy/MM/dd HH:mm:ss → M/d形式
   const m = String(str).match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
   if (m) return parseInt(m[2]) + '/' + parseInt(m[3]);
   return str;
+}
+
+function fmtDateJP(str) {
+  if (!str) return '—';
+  // yyyy/MM/dd HH:mm:ss → yyyy年M月d日(曜) HH:mm
+  const m = String(str).match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})[^\d](\d{1,2}):(\d{2})/);
+  if (!m) return str;
+  const days = ['日','月','火','水','木','金','土'];
+  const d = new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
+  const dow = days[d.getDay()];
+  return m[1] + '年' + parseInt(m[2]) + '月' + parseInt(m[3]) + '日(' + dow + ')' + m[4] + ':' + m[5];
 }
 
 // 添削済チェックボックス操作
