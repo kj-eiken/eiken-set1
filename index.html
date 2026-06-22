@@ -2753,17 +2753,78 @@ function renderAdminTable(rows, items, si, ei, unit) {
     const latest = sRows.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
     const count = sRows.length;
     const tr = document.createElement('tr');
-    tr.onclick = () => adminShowDetail(latest.studentId);
+    tr.onclick = (e) => { if (!e.target.closest('.proofread-cb-wrap')) adminShowDetail(latest.studentId); };
+
+    // 大問5・6の提出日を判定（タイプ送信 or 写メ）
+    function getSubmitDate(status, photoDate) {
+      if (photoDate) return fmtDateOnly(photoDate);
+      if (status && status !== '未提出' && status !== '') return fmtDateOnly(status);
+      return '<span style="color:#9b9890">未提出</span>';
+    }
+    const q5date = getSubmitDate(latest.q5status, latest.q5photoDate);
+    const q6date = getSubmitDate(latest.q6status, latest.q6photoDate);
+
+    // 添削済チェックボックス
+    function proofreadCell(q, proofreadDate, studentId) {
+      const checked = !!proofreadDate;
+      const label = proofreadDate ? fmtDateOnly(proofreadDate) : '—';
+      return '<div class="proofread-cb-wrap" style="display:flex;align-items:center;gap:5px;">' +
+        '<input type="checkbox" ' + (checked?'checked':'') +
+        ' onchange="adminToggleProofread(this,\'' + studentId + '\',\'' + q + '\')" style="cursor:pointer;width:15px;height:15px;">' +
+        '<span style="font-size:12px;color:' + (checked?'#065f46':'#9b9890') + '">' + label + '</span>' +
+        '</div>';
+    }
+
     tr.innerHTML =
       '<td style="font-weight:600">' + latest.studentId + '</td>' +
       '<td>' + latest.name + '</td>' +
-      '<td style="color:#6b6960">' + latest.date + '</td>' +
+      '<td style="color:#6b6960;font-size:12px">' + latest.date + '</td>' +
       '<td style="text-align:center"><span class="admin-submit-badge">' + count + '回</span></td>' +
       '<td>' + scoreill_simple(latest.q1to4, 29) + '</td>' +
       '<td>' + scoreill_simple(latest.lis, 30) + '</td>' +
-      '<td style="font-size:12px;color:#6b6960">' + (latest.q5status || '—') + '</td>' +
-      '<td style="font-size:12px;color:#6b6960">' + (latest.q6status || '—') + '</td>';
+      '<td style="font-size:12px">' + q5date + '</td>' +
+      '<td>' + proofreadCell('q5', latest.q5proofread, latest.studentId) + '</td>' +
+      '<td style="font-size:12px">' + q6date + '</td>' +
+      '<td>' + proofreadCell('q6', latest.q6proofread, latest.studentId) + '</td>';
     tbody.appendChild(tr);
+  });
+}
+
+function fmtDateOnly(str) {
+  if (!str) return '—';
+  // yyyy/MM/dd HH:mm:ss → M/d形式
+  const m = String(str).match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+  if (m) return parseInt(m[2]) + '/' + parseInt(m[3]);
+  return str;
+}
+
+// 添削済チェックボックス操作
+function adminToggleProofread(checkbox, targetStudentId, question) {
+  const now = new Date();
+  const dateStr = now.getFullYear() + '/' + String(now.getMonth()+1).padStart(2,'0') + '/' +
+    String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0');
+  const value = checkbox.checked ? dateStr : '';
+  const label = checkbox.nextElementSibling;
+  if (label) {
+    label.textContent = checkbox.checked ? fmtDateOnly(dateStr) : '—';
+    label.style.color = checkbox.checked ? '#065f46' : '#9b9890';
+  }
+
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify({
+      action: 'setProofread',
+      studentId: '00000000',
+      targetStudentId: targetStudentId,
+      question: question,
+      date: value
+    })
+  }).then(r => r.json()).then(data => {
+    if (!data.ok) { alert('保存に失敗しました：' + (data.error||'')); checkbox.checked = !checkbox.checked; }
+  }).catch(() => {
+    alert('通信エラーが発生しました。'); checkbox.checked = !checkbox.checked;
   });
 }
 
@@ -2841,6 +2902,11 @@ function submitPhotoQ5(){
   if(done){done.style.display='block';}
   updateScore();
   saveState();
+  // GASに写メ提出日を送信
+  fetch(GAS_URL,{
+    method:'POST',headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({action:'submitPhoto',studentId:window._studentId||'',question:'q5'})
+  }).catch(()=>{});
 }
 
 function submitPhotoQ6(){
@@ -2857,6 +2923,11 @@ function submitPhotoQ6(){
   if(done){done.style.display='block';}
   updateScore();
   saveState();
+  // GASに写メ提出日を送信
+  fetch(GAS_URL,{
+    method:'POST',headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({action:'submitPhoto',studentId:window._studentId||'',question:'q6'})
+  }).catch(()=>{});
 }
 
 buildQ1();buildQ2();buildQ3();buildQ4();loadState();updateScore();
@@ -2923,12 +2994,14 @@ buildQ1();buildQ2();buildQ3();buildQ4();loadState();updateScore();
             <th>提出回数</th>
             <th>大問1-4</th>
             <th>リスニング</th>
-            <th>大問5</th>
-            <th>大問6</th>
+            <th>大問5提出日</th>
+            <th>大問5添削済</th>
+            <th>大問6提出日</th>
+            <th>大問6添削済</th>
           </tr>
         </thead>
         <tbody id="admin-tbody">
-          <tr><td colspan="8" class="admin-loading">データを読み込んでいます…</td></tr>
+          <tr><td colspan="10" class="admin-loading">データを読み込んでいます…</td></tr>
         </tbody>
       </table>
     </div>
