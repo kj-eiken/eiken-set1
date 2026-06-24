@@ -471,6 +471,16 @@ button ruby rt{color:inherit}
 </head>
 <body>
 
+<!-- ===== 問題データ読み込み中オーバーレイ ===== -->
+<div id="questions-loading" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(247,246,243,0.92);z-index:9998;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div style="font-size:2rem;">📚</div>
+  <div style="font-size:15px;font-weight:700;color:#1a3a6e;">問題データを読み込んでいます…</div>
+  <div style="width:200px;height:6px;background:#e2e0da;border-radius:3px;overflow:hidden;">
+    <div style="height:100%;background:#2563c4;border-radius:3px;animation:loadbar 1.5s infinite ease-in-out;"></div>
+  </div>
+  <style>@keyframes loadbar{0%{width:0%}50%{width:80%}100%{width:100%}}</style>
+</div>
+
 <!-- ===== ログイン画面 ===== -->
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
@@ -1044,171 +1054,14 @@ button ruby rt{color:inherit}
 </div>
 
 <script>
-// =========================================================
-// ★ 既存 大問1〜6 データ（元のコードからそのまま移植）
-// =========================================================
-const QD = {"q1-1":{"correct":2,"choices":[{"n":1,"t":"nervously","ja":"緊張して・おびえて","ok":false,"reason":"副詞だが「緊張しておいしい」は意味が通らない。感情の強調には使わない。"},{"n":2,"t":"absolutely","ja":"まったく・完全に","ok":true,"reason":"正解。「absolutely delicious（本当においしい）」は感情を強調する自然な表現。"},{"n":3,"t":"rarely","ja":"めったに〜ない","ok":false,"reason":"「めったにおいしくない」という否定的な意味になり文脈に合わない。"},{"n":4,"t":"separately","ja":"別々に","ok":false,"reason":"「別々においしい」は意味が通らない。食事の修飾語として不適切。"}],"point":"absolutely は「まったく・完全に」の副詞。会話で感情を強調する。nervously（緊張して）・rarely（めったに〜ない）は文脈に合わない。"},"q1-2":{"correct":1,"choices":[{"n":1,"t":"transferred","ja":"異動させられた・転勤した","ok":true,"reason":"正解。be transferred to ＋場所「〜へ転勤になる」の形。新しいアパートに住んでいるという後文とも一致する。"},{"n":2,"t":"reduced","ja":"削減された","ok":false,"reason":"be reduced は「削減・縮小」。職場への転勤の文脈には合わない。"},{"n":3,"t":"proposed","ja":"提案された","ok":false,"reason":"be proposed は「提案される」。人がオフィスに「提案される」とは言わない。"},{"n":4,"t":"apologized","ja":"謝罪した","ok":false,"reason":"apologize は自動詞で be apologized とは使わない。文法的にも不自然。"}],"point":"transfer は「異動させる・転勤させる」。be transferred to ＋場所 の形で使う。reduced（削減）・proposed（提案）は文脈に合わない。"},"q1-3":{"correct":1,"choices":[{"n":1,"t":"dangers","ja":"危険性","ok":true,"reason":"正解。dangers of smoking「喫煙の危険性」。後文でhealth problems（健康問題）と述べており一致する。"},{"n":2,"t":"palaces","ja":"宮殿・御所","ok":false,"reason":"「喫煙の宮殿」は意味が通らない。建物に関する語で文脈に合わない。"},{"n":3,"t":"markets","ja":"市場・マーケット","ok":false,"reason":"「喫煙のマーケット」は不自然。健康問題の話題に合わない。"},{"n":4,"t":"galleries","ja":"ギャラリー・画廊","ok":false,"reason":"芸術施設を表す言葉で、喫煙の説明とは関係がない。"}],"point":"danger（危険）は「dangers of ＋名詞」で「〜の危険性」。health problems（健康上の問題）という後文がヒント。"},"q1-4":{"correct":4,"choices":[{"n":1,"t":"wooden","ja":"木製の","ok":false,"reason":"「価格が木製に見えた」は意味が通らない。素材を表す形容詞で価格の描写には使わない。"},{"n":2,"t":"boring","ja":"退屈な","ok":false,"reason":"価格が「退屈」とは言わない。感想・評価の文脈では不自然。"},{"n":3,"t":"cute","ja":"かわいい","ok":false,"reason":"価格に「かわいい」は使わない。英語でもcuteは価格の形容には使わない。"},{"n":4,"t":"reasonable","ja":"手ごろな・妥当な","ok":true,"reason":"正解。reasonable price「手ごろな価格」は価格評価の定番表現。"}],"point":"reasonable は「手ごろな・妥当な」。価格の話題なので reasonable price（手ごろな価格）が正解。wooden（木製の）・boring（退屈な）は価格の描写に使わない。"},"q1-5":{"correct":4,"choices":[{"n":1,"t":"award","ja":"賞・表彰","ok":false,"reason":"make an award は「賞を出す」。クラスへの連絡をする場面には合わない。"},{"n":2,"t":"aisle","ja":"通路・廊下","ok":false,"reason":"通路を表す名詞。「make an aisle」は一般的な表現ではなく文脈に合わない。"},{"n":3,"t":"attempt","ja":"試み・挑戦","ok":false,"reason":"make an attempt は「試みる」。授業の連絡をする文脈には合わない。"},{"n":4,"t":"announcement","ja":"お知らせ・発表","ok":true,"reason":"正解。make an announcement で「お知らせをする」。後文でクラスへの連絡内容が具体的に述べられている。"}],"point":"make an announcement で「お知らせをする」。後文でクラスへの連絡内容が書かれていることがヒント。award（賞）・aisle（通路）・attempt（試み）は不適切。"},"q1-6":{"correct":3,"choices":[{"n":1,"t":"policies","ja":"政策・方針","ok":false,"reason":"政策・方針を表す言葉。公園に「設置」するものとしては不自然。金属や石とも関係ない。"},{"n":2,"t":"blankets","ja":"毛布・ブランケット","ok":false,"reason":"毛布を表す言葉。金属や石で作る公園の展示物とは合わない。"},{"n":3,"t":"statues","ja":"彫像・像","ok":true,"reason":"正解。statue（彫像）は金属や石で作り、公園に設置する。素材の記述と完全に一致する。"},{"n":4,"t":"insects","ja":"昆虫・虫","ok":false,"reason":"昆虫を表す言葉。芸術家が金属や石で昆虫を作って公園に置くのは文脈上ありえない。"}],"point":"statue は「彫像」。金属か石を使うという素材の記述がヒント。policies（政策）・blankets（毛布）・insects（虫）は公園に設置するものとして不自然。"},"q1-7":{"correct":2,"choices":[{"n":1,"t":"battery","ja":"電池・バッテリー","ok":false,"reason":"電池を安全な場所に保管して返品に使うという文脈は不自然。"},{"n":2,"t":"receipt","ja":"領収書・レシート","ok":true,"reason":"正解。receipt（レシート）を保管しておけば返品できる。keep the receiptは日常の重要表現。"},{"n":3,"t":"website","ja":"ウェブサイト","ok":false,"reason":"ウェブサイトを安全な場所に保管するとは言わない。デジタルな概念で保管の文脈に合わない。"},{"n":4,"t":"frame","ja":"フレーム・枠","ok":false,"reason":"フレームを保管して返品に使うという文脈は不自然。"}],"point":"receipt は「領収書・レシート」。返品するために保管するものとして receipt が正解。keep the receipt（レシートを取っておく）は日常の重要表現。"},"q1-8":{"correct":3,"choices":[{"n":1,"t":"paste","ja":"貼り付ける","ok":false,"reason":"「友人を貼り付ける」は意味が通らない。物理的な動作を表す言葉。"},{"n":2,"t":"blame","ja":"責める・非難する","ok":false,"reason":"困難な時期に友人を責めるでは逆の意味になる。supportと矛盾する。"},{"n":3,"t":"trust","ja":"信頼する・頼る","ok":true,"reason":"正解。trust friends「友人を信頼する」。困難な時期に助けを求める文脈と一致する。"},{"n":4,"t":"scratch","ja":"引っ掻く・こする","ok":false,"reason":"「友人を引っ掻く」は意味が通らない。身体的な動作を表す言葉で文脈に合わない。"}],"point":"trust は「信頼する」。困難な時期に友人に頼るという文脈に合う。blame（責める）は逆の意味になる。paste（貼る）・scratch（引っかく）は身体の痛みを表さない。"},"q1-9":{"correct":4,"choices":[{"n":1,"t":"enter","ja":"入る・入力する","ok":false,"reason":"テストに入るは文脈に合わない。enter a test とは言わない。"},{"n":2,"t":"engage","ja":"従事する・関わる","ok":false,"reason":"engage in a test は試験に取り組む意味だが、何点取ったかを尋ねる文脈には合わない。"},{"n":3,"t":"claim","ja":"主張する・要求する","ok":false,"reason":"何点主張したかは意味が通らない。得点を取る動作を表さない。"},{"n":4,"t":"score","ja":"得点する・点を取る","ok":true,"reason":"正解。score points「点数を取る」は試験の文脈での重要表現。"}],"point":"score は動詞で「点を取る」。score points（点数を取る）は試験の文脈での重要表現。enter（入る）・claim（主張する）は点数の文脈に合わない。"},"q1-10":{"correct":1,"choices":[{"n":1,"t":"ache","ja":"痛む・うずく","ok":true,"reason":"正解。ache は体がじんじんと痛む意味。長距離走後の脚の痛みとして自然。"},{"n":2,"t":"soothe","ja":"なだめる・和らげる","ok":false,"reason":"soothe は痛みを和らげる意味で、acheの逆。脚が和らいで休んだという文脈は不自然。"},{"n":3,"t":"push","ja":"押す","ok":false,"reason":"脚が押し始めたは意味が通らない。身体の状態を表す文脈に合わない。"},{"n":4,"t":"gather","ja":"集める・集まる","ok":false,"reason":"脚が集まり始めたは意味が通らない。身体の感覚を表す言葉ではない。"}],"point":"ache は「体が痛む・うずく」。長距離走後に足が痛む文脈に合う。soothe（なだめる）は逆の意味。push（押す）・gather（集める）は身体の痛みを表さない。"},"q1-11":{"correct":2,"choices":[{"n":1,"t":"next to","ja":"〜の隣に","ok":false,"reason":"位置を表す表現。1匹の隣にでは文脈が通らない。除外を表す表現が必要。"},{"n":2,"t":"except for","ja":"〜を除いて","ok":true,"reason":"正解。ほぼ全員が家族を見つけた、1匹を除いてという除外の文脈に合う。"},{"n":3,"t":"across from","ja":"〜の向かいに","ok":false,"reason":"向かい側の位置を表す表現。除外の意味がないので文脈に合わない。"},{"n":4,"t":"up to","ja":"〜まで・〜次第で","ok":false,"reason":"〜まで・〜次第での意味。除外を表す文脈には合わない。"}],"point":"except for は「〜を除いて」。ほぼ全員が家族を見つけた、1匹を除いてという文脈に合う。next to（隣に）・across from（向かいに）は位置を表す表現。"},"q1-12":{"correct":4,"choices":[{"n":1,"t":"Get on","ja":"乗り物に乗る・うまくいく","ok":false,"reason":"乗る・うまくいくの意味。蜂が近くにいる警告場面には全く合わない。"},{"n":2,"t":"Take off","ja":"離陸する・服を脱ぐ","ok":false,"reason":"離陸する・脱ぐの意味。危険を伝える場面には使わない。"},{"n":3,"t":"Give up","ja":"あきらめる","ok":false,"reason":"あきらめろは蜂が顔の近くにいる状況への適切な反応ではない。"},{"n":4,"t":"Look out","ja":"気をつけて！","ok":true,"reason":"正解。Look out! は危険を知らせる警告の叫び声。蜂が近くにいる緊急場面に最適。"}],"point":"Look out! は「気をつけて！」という警告の叫び声。危険を伝える場面で使う重要表現。Get on（乗る）・Take off（離陸する）・Give up（あきらめる）は警告の文脈に合わない。"},"q1-13":{"correct":1,"choices":[{"n":1,"t":"out of the question","ja":"論外・問題外","ok":true,"reason":"正解。先月新しいスマホを買ったばかりなのにまた欲しいというのは論外。文脈に完全に合う。"},{"n":2,"t":"up in the air","ja":"未定・宙ぶらりんの","ok":false,"reason":"まだ決まっていないの意味。はっきりNoと言っている場面なので未定は合わない。"},{"n":3,"t":"in a good temper","ja":"機嫌がいい","ok":false,"reason":"機嫌がいいの意味。誕生日プレゼントの断りの文脈には合わない。"},{"n":4,"t":"none of your business","ja":"あなたには関係ない・余計なお世話","ok":false,"reason":"余計なお世話の意味。娘の質問を無視するような言い方で、説明している文脈には合わない。"}],"point":"out of the question は「論外・問題外」。先月買ったばかりで新しいスマホはありえないという文脈に合う。up in the air（未定）・in a good temper（機嫌がいい）は意味が異なる。"},"q1-14":{"correct":1,"choices":[{"n":1,"t":"make up my mind","ja":"決心する・決める","ok":true,"reason":"正解。決心できないという意味。どのクラブも面白そうで決められないという文脈に完全に合う。"},{"n":2,"t":"get off my back","ja":"うるさくしないで・放っておいて","ok":false,"reason":"うるさくしないでという意味。クラブ選びに悩む文脈には合わない。"},{"n":3,"t":"go on a voyage","ja":"航海に出る","ok":false,"reason":"航海に出るの意味。クラブ選びとは全く関係がない。"},{"n":4,"t":"put out the light","ja":"電気を消す","ok":false,"reason":"電気を消すの意味。クラブ選びの文脈には合わない。"}],"point":"make up one's mind は「決心する」。どのクラブも面白そうで決められないという文脈に合う。get off my back（うるさくしないで）・go on a voyage（航海に出る）は文脈に合わない。"},"q1-15":{"correct":2,"choices":[{"n":1,"t":"make a start on","ja":"〜に取りかかる","ok":false,"reason":"〜に取りかかる・始めるの意味。スマホを始めるは不自然。"},{"n":2,"t":"take a look at","ja":"〜をちょっと見てみる","ok":true,"reason":"正解。複数の機種を見比べてから購入するという文脈に合う。"},{"n":3,"t":"do a favor for","ja":"〜のために親切にする","ok":false,"reason":"〜に親切にするの意味。スマホを親切にするは意味が通らない。"},{"n":4,"t":"have a word with","ja":"〜と少し話す","ok":false,"reason":"〜とちょっと話すの意味。人に使う表現でスマホには使わない。"}],"point":"take a look at は「〜をちょっと見てみる」。複数の機種を見比べてから購入するという文脈に合う。do a favor for・have a word with は文脈に合わない。"},"q2-16":{"correct":1,"choices":[{"n":1,"t":"I can take you there","ja":"そこまで案内できますよ","ok":true,"reason":"正解。同じ方向に行くので連れて行けるという流れ。Please follow me. も自然につながる。"},{"n":2,"t":"I can take the wrong way","ja":"私なら間違った道を行けます","ok":false,"reason":"間違った道を行くでは相手の役に立たない。文脈上ありえない申し出。"},{"n":3,"t":"you won't make it","ja":"あなたは間に合わないでしょう","ok":false,"reason":"間に合わないは否定的な内容でPlease follow me.と矛盾する。"},{"n":4,"t":"you won't see me again","ja":"もう私には会えないでしょう","ok":false,"reason":"全く文脈に合わない唐突な発言。道案内の場面には不自然。"}],"point":"同じ方向に行くのだから I can take you there（連れて行けます）が自然。Please follow me.（ついてきてください）が続くことからも確認できる。"},"q2-17":{"correct":3,"choices":[{"n":1,"t":"the closest to the supermarket","ja":"スーパーに一番近い","ok":false,"reason":"スーパーに近いのはLucasが行く別のジム。新しいジムについての説明として矛盾する。"},{"n":2,"t":"only about one year old","ja":"まだ約1年しかたっていない","ok":false,"reason":"just opened last month（先月オープンしたばかり）とあるので1年は矛盾する。"},{"n":3,"t":"about five minutes from your house","ja":"あなたの家から約5分のところ","ok":true,"reason":"正解。あなたの家に近い（closer to your place）という前文と一致する。距離感を具体的に説明している。"},{"n":4,"t":"too noisy and small for real training","ja":"本格的なトレーニングには騒がしすぎて狭い","ok":false,"reason":"people say its good（評判がいい）と矛盾する否定的な内容。"}],"point":"「あなたの家に近い（closer to your place）」という文脈から、about five minutes from your house が正解。just opened last month とあるのでone year oldは矛盾する。"},"q2-18":{"correct":2,"choices":[{"n":1,"t":"how you learned about our programs","ja":"どのようにプログラムをお知りになりましたか","ok":false,"reason":"Aがすぐ具体的なプログラム名を答えているので、参加動機を聞く質問への返答としては不自然。"},{"n":2,"t":"which program you're interested in","ja":"どのプログラムに興味がありますか","ok":true,"reason":"正解。直後でAが具体的なプログラム名を答えており、自然な流れ。"},{"n":3,"t":"what kinds of books you enjoy reading","ja":"どんな種類の本を読むのが好きですか","ok":false,"reason":"申込み場面での質問としては個人的すぎて不自然。"},{"n":4,"t":"when your summer vacation finishes","ja":"夏休みはいつ終わりますか","ok":false,"reason":"申込み開始の場面でこの質問は唐突。"}],"point":"空欄の直後でAさんが具体的なプログラム名を答えていることがヒント。どのプログラムに興味がありますかと聞かれたから答えている流れ。"},"q2-19":{"correct":1,"choices":[{"n":1,"t":"usually eat at the cafeteria","ja":"普段は学食で食べている","ok":true,"reason":"正解。なぜ自分でお弁当が必要なのという疑問が自然に出てくるのは普段は学食で食べているから。学食が修理で閉まるという後文とも一致する。"},{"n":2,"t":"always make your own lunch","ja":"いつも自分でお弁当を作っている","ok":false,"reason":"いつも自分で作っているのに、なぜ持参が必要かでは質問自体が成り立たない。矛盾する。"},{"n":3,"t":"didn't wake up early enough","ja":"十分早く起きられなかった","ok":false,"reason":"早く起きられなかったのに、なぜ持参が必要かは文脈として繋がらない。"},{"n":4,"t":"don't have school today","ja":"今日は学校がない","ok":false,"reason":"学校がないのに、なぜ持参が必要かは矛盾する。"}],"point":"なぜ自分でお弁当が必要なのという疑問が自然に出てくるのは普段は学食で食べているから。学食が修理のため閉まるという後文とも一致する。"},"q2-20":{"correct":3,"choices":[{"n":1,"t":"ask your teacher to make it","ja":"先生にお弁当を作ってもらう","ok":false,"reason":"先生にお弁当を作ってもらうという現実的でない選択肢。Aの返答（パン屋に寄る）とも合わない。"},{"n":2,"t":"eat at the school cafeteria","ja":"学食で食べる","ok":false,"reason":"学食が修理中で閉まっていることは直前の会話で明らかになっている。矛盾する選択肢。"},{"n":3,"t":"buy something on your way","ja":"途中で何か買う","ok":true,"reason":"正解。お弁当を作る時間がないお父さんが提案。AのOK. I'll stop by my favorite bakery.という返答と完全に一致する。"},{"n":4,"t":"make something by yourself","ja":"自分で何か作る","ok":false,"reason":"Aはパン屋に寄ると答えており、自分で作る返答ではない。"}],"point":"お弁当を作る時間がないお父さんが今日は何か買えるかと聞いている。Aの返答がパン屋に寄るなので、buy something on your way（途中で何か買う）が正解。"},"q3-21":{"correct":4,"choices":[{"n":1,"t":"no room for beginners in the club","ja":"クラブに初心者の居場所はない","ok":false,"reason":"MiaはNanaを励ましているのに居場所がないでは全く逆の内容になる。"},{"n":2,"t":"only one way to become a good artist","ja":"上手な芸術家になる方法は一つだけ","ok":false,"reason":"励ましのアドバイスとしては限定的すぎる。後文の入って練習すれば上達するという前向きな内容と合わない。"},{"n":3,"t":"something more difficult than she had imagined","ja":"想像より難しいものがある","ok":false,"reason":"難しいという否定的な情報を伝えても励みにならない。後文でclub入部を促す流れに合わない。"},{"n":4,"t":"nothing wrong with not being good at art yet","ja":"まだ絵が上手くなくても全く問題ない","ok":true,"reason":"正解。まだ上手くなくても大丈夫という励ましで、直後の入って練習すれば上達すると自然につながる。"}],"point":"MiaはNanaにまだ上手くなくても問題ないと励ます。直後の入って一緒に練習すれば上達するがヒント。選択肢4だけが励ます内容になっている。"},"q3-22":{"correct":1,"choices":[{"n":1,"t":"her drawing might not be very good","ja":"自分の絵はあまり上手くないかもしれない","ok":true,"reason":"正解。Still（それでも）という逆接の直前に不安な気持ちが必要。鉛筆を手に取って描き始めたという後文と自然につながる。"},{"n":2,"t":"her classmates were all better than her","ja":"クラスメートは全員自分より上手い","ok":false,"reason":"他の生徒との比較の話は本文に出てこない。Stillの前の内容として文脈に合わない。"},{"n":3,"t":"she could not continue her speech","ja":"スピーチを続けられなかった","ok":false,"reason":"本文はスピーチではなく絵を描く場面。全く関係のない内容。"},{"n":4,"t":"she had forgotten how to hold a pencil","ja":"鉛筆の持ち方を忘れていた","ok":false,"reason":"直後で鉛筆を手に取って描いたとあるので、持ち方を忘れていたという内容とは矛盾する。"}],"point":"Still（それでも）という逆接の接続詞が直後にある。Nanaは不安を感じながらも鉛筆を手に取った、という流れ。Stillの前には不安な気持ちが入る。"},"q4-23":{"correct":3,"choices":[{"n":1,"t":"To ask Chloe to collect money from their classmates.","ja":"クラスメートからお金を集めるよう頼むため","ok":false,"reason":"お金の回収はSophie自身が行う予定。Chloeへの依頼ではない。"},{"n":2,"t":"To tell Chloe that Mr. Evans is getting a new job.","ja":"エバンス先生が新しい仕事に就くと伝えるため","ok":false,"reason":"本文には新しい仕事の情報はない。先生が学校を去るとだけ書いてある。"},{"n":3,"t":"To invite Chloe to help plan a farewell party.","ja":"送別会の計画を手伝うよう誘うため","ok":true,"reason":"正解。メール全体を通じてSophieはChloeに送別会の企画への協力を求めている。"},{"n":4,"t":"To ask Chloe to choose the date for the party.","ja":"パーティーの日程を選ぶよう頼むため","ok":false,"reason":"日程（3月28日）はすでにSophieが決めている。Chloeに選ばせているわけではない。"}],"point":"第1・2段落：Sophieはお別れパーティーを企画しており、Chloeに協力をお願いするためにメールを書いている。"},"q4-24":{"correct":2,"choices":[{"n":1,"t":"A gift card for a local bookstore.","ja":"地元の本屋のギフトカード","ok":false,"reason":"ギフトカードではなく本そのものを贈る提案。本文にgift cardという言葉は出てこない。"},{"n":2,"t":"A set of books for him to enjoy.","ja":"彼が楽しめる本のセット","ok":true,"reason":"正解。第2段落「he enjoys reading, so I was thinking about getting him a set of books」が直接の根拠。"},{"n":3,"t":"A certificate from all the students.","ja":"全生徒からの証明書・表彰状","ok":false,"reason":"本文に証明書の話は一切出てこない。"},{"n":4,"t":"A framed photo of the whole class.","ja":"クラス全員のフレーム入り写真","ok":false,"reason":"本文に写真の話は出てこない。プレゼントの候補として挙げられていない。"}],"point":"第2段落：he enjoys reading, so I was thinking about getting him a set of books が直接の根拠。gift card ではなく本そのものを贈る提案。"},"q4-25":{"correct":4,"choices":[{"n":1,"t":"To collect money from every student.","ja":"全生徒からお金を集める","ok":false,"reason":"お金の回収はSophie自身が行う。I would like to collect とあり、Chloeへの依頼ではない。"},{"n":2,"t":"To book the school gym for the party.","ja":"パーティーのために体育館を予約する","ok":false,"reason":"体育館の予約についての依頼は本文にない。Sophieはすでに場所を決めている。"},{"n":3,"t":"To contact Mr. Evans about the plan.","ja":"先生に計画を伝える","ok":false,"reason":"本文にはエバンス先生への連絡の依頼はない。"},{"n":4,"t":"To give a short speech at the party.","ja":"パーティーでスピーチをする","ok":true,"reason":"正解。第3段落「I still need someone to give a short speech … I was hoping you might be willing to do it.」が根拠。"}],"point":"第3段落：I still need someone to give a short speech … I was hoping you might be willing to do it. SophieはChloeにスピーチを依頼している。"},"q4-26":{"correct":3,"choices":[{"n":1,"t":"It takes place only once every few years.","ja":"数年に一度しか行われない","ok":false,"reason":"本文ではEvery year（毎年）と明記されている。数年に一度は誤り。"},{"n":2,"t":"The butterflies travel from Mexico to Canada.","ja":"メキシコからカナダへ移動する","ok":false,"reason":"方向が逆。本文ではfrom Canada and the United States all the way to Mexicoとある。"},{"n":3,"t":"It is among the longest insect migrations in the world.","ja":"世界でも最長クラスの昆虫の渡りの一つ","ok":true,"reason":"正解。第1段落「one of the longest migrations of any insect in the world」が直接の根拠。"},{"n":4,"t":"Only a small number of butterflies make the journey.","ja":"ごく少数の蝶だけが旅をする","ok":false,"reason":"本文ではmillions of monarch butterflies（何百万もの蝶）と大規模な移動であると説明している。"}],"point":"第1段落：one of the longest migrations of any insect in the world が根拠。方向はカナダ・米国からメキシコ（選択肢2は逆）。毎年行われ、数百万匹が参加する。"},"q4-27":{"correct":1,"choices":[{"n":1,"t":"They use the position of the sun as a guide.","ja":"太陽の位置を道しるべとして使う","ok":true,"reason":"正解。第2段落「they use the position of the sun as a kind of compass」が直接の根拠。"},{"n":2,"t":"They follow rivers and mountains on the ground.","ja":"地上の川や山を目印に進む","ok":false,"reason":"本文に地形を目印にするという説明はない。太陽を使うという方法が述べられている。"},{"n":3,"t":"They communicate with each other to stay on track.","ja":"仲間と連絡を取り合って進路を保つ","ok":false,"reason":"本文にコミュニケーションで方向を決めるという説明はない。"},{"n":4,"t":"They remember the route from the previous year.","ja":"前年のルートを記憶している","ok":false,"reason":"本文に記憶によるナビゲーションの説明はない。太陽の位置を感知する仕組みが説明されている。"}],"point":"第2段落：they use the position of the sun as a kind of compass が根拠。曇りの日も目の特殊な細胞で太陽の位置を感知できる点も重要。"},"q4-28":{"correct":2,"choices":[{"n":1,"t":"To find food in the mountain forests.","ja":"山の森で食べ物を探すため","ok":false,"reason":"本文に食料を探すという説明はない。集まる理由は体温維持と述べられている。"},{"n":2,"t":"To stay warm during the cold winter.","ja":"寒い冬の間、体を温めるため","ok":true,"reason":"正解。第3段落「Millions of butterflies rest on the branches together, which keeps them warm during the cold winter months.」が根拠。"},{"n":3,"t":"To hide from animals that want to eat them.","ja":"自分たちを食べようとする動物から隠れるため","ok":false,"reason":"本文に天敵から隠れるという説明はない。集まる目的は体温維持。"},{"n":4,"t":"To wait for the rain season to end.","ja":"雨季が終わるのを待つため","ok":false,"reason":"本文に雨季の話は出てこない。冬の寒さへの対処として集まると説明されている。"}],"point":"第3段落：Millions of butterflies rest on the branches together, which keeps them warm during the cold winter months. 集団で木に集まることで体温を保つのが目的。"},"q4-29":{"correct":4,"choices":[{"n":1,"t":"They are building new forests in Canada.","ja":"カナダに新しい森を作っている","ok":false,"reason":"本文に森を建設するという活動は述べられていない。公園や庭にミルクウィードを植えると書かれている。"},{"n":2,"t":"They are asking tourists not to visit Mexico.","ja":"観光客にメキシコへの訪問を控えるよう求めている","ok":false,"reason":"本文に観光客の訪問を制限するという説明はない。"},{"n":3,"t":"They are studying the butterflies' migration routes.","ja":"蝶の渡りのルートを研究している","ok":false,"reason":"本文の第4段落に研究の話はない。植栽と化学物質削減が保護活動として紹介されている。"},{"n":4,"t":"They are planting milkweed and reducing harmful chemicals.","ja":"ミルクウィードを植え、有害な化学物質を減らしている","ok":true,"reason":"正解。第4段落「planting more milkweed … reduce the use of chemicals」の2点が根拠。"}],"point":"第4段落：They are planting more milkweed … and encouraging people to reduce the use of chemicals の2点が根拠。ミルクウィードの植栽と化学物質削減の推奨が保護活動の内容。"}};
-
-// =========================================================
-// ★ リスニング問題データ（全30問）
-// =========================================================
-const LIS_Q = [
-  // --- 第1部：会話の応答文選択（No.1〜10）A→B→A 3行、3択 ---
-  {part:1,no:1,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No01.mp3",audioLabel:"No. 1 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Excuse me. Could you tell me where the nearest post office is?\nF: Sure. Go straight down this street and turn left at the traffic light.\nM: Thank you. Is it far from here?",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["No, it's only about a five-minute walk.","I don't know where the traffic light is.","You should take the bus to get there."],answer:0,
-   explanation:"「<ruby>遠<rt>とお</rt></ruby>いですか」という<ruby>質問<rt>しつもん</rt></ruby>に「<ruby>歩<rt>ある</rt></ruby>いて5<ruby>分<rt>ふん</rt></ruby>ほどです」と<ruby>答<rt>こた</rt></ruby>えるのが<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>です。"},
-  {part:1,no:2,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No02.mp3",audioLabel:"No. 2 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Hi, Jake. Did you finish the science homework?\nM: Not yet. I've been busy with baseball practice all week.\nF: The deadline is tomorrow morning. Are you going to be OK?",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["Yes, I'll stay up late tonight and finish it.","Actually, I handed it in last week.","I didn't know there was any homework."],answer:0,
-   explanation:"<ruby>締<rt>し</rt></ruby>め<ruby>切<rt>き</rt></ruby>りが<ruby>明日<rt>あした</rt></ruby>と<ruby>聞<rt>き</rt></ruby>いて「<ruby>今夜<rt>こんや</rt></ruby><ruby>遅<rt>おそ</rt></ruby>くまで<ruby>頑張<rt>がんば</rt></ruby>って<ruby>終<rt>お</rt></ruby>わらせる」が<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>な<ruby>返答<rt>へんとう</rt></ruby>です。"},
-  {part:1,no:3,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No03.mp3",audioLabel:"No. 3 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Honey, have you seen my glasses? I can't find them anywhere.\nF: Did you check the kitchen table? You usually leave them there.\nM: I already looked there. They weren't on the table.",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["Maybe you left them in the car.","I think you should get new ones.","I wear glasses, too."],answer:0,
-   explanation:"テーブルになかったと<ruby>聞<rt>き</rt></ruby>いて「<ruby>車<rt>くるま</rt></ruby>に<ruby>置<rt>お</rt></ruby>いてきたかも」が<ruby>次<rt>つぎ</rt></ruby>の<ruby>探<rt>さが</rt></ruby>す<ruby>場所<rt>ばしょ</rt></ruby>として<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>です。"},
-  {part:1,no:4,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No04.mp3",audioLabel:"No. 4 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Excuse me. I'd like to return this sweater. I bought it last Saturday.\nM: Sure. Do you have your receipt with you?\nF: Oh no. I think I left it at home.",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["I'm sorry, but we need a receipt to process returns.","No problem. You can pay by cash or card.","The sweater looks great on you."],answer:0,
-   explanation:"レシートを<ruby>忘<rt>わす</rt></ruby>れたと<ruby>聞<rt>き</rt></ruby>いて「<ruby>返品<rt>へんぴん</rt></ruby>にはレシートが<ruby>必要<rt>ひつよう</rt></ruby>です」が<ruby>店員<rt>てんいん</rt></ruby>として<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>な<ruby>返答<rt>へんとう</rt></ruby>です。"},
-  {part:1,no:5,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No05.mp3",audioLabel:"No. 5 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Lucy, the gym has a new yoga class starting next month.\nF: Really? What day is it on?\nM: Every Tuesday and Thursday evening from seven to eight.",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["That sounds perfect. I'm free on both days.","I already signed up for the swimming class.","The gym is too far from my house."],answer:0,
-   explanation:"<ruby>曜日<rt>ようび</rt></ruby>と<ruby>時間<rt>じかん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>いて「<ruby>両日<rt>りょうじつ</rt></ruby>とも<ruby>空<rt>あ</rt></ruby>いているのでちょうどいい」が<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>な<ruby>喜<rt>よろこ</rt></ruby>びの<ruby>応答<rt>おうとう</rt></ruby>です。"},
-  {part:1,no:6,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No06.mp3",audioLabel:"No. 6 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Dad, can I borrow the car this afternoon?\nM: What do you need it for, Amy?\nF: I need to drive my friend to the airport. Her flight leaves at four.",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["OK, but make sure you're back by dinner.","I already drove to the airport this morning.","Why don't you take the train instead?"],answer:0,
-   explanation:"<ruby>空港<rt>くうこう</rt></ruby>まで<ruby>送<rt>おく</rt></ruby>ると<ruby>聞<rt>き</rt></ruby>いて「いいよ、<ruby>夕食<rt>ゆうしょく</rt></ruby>までに<ruby>帰<rt>かえ</rt></ruby>っておいで」が<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>な<ruby>親<rt>おや</rt></ruby>の<ruby>返答<rt>へんとう</rt></ruby>です。"},
-  {part:1,no:7,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No07.mp3",audioLabel:"No. 7 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Hi, this is Kevin calling. Is Dr. Patel available?\nF: I'm afraid she's with a patient right now. Can I take a message?\nM: Yes, please. Could you ask her to call me back when she's free?",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["Of course. May I have your phone number?","The doctor is not in today.","You can come in at any time."],answer:0,
-   explanation:"<ruby>折<rt>お</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>し<ruby>電話<rt>でんわ</rt></ruby>を<ruby>頼<rt>たの</rt></ruby>まれた<ruby>受付<rt>うけつけ</rt></ruby>が「<ruby>電話番号<rt>でんわばんごう</rt></ruby>を<ruby>教<rt>おし</rt></ruby>えていただけますか」と<ruby>聞<rt>き</rt></ruby>くのが<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>です。"},
-  {part:1,no:8,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No08.mp3",audioLabel:"No. 8 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Tom, you look tired. Did you sleep well last night?\nM: Not really. My neighbors were having a loud party until midnight.\nF: Oh, that's terrible. Did you say anything to them?",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["No, I was too tired to get up.","I love going to parties.","Yes, the music was really good."],answer:0,
-   explanation:"「<ruby>何<rt>なに</rt></ruby>か<ruby>言<rt>い</rt></ruby>いましたか」に<ruby>対<rt>たい</rt></ruby>して「<ruby>疲<rt>つか</rt></ruby>れすぎて<ruby>起<rt>お</rt></ruby>き<ruby>上<rt>あ</rt></ruby>がれなかった」が<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>な<ruby>返答<rt>へんとう</rt></ruby>です。"},
-  {part:1,no:9,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No09.mp3",audioLabel:"No. 9 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Excuse me. Is this seat taken?\nF: No, go ahead. I'm saving this one for my friend, though.\nM: Oh, which one is your friend sitting in?",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["She's sitting in the seat next to me.","My friend is very tall.","I don't have any friends here."],answer:0,
-   explanation:"<ruby>友人<rt>ゆうじん</rt></ruby>の<ruby>席<rt>せき</rt></ruby>を<ruby>聞<rt>き</rt></ruby>かれて「<ruby>隣<rt>となり</rt></ruby>の<ruby>席<rt>せき</rt></ruby>に<ruby>座<rt>すわ</rt></ruby>っています」が<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>な<ruby>答<rt>こた</rt></ruby>えです。"},
-  {part:1,no:10,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P1_No10.mp3",audioLabel:"No. 10 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Hi. I'm calling about the apartment you have for rent.\nM: Yes, of course. It's a two-bedroom apartment on the third floor.\nF: Sounds good. Is it possible to see it this weekend?",
-   question:"<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
-   choices:["Sure. How about Saturday afternoon?","The apartment was rented last week.","I'm afraid I don't have any information."],answer:0,
-   explanation:"<ruby>内見<rt>ないけん</rt></ruby>を<ruby>希望<rt>きぼう</rt></ruby>されて「<ruby>土曜日<rt>どようび</rt></ruby>の<ruby>午後<rt>ごご</rt></ruby>はいかがですか」が<ruby>最<rt>もっと</rt></ruby>も<ruby>自然<rt>しぜん</rt></ruby>な<ruby>返答<rt>へんとう</rt></ruby>です。"},
-
-  // --- 第2部：会話内容の質問（No.11〜20）4行会話、4択 ---
-  {part:2,no:11,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No11.mp3",audioLabel:"No. 11 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Mom, have you seen my soccer shoes? I can't find them anywhere.\nF: Did you check the garage? I think I saw them near the door.\nM: Oh, you're right. They were behind the bike. Thanks, Mom.\nF: Don't forget to clean them before the game tomorrow.",
-   question:"Question: What will the boy do before tomorrow's game?",
-   choices:["Buy new soccer shoes.","Look for his shoes in the garage.","Clean his soccer shoes.","Ask his mother to drive him."],answer:2,
-   explanation:"お<ruby>母<rt>かあ</rt></ruby>さんが「<ruby>明日<rt>あした</rt></ruby>の<ruby>試合<rt>しあい</rt></ruby>の<ruby>前<rt>まえ</rt></ruby>に<ruby>洗<rt>あら</rt></ruby>っておいて」と<ruby>言<rt>い</rt></ruby>っているので、3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:2,no:12,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No12.mp3",audioLabel:"No. 12 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Excuse me. I ordered a chicken sandwich, but I got a tuna sandwich.\nM: I'm so sorry about that. I'll bring you the right one right away.\nF: Thank you. Also, could I get some more water, please?\nM: Of course. I'll be right back.",
-   question:"Question: Why did the woman talk to the man?",
-   choices:["She wanted to order more food.","She received the wrong sandwich.","She needed to pay the bill.","She wanted to change her seat."],answer:1,
-   explanation:"<ruby>女性<rt>じょせい</rt></ruby>はチキンサンドを<ruby>注文<rt>ちゅうもん</rt></ruby>したのにツナサンドが<ruby>来<rt>き</rt></ruby>たと<ruby>伝<rt>つた</rt></ruby>えているので、2<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:2,no:13,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No13.mp3",audioLabel:"No. 13 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Hey Sarah, I heard you went to the new art museum last weekend.\nF: Yes! It was amazing. There was a special exhibition of Japanese paintings.\nM: That sounds interesting. How long will the exhibition be on?\nF: Until the end of next month. You should definitely go.",
-   question:"Question: What does the woman say about the exhibition?",
-   choices:["It ended last week.","It is about European paintings.","It will continue until the end of next month.","It is only open on weekends."],answer:2,
-   explanation:"「<ruby>来月末<rt>らいげつまつ</rt></ruby>まで」と<ruby>言<rt>い</rt></ruby>っているので3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:2,no:14,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No14.mp3",audioLabel:"No. 14 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Brian, are you coming to Kevin's birthday party on Saturday?\nM: I'd love to, but I have a piano recital that afternoon.\nF: Oh, that's too bad. What time does your recital finish?\nM: Around four o'clock, so I might be able to stop by after.",
-   question:"Question: Why can't Brian go to the party in the afternoon?",
-   choices:["He has to work that day.","He has a piano recital.","He forgot about the party.","He is visiting his parents."],answer:1,
-   explanation:"「<ruby>午後<rt>ごご</rt></ruby>にピアノの<ruby>発表会<rt>はっぴょうかい</rt></ruby>がある」と<ruby>言<rt>い</rt></ruby>っているので2<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:2,no:15,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No15.mp3",audioLabel:"No. 15 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Good morning. I'm here to pick up a package. My name is David Green.\nF: Let me check. Yes, I have it here. Could I see your ID, please?\nM: Sure. Here's my driver's license.\nF: Thank you. Please sign here and the package is yours.",
-   question:"Question: What does the woman ask the man to show her?",
-   choices:["His address.","His credit card.","His ID.","His phone number."],answer:2,
-   explanation:"「IDを<ruby>見<rt>み</rt></ruby>せてください」と<ruby>言<rt>い</rt></ruby>っているので3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:2,no:16,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No16.mp3",audioLabel:"No. 16 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Mark, did you hear that the school library is getting new computers?\nM: Yes! I heard they're also adding more study rooms.\nF: That's great. The library gets really crowded during exam week.\nM: I know. I'll definitely use the new study rooms when they open.",
-   question:"Question: What does Mark say he will do when the new rooms open?",
-   choices:["Buy new computer equipment.","Use the new study rooms.","Spend more time at the library.","Help other students with their exams."],answer:1,
-   explanation:"「<ruby>新<rt>あたら</rt></ruby>しい<ruby>自習室<rt>じしゅうしつ</rt></ruby>ができたら<ruby>絶対<rt>ぜったい</rt></ruby><ruby>使<rt>つか</rt></ruby>う」と<ruby>言<rt>い</rt></ruby>っているので2<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:2,no:17,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No17.mp3",audioLabel:"No. 17 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Hi, I'd like to sign up for the cooking class that starts next month.\nF: Sure. We have classes on Monday evenings and Saturday mornings.\nM: I work on Monday evenings, so Saturday mornings would be better for me.\nF: Great. The class fee is fifty dollars for four sessions.",
-   question:"Question: When will the man take the cooking class?",
-   choices:["On Monday evenings.","On Saturday mornings.","On Wednesday afternoons.","On Sunday evenings."],answer:1,
-   explanation:"「<ruby>月曜<rt>げつよう</rt></ruby><ruby>夜<rt>よる</rt></ruby>は<ruby>仕事<rt>しごと</rt></ruby>なので<ruby>土曜<rt>どよう</rt></ruby>の<ruby>朝<rt>あさ</rt></ruby>がいい」と<ruby>言<rt>い</rt></ruby>っているので2<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:2,no:18,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No18.mp3",audioLabel:"No. 18 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Daniel, I'm thinking of getting a dog. Any advice?\nM: Sure. First, think about how much time you can spend with it every day.\nF: I'm at home most of the time, so that should be fine.\nM: Then you should also consider the size of your apartment.",
-   question:"Question: What does Daniel say the woman should think about first?",
-   choices:["The cost of dog food.","The size of the dog.","How much time she can spend with the dog.","Where she can buy a dog."],answer:2,
-   explanation:"「まず<ruby>毎日<rt>まいにち</rt></ruby>どれだけ<ruby>時間<rt>じかん</rt></ruby>を<ruby>使<rt>つか</rt></ruby>えるか<ruby>考<rt>かんが</rt></ruby>えて」と<ruby>言<rt>い</rt></ruby>っているので3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:2,no:19,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No19.mp3",audioLabel:"No. 19 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"M: Hi, Linda. Are you free this Sunday? A group of us are going hiking.\nF: I'd love to, but I promised my sister I'd help her move to her new apartment.\nM: That's too bad. Maybe next time.\nF: Yes, definitely. Send me the details and I'll come next time for sure.",
-   question:"Question: Why can't Linda go hiking on Sunday?",
-   choices:["She has to work on Sunday.","She is going on a trip.","She is helping her sister move.","She doesn't like hiking."],answer:2,
-   explanation:"「<ruby>妹<rt>いもうと</rt></ruby>の<ruby>引<rt>ひ</rt></ruby>っ<ruby>越<rt>こ</rt></ruby>しを<ruby>手伝<rt>てつだ</rt></ruby>う<ruby>約束<rt>やくそく</rt></ruby>をしている」と<ruby>言<rt>い</rt></ruby>っているので3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:2,no:20,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P2_No20.mp3",audioLabel:"No. 20 <ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"F: Excuse me. I found this wallet near the entrance. I think someone dropped it.\nM: Thank you for bringing it in. I'll check if anyone has reported it missing.\nF: There's some cash and a library card inside, but no name.\nM: OK. We'll keep it here at the front desk. The owner can pick it up anytime.",
-   question:"Question: What did the woman find near the entrance?",
-   choices:["A library card.","A lost bag.","A wallet.","Some cash."],answer:2,
-   explanation:"「<ruby>入口<rt>いりぐち</rt></ruby><ruby>近く<rt>ちかく</rt></ruby>で<ruby>財布<rt>さいふ</rt></ruby>を<ruby>見<rt>み</rt></ruby>つけました」と<ruby>言<rt>い</rt></ruby>っているので3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-
-  // --- 第3部：文の内容の質問（No.21〜30）英文パッセージ、4択 ---
-  {part:3,no:21,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No21.mp3",audioLabel:"No. 21 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"Good morning, everyone! Welcome to Green Valley Nature Park. The park gates are now open. Today, we have a bird-watching tour at nine a.m. and a guided nature walk at eleven a.m. Please note that the picnic area is closed today for repairs. Food is available at the main café near the entrance. We hope you enjoy your visit.",
-   question:"Question: Where is this announcement being made?",
-   choices:["At a shopping mall.","At a nature park.","At a school.","At a sports stadium."],answer:1,
-   explanation:"Green Valley Nature Parkへの<ruby>案内<rt>あんない</rt></ruby>アナウンスなので2<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:3,no:22,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No22.mp3",audioLabel:"No. 22 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"Attention, all students. The school swimming pool will be closed next Monday and Tuesday for cleaning. Students who have swimming club practice on those days should use the community pool on Oak Street instead. The school pool will reopen on Wednesday morning. Thank you for your understanding.",
-   question:"Question: What is one thing the speaker says?",
-   choices:["The swimming club has been cancelled.","The community pool is closed next week.","Students should use a different pool on Monday and Tuesday.","The school pool will be closed for one week."],answer:2,
-   explanation:"<ruby>月曜<rt>げつよう</rt></ruby>・<ruby>火曜<rt>かよう</rt></ruby>は<ruby>地域<rt>ちいき</rt></ruby>のプールを<ruby>使<rt>つか</rt></ruby>うよう<ruby>案内<rt>あんない</rt></ruby>しているので3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:3,no:23,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No23.mp3",audioLabel:"No. 23 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"Lisa is a university student who loves animals. She volunteers at a local animal shelter every Saturday morning. She helps feed the animals and clean their cages. Lisa hopes to become a veterinarian after she graduates, and she feels that her work at the shelter is great experience for her future career.",
-   question:"Question: Why does Lisa volunteer at the animal shelter?",
-   choices:["She wants to earn extra money.","Her teacher told her to do it.","She thinks it is good experience for her future.","She wants to adopt a pet."],answer:2,
-   explanation:"「<ruby>将来<rt>しょうらい</rt></ruby>のキャリアに<ruby>良<rt>よ</rt></ruby>い<ruby>経験<rt>けいけん</rt></ruby>になると<ruby>感<rt>かん</rt></ruby>じている」と<ruby>述<rt>の</rt></ruby>べているので3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:3,no:24,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No24.mp3",audioLabel:"No. 24 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"Michael used to drive to work every day, but last spring he decided to start cycling instead. It takes a little longer, but he enjoys the fresh air and exercise. He has also saved a lot of money on gas. His friends were surprised at first, but now three of them have started cycling to work, too.",
-   question:"Question: What is one benefit Michael has had from cycling to work?",
-   choices:["He arrives at work faster.","He has saved money on gas.","He has made new friends.","He gets more sleep."],answer:1,
-   explanation:"「ガソリン<ruby>代<rt>だい</rt></ruby>をたくさん<ruby>節約<rt>せつやく</rt></ruby>できた」と<ruby>述<rt>の</rt></ruby>べているので2<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:3,no:25,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No25.mp3",audioLabel:"No. 25 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"Honey bees are very important insects. They help plants grow by carrying pollen from one flower to another. This process is called pollination. Without honey bees, many fruits and vegetables would not be able to grow. Scientists are worried because the number of honey bees around the world has been decreasing in recent years.",
-   question:"Question: What is one thing we learn about honey bees?",
-   choices:["They only live in warm countries.","They help plants grow through pollination.","They produce more honey than other insects.","They can live for over ten years."],answer:1,
-   explanation:"「<ruby>受粉<rt>じゅふん</rt></ruby>を<ruby>通<rt>とお</rt></ruby>じて<ruby>植物<rt>しょくぶつ</rt></ruby>の<ruby>成長<rt>せいちょう</rt></ruby>を<ruby>助<rt>たす</rt></ruby>ける」と<ruby>述<rt>の</rt></ruby>べているので2<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:3,no:26,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No26.mp3",audioLabel:"No. 26 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"Good afternoon, and welcome to Riverside Museum. Please note that photography is allowed in most areas of the museum, but flash photography is not permitted near the old paintings. The museum gift shop on the first floor is having a special sale this week. Also, the café on the second floor will close early today at three p.m.",
-   question:"Question: What does the speaker say about photography?",
-   choices:["Photography is not allowed in the museum.","Flash photography is not permitted near old paintings.","Visitors must pay extra to take photos.","Photography is only allowed on the first floor."],answer:1,
-   explanation:"「<ruby>古<rt>ふる</rt></ruby>い<ruby>絵画<rt>かいが</rt></ruby>の<ruby>近く<rt>ちかく</rt></ruby>でのフラッシュ<ruby>撮影<rt>さつえい</rt></ruby>は<ruby>禁止<rt>きんし</rt></ruby>」と<ruby>述<rt>の</rt></ruby>べているので2<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:3,no:27,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No27.mp3",audioLabel:"No. 27 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"The Arctic fox is a small animal that lives in very cold places, such as northern Canada and Russia. It has thick white fur in winter, which helps it stay warm and hide in the snow. In summer, its fur changes to brown or gray to blend in with rocks and plants. Arctic foxes can survive in temperatures as low as minus fifty degrees Celsius.",
-   question:"Question: What is one thing we learn about the Arctic fox?",
-   choices:["It only lives in Canada.","Its fur changes color with the seasons.","It cannot survive in cold weather.","It has black fur in winter."],answer:1,
-   explanation:"「<ruby>夏<rt>なつ</rt></ruby>になると<ruby>毛<rt>け</rt></ruby>の<ruby>色<rt>いろ</rt></ruby>が<ruby>茶色<rt>ちゃいろ</rt></ruby>や<ruby>灰色<rt>はいいろ</rt></ruby>に<ruby>変<rt>か</rt></ruby>わる」と<ruby>述<rt>の</rt></ruby>べているので2<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:3,no:28,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No28.mp3",audioLabel:"No. 28 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"Sophie wanted to learn how to play the guitar, but she could not afford lessons. She decided to search for free tutorial videos online and practiced every day after school. After six months, she could play several songs well. Her parents were so impressed that they bought her a new guitar for her birthday.",
-   question:"Question: How did Sophie learn to play the guitar?",
-   choices:["She took lessons at a music school.","She asked her parents to teach her.","She watched free videos online and practiced.","She learned from a friend at school."],answer:2,
-   explanation:"「<ruby>無料<rt>むりょう</rt></ruby>の<ruby>動画<rt>どうが</rt></ruby>を<ruby>見<rt>み</rt></ruby>て<ruby>毎日<rt>まいにち</rt></ruby><ruby>練習<rt>れんしゅう</rt></ruby>した」と<ruby>述<rt>の</rt></ruby>べているので3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:3,no:29,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No29.mp3",audioLabel:"No. 29 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"Table tennis, also known as ping-pong, is one of the most popular sports in the world. It was first played in England in the 1880s as a form of indoor tennis. Today, millions of people enjoy it both as a casual activity and as a competitive sport. China has been especially successful in international table tennis competitions.",
-   question:"Question: What is one thing we learn about table tennis?",
-   choices:["It was first played in China.","It was invented in the 1980s.","It originally started in England.","It is only popular in Asia."],answer:2,
-   explanation:"「1880<ruby>年代<rt>ねんだい</rt></ruby>にイギリスで<ruby>最初<rt>さいしょ</rt></ruby>に<ruby>行<rt>おこな</rt></ruby>われた」と<ruby>述<rt>の</rt></ruby>べているので3<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-  {part:3,no:30,audioSrc:"https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_P3_No30.mp3",audioLabel:"No. 30 <ruby>英文<rt>えいぶん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く",
-   script:"Kevin wanted to visit his grandmother for her birthday, but he had no money for the train ticket. He asked his older sister if she could lend him some money, but she was also short of cash. In the end, his parents offered to drive him there, and they all spent the afternoon together celebrating.",
-   question:"Question: How did Kevin get to his grandmother's house?",
-   choices:["He took the train.","His sister drove him.","He borrowed money from a friend.","His parents drove him."],answer:3,
-   explanation:"「<ruby>両親<rt>りょうしん</rt></ruby>が<ruby>車<rt>くるま</rt></ruby>で<ruby>連<rt>つ</rt></ruby>れて<ruby>行<rt>い</rt></ruby>ってくれた」と<ruby>述<rt>の</rt></ruby>べているので4<ruby>番<rt>ばん</rt></ruby>が<ruby>正解<rt>せいかい</rt></ruby>です。"},
-];
+// ★ 問題データはGASから取得（getQuestions）
+let QD = {};
+let LIS_Q = [];
+let Q5_MODEL = '';
+let Q5_POINTS = [];
+let Q6_MODEL_YES = '';
+let Q6_MODEL_NO = '';
+let Q6_POINTS = [];
 const PART_LABELS_LIS = {1:"<ruby>第<rt>だい</rt></ruby>1<ruby>部<rt>ぶ</rt></ruby>：<ruby>会話<rt>かいわ</rt></ruby>の<ruby>応答文選択<rt>おうとうぶんせんたく</rt></ruby>",2:"<ruby>第<rt>だい</rt></ruby>2<ruby>部<rt>ぶ</rt></ruby>：<ruby>会話<rt>かいわ</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby>の<ruby>質問<rt>しつもん</rt></ruby>",3:"<ruby>第<rt>だい</rt></ruby>3<ruby>部<rt>ぶ</rt></ruby>：<ruby>文<rt>ぶん</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby>の<ruby>質問<rt>しつもん</rt></ruby>"};
 const PART_DESC_LIS = {
   1:"<ruby>会話<rt>かいわ</rt></ruby>を<ruby>聞<rt>き</rt></ruby>いて、<ruby>最後<rt>さいご</rt></ruby>の<ruby>発言<rt>はつげん</rt></ruby>への<ruby>最<rt>もっと</rt></ruby>も<ruby>適切<rt>てきせつ</rt></ruby>な<ruby>応答<rt>おうとう</rt></ruby>を<ruby>選<rt>えら</rt></ruby>んでください。",
@@ -1395,11 +1248,6 @@ document.addEventListener('input',function(e){
   if(e.target.id==='q5-textarea'){const n=e.target.value.trim().split(/\s+/).filter(w=>w.length>0).length;const el=document.getElementById('q5-wordcount');el.innerHTML='<ruby>語数<rt>ごすう</rt></ruby>：'+n+'<ruby>語<rt>ご</rt></ruby>';el.style.color=(n>=40&&n<=50)?'#0f6e56':(n>50?'#993c1d':'#9b9890');}
   if(e.target.id==='q6-textarea'){const n=e.target.value.trim().split(/\s+/).filter(w=>w.length>0).length;const el=document.getElementById('q6-wordcount');el.innerHTML='<ruby>語数<rt>ごすう</rt></ruby>：'+n+'<ruby>語<rt>ご</rt></ruby>';el.style.color=(n>=50&&n<=60)?'#0f6e56':(n>60?'#993c1d':'#9b9890');}
 });
-const Q5_MODEL=`Hi, Tom!\n\nThank you for your e-mail. The music festival sounds amazing! How many performers were there at the event? Also, what kinds of music were played? I think joining local events is a great way to connect with people in the community.\n\nBest wishes,`;
-const Q5_POINTS=['✅ <strong><ruby>質問<rt>しつもん</rt></ruby>1</strong>：How many performers were there? など、フェスティバルの<ruby>規模<rt>きぼ</rt></ruby>や<ruby>参加者数<rt>さんかしゃすう</rt></ruby>を<ruby>問<rt>と</rt></ruby>う<ruby>具体的<rt>ぐたいてき</rt></ruby>な<ruby>質問<rt>しつもん</rt></ruby>','✅ <strong><ruby>質問<rt>しつもん</rt></ruby>2</strong>：What kinds of music were played? など、<ruby>音楽<rt>おんがく</rt></ruby>の<ruby>種類<rt>しゅるい</rt></ruby>や<ruby>内容<rt>ないよう</rt></ruby>を<ruby>問<rt>と</rt></ruby>う<ruby>具体的<rt>ぐたいてき</rt></ruby>な<ruby>質問<rt>しつもん</rt></ruby>','✅ Tomの<ruby>質問<rt>しつもん</rt></ruby>（<ruby>地域行事<rt>ちいきぎょうじ</rt></ruby>の<ruby>重要性<rt>じゅうようせい</rt></ruby>）に<ruby>答<rt>こた</rt></ruby>えている','✅ 40〜50<ruby>語<rt>ご</rt></ruby>の<ruby>範囲内<rt>はんいない</rt></ruby>に<ruby>収<rt>おさ</rt></ruby>まっている'];
-const Q6_MODEL_YES=`I think it is a good idea for students to study at a library. First, libraries are quiet, so students can concentrate well on their studies. Second, libraries have many books and materials that can help students learn more deeply. For these reasons, I think studying at a library is very helpful.`;
-const Q6_MODEL_NO=`I do not think it is always a good idea for students to study at a library. First, students need to spend time traveling to the library, which can be tiring. Second, some students feel more comfortable studying at home at their own pace. For these reasons, I think studying at home is better for some students.`;
-const Q6_POINTS=['✅ Yes / No の<ruby>立場<rt>たちば</rt></ruby>を<ruby>最初<rt>さいしょ</rt></ruby>にはっきり<ruby>示<rt>しめ</rt></ruby>している','✅ <strong><ruby>理由<rt>りゆう</rt></ruby>1</strong>：First, ... を<ruby>使<rt>つか</rt></ruby>って<ruby>具体的<rt>ぐたいてき</rt></ruby>に<ruby>述<rt>の</rt></ruby>べている','✅ <strong><ruby>理由<rt>りゆう</rt></ruby>2</strong>：Second, ... を<ruby>使<rt>つか</rt></ruby>って<ruby>具体的<rt>ぐたいてき</rt></ruby>に<ruby>述<rt>の</rt></ruby>べている','✅ 50〜60<ruby>語<rt>ご</rt></ruby>の<ruby>範囲内<rt>はんいない</rt></ruby>に<ruby>収<rt>おさ</rt></ruby>まっている','✅ For these reasons などで<ruby>締<rt>し</rt></ruby>めくくっている'];
 
 function checkQ5(){if(submitted.q5)return;const text=document.getElementById('q5-textarea').value.trim();if(!text){alert('返信メールを入力してください。');return;}submitted.q5=true;document.getElementById('q5-submit').disabled=true;scores.q5=1;const n=text.split(/\s+/).filter(w=>w.length>0).length;const inRange=n>=40&&n<=50;let html=`<div class="score-banner ${inRange?'perfect':'partial'}">${inRange?'<ruby>語数<rt>ごすう</rt></ruby>OK！（'+n+'<ruby>語<rt>ご</rt></ruby>）':'<ruby>語数<rt>ごすう</rt></ruby>：'+n+'<ruby>語<rt>ご</rt></ruby>（<ruby>目安<rt>めやす</rt></ruby>：40〜50<ruby>語<rt>ご</rt></ruby>）'}</div>`;html+=`<div class="result-q"><div class="rq-header"><span class="rb rb-ok"><ruby>採点<rt>さいてん</rt></ruby>ポイント</span></div><div style="margin-bottom:.75rem"><p style="font-size:13px;color:#6b6960;margin-bottom:.6rem"><ruby>以下<rt>いか</rt></ruby>のポイントを<ruby>自己<rt>じこ</rt></ruby>チェックしてください：</p>${Q5_POINTS.map(p=>`<p style="font-size:13px;margin-bottom:.4rem">${p}</p>`).join('')}</div><div class="point-box" style="margin-bottom:.75rem">📝 <strong><ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby>例</strong><br><span style="font-size:13px;line-height:1.8;white-space:pre-wrap">${Q5_MODEL}</span></div><div style="font-size:12px;color:#6b6960">※<ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby>はあくまで<ruby>一例<rt>いちれい</rt></ruby>です。</div></div>`;const ra=document.getElementById('q5-result');ra.innerHTML=html;ra.classList.add('show');ra.scrollIntoView({behavior:'smooth',block:'start'});updateScore();saveState();}
 function resetQ5(){submitted.q5=false;scores.q5=0;document.getElementById('q5-submit').disabled=false;document.getElementById('q5-textarea').value='';document.getElementById('q5-wordcount').innerHTML='<ruby>語数<rt>ごすう</rt></ruby>：0<ruby>語<rt>ご</rt></ruby>';document.getElementById('q5-wordcount').style.color='#9b9890';const ra=document.getElementById('q5-result');ra.classList.remove('show');ra.innerHTML='';updateScore();saveState();}
@@ -2287,11 +2135,74 @@ async function doLogin(){
     const adminTab=document.getElementById('nav-tab-admin');
     if(isAdmin && adminTab){
       adminTab.style.display = 'block';
-      // 管理者はアイドルタイムアウト・期限制限を無効化
       window._isAdmin = true;
-      window._adminStudentId = id; // ログイン時のIDを保存
+      window._adminStudentId = id;
     }
-    saveState();
+    // ★ GASから問題データを取得してアプリを初期化
+    fetchQuestions(id);
+  }
+
+  // GASから問題データを取得する関数
+  async function fetchQuestions(studentId) {
+    // ローディング表示
+    const loadingEl = document.getElementById('questions-loading');
+    if(loadingEl) loadingEl.style.display = 'flex';
+    try {
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'text/plain'},
+        body: JSON.stringify({action:'getQuestions', studentId: studentId})
+      });
+      const data = await res.json();
+      if(data.ok) {
+        applyQuestions(data);
+      } else {
+        // fetchが失敗した場合はJSONPにフォールバック
+        fetchQuestionsJSONP(studentId);
+      }
+    } catch(e) {
+      fetchQuestionsJSONP(studentId);
+    }
+  }
+
+  function fetchQuestionsJSONP(studentId) {
+    const cbName = '_getQCb_' + Date.now();
+    const timer = setTimeout(() => {
+      cleanup();
+      alert('問題データの読み込みに失敗しました。ページを再読み込みしてください。');
+    }, 20000);
+    window[cbName] = function(data) {
+      cleanup();
+      if(data.ok) { applyQuestions(data); }
+      else { alert('問題データを取得できませんでした：' + (data.error||'')); }
+    };
+    const script = document.createElement('script');
+    const params = new URLSearchParams({action:'getQuestions', studentId: studentId, callback: cbName});
+    script.src = GAS_URL + '?' + params.toString();
+    script.onerror = () => { cleanup(); alert('通信エラーが発生しました。'); };
+    function cleanup() {
+      clearTimeout(timer); delete window[cbName];
+      if(script.parentNode) script.parentNode.removeChild(script);
+    }
+    document.head.appendChild(script);
+  }
+
+  function applyQuestions(data) {
+    // グローバル変数にデータをセット
+    QD          = data.QD          || {};
+    LIS_Q       = data.LIS_Q       || [];
+    Q5_MODEL    = data.Q5_MODEL    || '';
+    Q5_POINTS   = data.Q5_POINTS   || [];
+    Q6_MODEL_YES = data.Q6_MODEL_YES || '';
+    Q6_MODEL_NO  = data.Q6_MODEL_NO  || '';
+    Q6_POINTS   = data.Q6_POINTS   || [];
+    // ローディング非表示
+    const loadingEl = document.getElementById('questions-loading');
+    if(loadingEl) loadingEl.style.display = 'none';
+    // 問題を描画してから状態復元
+    buildQ1(); buildQ2(); buildQ3(); buildQ4();
+    loadState();
+    updateScore();
   }
   function loginError(msg){
     const err=document.getElementById('login-error');
@@ -3011,7 +2922,8 @@ function submitPhotoQ6(){
   }).catch(()=>{});
 }
 
-buildQ1();buildQ2();buildQ3();buildQ4();loadState();updateScore();
+// buildQ1〜loadState はログイン後にapplyQuestions()内で呼び出すため、ここでは呼ばない
+// buildQ1();buildQ2();buildQ3();buildQ4();loadState();updateScore();
 </script>
 
 <!-- ===== 管理ダッシュボード ===== -->
