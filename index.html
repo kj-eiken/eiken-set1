@@ -1536,8 +1536,17 @@ function lisNext(){
   if(lisIdx<lisRange[1]){
     lisIdx++;renderLisQ();window.scrollTo(0,0);
   } else {
-    // 部の最後 → 解答確認画面へ
-    showLisPartResult();
+    // 第3部の最後（No.30）→ endingアナウンス再生してから結果画面へ
+    const isLastPart=(lisRange[1]===LIS_Q.length-1);
+    if(isLastPart){
+      if(currentAudio){currentAudio.pause();currentAudio=null;}
+      const endingAudio=new Audio('https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_ending.mp3');
+      endingAudio.play().catch(()=>{});
+      endingAudio.onended=()=>{currentAudio=null; showLisPartResult();};
+      currentAudio=endingAudio;
+    } else {
+      showLisPartResult();
+    }
   }
 }
 function lisPrev(){if(lisIdx>lisRange[0]){lisIdx--;renderLisQ();window.scrollTo(0,0);}}
@@ -1630,12 +1639,6 @@ function showLisPartResult(){
 // 全部終了後の全体結果
 function showLisAllResult(){
   lisSubmitted=true;
-  // 終了アナウンス再生
-  if(currentAudio){currentAudio.pause();currentAudio=null;}
-  const endingAudio=new Audio('https://raw.githubusercontent.com/kj-eiken/eiken-audio/main/Set1_ending.mp3');
-  endingAudio.play().catch(()=>{});
-  endingAudio.onended=()=>{currentAudio=null;};
-  currentAudio=endingAudio;
   const result=document.getElementById('lis-result');
   const total=lisScores.p1+lisScores.p2+lisScores.p3;
   lisScores.total=total;
