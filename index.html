@@ -1685,11 +1685,16 @@ function lisPlayAudio(idx,speed){
 
   if(hasDialog){
     // 会話スクリプトを行ごとに分割して男女交互に読み上げ
+    // 第2・3部はscriptの行のみ（選択肢は読まない）。最後にQuestionを追加読み上げ
     const lines=rawScript.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+    // 第2・3部：Questionテキストを末尾に追加（選択肢は含めない）
+    const allLines = (q.part!==1 && q.question)
+      ? [...lines, q.question.replace(/<[^>]+>/g,'')]
+      : lines;
     let lineIdx=0;
     function speakNextLine(){
-      if(lineIdx>=lines.length){onEnd();return;}
-      const line=lines[lineIdx];
+      if(lineIdx>=allLines.length){onEnd();return;}
+      const line=allLines[lineIdx];
       const isMale=line.startsWith('M:');
       const isFemale=line.startsWith('F:');
       const text=line.replace(/^[MF]:\s*/,'');
