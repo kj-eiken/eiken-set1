@@ -2119,13 +2119,28 @@ function printSection(section, mode){
   const targetPage = document.getElementById('page-' + section);
   const resultArea = document.getElementById(section + '-result');
 
-  // 解答・解説モード：未解答なら警告
+  // 解答・解説モード：未解答なら警告、中身が空なら再生成
   if(mode === 'answer'){
     if(!submitted[section]){
       alert('先に「解答する」ボタンを押してから印刷してください。');
       return;
     }
-    // result-area を確実に表示
+    // result-area の中身が空（リロード後など）なら再生成
+    if(resultArea && !resultArea.innerHTML.trim()){
+      if(['q1','q2','q3','q4'].includes(section)){
+        const all = getAllQids(section);
+        const pct = Math.round(scores[section]/all.length*100);
+        const bc = pct===100?'perfect':pct>=60?'partial':'low';
+        const msg = pct===100
+          ? '<ruby>全問<rt>ぜんもん</rt></ruby><ruby>正解<rt>せいかい</rt></ruby>！<ruby>素晴<rt>すば</rt></ruby>らしい！'
+          : scores[section]+'/'+all.length+'<ruby>問<rt>もん</rt></ruby><ruby>正解<rt>せいかい</rt></ruby>。<ruby>解説<rt>かいせつ</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>しよう。';
+        let html = '<div class="score-banner '+bc+'">'+msg+'</div>';
+        all.forEach(qid => {
+          html += resultCardHtml(qid, (sel[section]||{})[qid], getLabel(section, qid));
+        });
+        resultArea.innerHTML = html;
+      }
+    }
     if(resultArea && !resultArea.classList.contains('show')){
       resultArea.classList.add('show');
     }
