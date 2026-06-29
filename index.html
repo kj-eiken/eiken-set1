@@ -1121,7 +1121,13 @@ function ar(text){
   function isAllHira(s){return s.length>0&&[...s].every(isHira);}
   function splitChunks(s){const chunks=[];let cur='',curK=null;for(const c of s){const k=isKanji(c);if(k===curK){cur+=c;}else{if(cur)chunks.push([cur,curK]);cur=c;curK=k;}}if(cur)chunks.push([cur,curK]);return chunks;}
   function buildRuby(word,reading){const wc=splitChunks(word);if(!wc.some(([c,k])=>k))return word;let rc=reading;for(const [chunk,k] of wc){if(!k&&rc.startsWith(chunk)){rc=rc.slice(chunk.length);}else if(k){break;}}const kanjiReadings=[];for(let i=0;i<wc.length;i++){const [chunk,k]=wc[i];if(k){let nextNK='';for(let j=i+1;j<wc.length;j++){if(!wc[j][1]){nextNK=wc[j][0];break;}}if(nextNK){const idx=isAllHira(nextNK)?rc.lastIndexOf(nextNK):rc.indexOf(nextNK);if(idx>0){kanjiReadings.push(rc.slice(0,idx));rc=rc.slice(idx+nextNK.length);}else{kanjiReadings.push(rc);rc='';}}else{kanjiReadings.push(rc);rc='';}}}let result='';let ki=0;for(const [chunk,k] of wc){if(k){const r=kanjiReadings[ki++]||'';result+=isAllHira(r)?`<ruby>${chunk}<rt>${r}</rt></ruby>`:chunk;}else{result+=chunk;}}return result;}
-  const phs={};let i=0;for(const [w,r] of RL){if(text.includes(w)){const ph=`\x00${i}\x00`;text=text.split(w).join(ph);phs[ph]=buildRuby(w,r);i++;}}for(const [ph,tag] of Object.entries(phs))text=text.split(ph).join(tag);return text;
+  // 既存のrubyタグ内の漢字を二重処理しないよう、rubyタグ部分をプレースホルダーで退避
+  const rubyPhs={};let ri=0;
+  text=text.replace(/<ruby[\s\S]*?<\/ruby>/g,(m)=>{const ph=`\x01${ri}\x01`;rubyPhs[ph]=m;ri++;return ph;});
+  const phs={};let i=0;for(const [w,r] of RL){if(text.includes(w)){const ph=`\x00${i}\x00`;text=text.split(w).join(ph);phs[ph]=buildRuby(w,r);i++;}}for(const [ph,tag] of Object.entries(phs))text=text.split(ph).join(tag);
+  // 退避したrubyタグを復元
+  for(const [ph,tag] of Object.entries(rubyPhs))text=text.split(ph).join(tag);
+  return text;
 }
 
 function resultCardHtml(qid,ansNum,label){
@@ -2097,12 +2103,13 @@ function printSection(section, mode){
   const resultArea = document.getElementById(section + '-result');
   let resultWasHidden = false;
   if(mode === 'answer' && resultArea){
-    if(!resultArea.classList.contains('show') || !resultArea.innerHTML.trim()){
-      // 未解答の場合は警告
-      if(!resultArea.innerHTML.trim()){
-        alert('先に「解答する」ボタンを押してから印刷してください。');
-        return;
-      }
+    // 未解答の場合は警告（submittedフラグで判定）
+    const secKey = (section === 'q5' || section === 'q6') ? section : section;
+    if(!submitted[secKey]){
+      alert('先に「解答する」ボタンを押してから印刷してください。');
+      return;
+    }
+    if(!resultArea.classList.contains('show')){
       resultArea.classList.add('show');
       resultWasHidden = true;
     }
