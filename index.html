@@ -1211,6 +1211,10 @@ function goPage(id){
   const target = document.getElementById('page-'+id);
   if(target) target.classList.add('active');
   window.scrollTo(0,0);
+  // ホームに戻る時に解答解説を非表示
+  if(id === 'home'){
+    document.querySelectorAll('.result-area').forEach(el => el.classList.remove('show'));
+  }
   // メインタブ・サブタブの更新
   updateNavTabs(id);
   // 管理ページ表示時に自動ロード
