@@ -307,10 +307,10 @@ button ruby rt{color:inherit}
   .choice,.lis-choice{border:1px solid #aaa;background:#fff!important;}
   .choice.show-ans,.lis-choice.show-ans{background:#e1f5ee!important;border-color:#0f6e56!important;}
   .choice.wrong,.lis-choice.wrong{background:#faece7!important;border-color:#993c1d!important;}
-  .result-area{display:block!important;}
-  .result-area.show{display:block!important;}
   .passage-box,.email-box,.conv-box{border:1px solid #aaa;page-break-inside:avoid;}
   .q-block,.result-q{page-break-inside:avoid;}
+  /* 問題用紙モード（print-answer-onlyなし）では result-area を常に非表示 */
+  .result-area{display:none!important;}
 
   /* ===== 解答・解説のみ印刷モード ===== */
   /* body.print-answer-only のとき、問題部分を非表示にする */
