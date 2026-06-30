@@ -2143,32 +2143,39 @@ function printSection(section, mode){
 
   // 解答・解説モード：常に解説を印刷（解答済みかどうか問わない）
   if(mode === 'answer'){
-    if(['q1','q2','q3','q4'].includes(section)){
-      const all = getAllQids(section);
-      // 常に「模範解答版」の解説を生成（選択状態・正誤色なし）
-      let html = '<div class="score-banner partial"><ruby>解答<rt>かいとう</rt></ruby>・<ruby>解説<rt>かいせつ</rt></ruby></div>';
-      all.forEach(qid => {
-        html += answerOnlyCardHtml(qid, getLabel(section, qid));
-      });
-      resultArea.innerHTML = html;
-    } else if(section === 'q5'){
-      // 大問5：ライティングの模範解答を常に表示
-      let html = '<div class="score-banner partial"><ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby></div>';
-      html += '<div class="result-q"><div class="rq-header"><span class="rb rb-ok"><ruby>採点<rt>さいてん</rt></ruby>ポイント</span></div>'
-            + '<div style="margin-bottom:.75rem"><p style="font-size:13px;color:#6b6960;margin-bottom:.6rem"><ruby>以下<rt>いか</rt></ruby>のポイントを<ruby>自己<rt>じこ</rt></ruby>チェックしてください：</p>'
-            + Q5_POINTS.map(p=>'<p style="font-size:13px;margin-bottom:.4rem">'+p+'</p>').join('')
-            + '</div><div class="point-box" style="margin-bottom:.75rem">📝 <strong><ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby>例</strong><br>'
-            + '<span style="font-size:13px;line-height:1.8;white-space:pre-wrap">' + Q5_MODEL + '</span></div>'
-            + '<div style="font-size:12px;color:#6b6960">※<ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby>はあくまで<ruby>一例<rt>いちれい</rt></ruby>です。</div></div>';
-      resultArea.innerHTML = html;
-    } else if(section === 'q6'){
-      // 大問6：ライティングの模範解答（Yes/No両方）を常に表示
-      let html = '<div class="score-banner partial"><ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby></div>';
-      html += '<div class="result-q"><div class="rq-header"><span class="rb rb-ok"><ruby>採点<rt>さいてん</rt></ruby>ポイント</span></div>'
-            + '<div style="margin-bottom:.75rem">' + Q6_POINTS.map(p=>'<p style="font-size:13px;margin-bottom:.4rem">'+p+'</p>').join('') + '</div>'
-            + '<div class="point-box" style="margin-bottom:.75rem">📝 <strong><ruby>模範<rt>もはん</rt></ruby>（Yes）</strong><br><span style="font-size:13px;line-height:1.8">' + Q6_MODEL_YES + '</span></div>'
-            + '<div class="point-box" style="margin-bottom:.75rem">📝 <strong><ruby>模範<rt>もはん</rt></ruby>（No）</strong><br><span style="font-size:13px;line-height:1.8">' + Q6_MODEL_NO + '</span></div></div>';
-      resultArea.innerHTML = html;
+    try{
+      if(['q1','q2','q3','q4'].includes(section)){
+        const all = getAllQids(section);
+        let html = '<div class="score-banner partial"><ruby>解答<rt>かいとう</rt></ruby>・<ruby>解説<rt>かいせつ</rt></ruby></div>';
+        all.forEach(qid => {
+          html += answerOnlyCardHtml(qid, getLabel(section, qid));
+        });
+        resultArea.innerHTML = html;
+      } else if(section === 'q5'){
+        const pts = Array.isArray(Q5_POINTS) ? Q5_POINTS : [];
+        const model = Q5_MODEL || '（模範解答データが見つかりません）';
+        let html = '<div class="score-banner partial"><ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby></div>';
+        html += '<div class="result-q"><div class="rq-header"><span class="rb rb-ok"><ruby>採点<rt>さいてん</rt></ruby>ポイント</span></div>'
+              + '<div style="margin-bottom:.75rem"><p style="font-size:13px;color:#6b6960;margin-bottom:.6rem"><ruby>以下<rt>いか</rt></ruby>のポイントを<ruby>自己<rt>じこ</rt></ruby>チェックしてください：</p>'
+              + pts.map(p=>'<p style="font-size:13px;margin-bottom:.4rem">'+p+'</p>').join('')
+              + '</div><div class="point-box" style="margin-bottom:.75rem">📝 <strong><ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby>例</strong><br>'
+              + '<span style="font-size:13px;line-height:1.8;white-space:pre-wrap">' + model + '</span></div>'
+              + '<div style="font-size:12px;color:#6b6960">※<ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby>はあくまで<ruby>一例<rt>いちれい</rt></ruby>です。</div></div>';
+        resultArea.innerHTML = html;
+      } else if(section === 'q6'){
+        const pts = Array.isArray(Q6_POINTS) ? Q6_POINTS : [];
+        const modelYes = Q6_MODEL_YES || '（模範解答データが見つかりません）';
+        const modelNo = Q6_MODEL_NO || '（模範解答データが見つかりません）';
+        let html = '<div class="score-banner partial"><ruby>模範<rt>もはん</rt></ruby><ruby>解答<rt>かいとう</rt></ruby></div>';
+        html += '<div class="result-q"><div class="rq-header"><span class="rb rb-ok"><ruby>採点<rt>さいてん</rt></ruby>ポイント</span></div>'
+              + '<div style="margin-bottom:.75rem">' + pts.map(p=>'<p style="font-size:13px;margin-bottom:.4rem">'+p+'</p>').join('') + '</div>'
+              + '<div class="point-box" style="margin-bottom:.75rem">📝 <strong><ruby>模範<rt>もはん</rt></ruby>（Yes）</strong><br><span style="font-size:13px;line-height:1.8">' + modelYes + '</span></div>'
+              + '<div class="point-box" style="margin-bottom:.75rem">📝 <strong><ruby>模範<rt>もはん</rt></ruby>（No）</strong><br><span style="font-size:13px;line-height:1.8">' + modelNo + '</span></div></div>';
+        resultArea.innerHTML = html;
+      }
+    }catch(err){
+      resultArea.innerHTML = '<div class="score-banner partial">エラー: ' + err.message + '</div>';
+      console.error('printSection answer mode error:', err);
     }
     if(resultArea && !resultArea.classList.contains('show')){
       resultArea.classList.add('show');
