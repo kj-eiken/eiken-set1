@@ -2226,48 +2226,51 @@ function printSection(section, mode){
 
   // 解答・解説モードのとき body にクラスを付けて問題部分を非表示
   let savedPanelChildrenDisplay = [];
-  if(mode === 'answer'){
-    document.body.classList.add('print-answer-only');
-    // CSS優先順位に依存せず、JSで直接表示を強制
-    if(resultArea) resultArea.style.setProperty('display', 'block', 'important');
-    // result-areaの親パネル（panel-type/panel6-type）はdisplay:blockにするが、
-    // その兄弟要素（テキストエリア・action-rowなど、result-area以外）は個別に非表示にする
+  try {
+    if(mode === 'answer'){
+      document.body.classList.add('print-answer-only');
+      // CSS優先順位に依存せず、JSで直接表示を強制
+      if(resultArea) resultArea.style.setProperty('display', 'block', 'important');
+      // result-areaの親パネル（panel-type/panel6-type）はdisplay:blockにするが、
+      // その兄弟要素（テキストエリア・action-rowなど、result-area以外）は個別に非表示にする
+      if(section === 'q5' || section === 'q6'){
+        const panelId = section === 'q5' ? 'panel-type' : 'panel6-type';
+        const panelEl = document.getElementById(panelId);
+        if(panelEl){
+          panelEl.style.setProperty('display', 'block', 'important');
+          Array.from(panelEl.children).forEach(child => {
+            if(child.id !== (section + '-result')){
+              savedPanelChildrenDisplay.push({el: child, prev: child.style.display});
+              child.style.setProperty('display', 'none', 'important');
+            }
+          });
+        }
+      }
+    } else {
+      // 問題用紙モードでは確実に非表示にする
+      if(resultArea) resultArea.style.setProperty('display', 'none', 'important');
+    }
+
+    window.print();
+  } finally {
+    // 印刷ダイアログがキャンセルされた場合や例外が起きた場合でも、
+    // 必ず元の表示状態に復元する（このブロックは確実に実行される）
+    document.body.classList.remove('print-answer-only');
+    document.title = origTitle;
+    pages.forEach(p => p.removeAttribute('data-print-hide'));
+    if(resultArea) resultArea.style.removeProperty('display');
+    if(resultWasShown && resultArea) resultArea.classList.add('show');
+    if(savedTextareaEl) savedTextareaEl.value = savedTextareaValue;
     if(section === 'q5' || section === 'q6'){
       const panelId = section === 'q5' ? 'panel-type' : 'panel6-type';
       const panelEl = document.getElementById(panelId);
-      if(panelEl){
-        panelEl.style.setProperty('display', 'block', 'important');
-        Array.from(panelEl.children).forEach(child => {
-          if(child.id !== (section + '-result')){
-            savedPanelChildrenDisplay.push({el: child, prev: child.style.display});
-            child.style.setProperty('display', 'none', 'important');
-          }
-        });
-      }
+      if(panelEl) panelEl.style.removeProperty('display');
     }
-  } else {
-    // 問題用紙モードでは確実に非表示にする
-    if(resultArea) resultArea.style.setProperty('display', 'none', 'important');
+    savedPanelChildrenDisplay.forEach(item => {
+      item.el.style.removeProperty('display');
+      if(item.prev) item.el.style.display = item.prev;
+    });
   }
-
-  window.print();
-
-  // 元に戻す
-  document.body.classList.remove('print-answer-only');
-  document.title = origTitle;
-  pages.forEach(p => p.removeAttribute('data-print-hide'));
-  if(resultArea) resultArea.style.removeProperty('display');
-  if(resultWasShown && resultArea) resultArea.classList.add('show');
-  if(savedTextareaEl) savedTextareaEl.value = savedTextareaValue;
-  if(section === 'q5' || section === 'q6'){
-    const panelId = section === 'q5' ? 'panel-type' : 'panel6-type';
-    const panelEl = document.getElementById(panelId);
-    if(panelEl) panelEl.style.removeProperty('display');
-  }
-  savedPanelChildrenDisplay.forEach(item => {
-    item.el.style.removeProperty('display');
-    if(item.prev) item.el.style.display = item.prev;
-  });
 }
 
 // =========================================================
