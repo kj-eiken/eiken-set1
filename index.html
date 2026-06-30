@@ -2214,6 +2214,11 @@ function printSection(section, mode){
   // 解答・解説モードのとき body にクラスを付けて問題部分を非表示
   if(mode === 'answer'){
     document.body.classList.add('print-answer-only');
+    // CSS優先順位に依存せず、JSで直接表示を強制
+    if(resultArea) resultArea.style.setProperty('display', 'block', 'important');
+  } else {
+    // 問題用紙モードでは確実に非表示にする
+    if(resultArea) resultArea.style.setProperty('display', 'none', 'important');
   }
 
   window.print();
@@ -2222,6 +2227,7 @@ function printSection(section, mode){
   document.body.classList.remove('print-answer-only');
   document.title = origTitle;
   pages.forEach(p => p.removeAttribute('data-print-hide'));
+  if(resultArea) resultArea.style.removeProperty('display');
   if(resultWasShown && resultArea) resultArea.classList.add('show');
   if(savedTextareaEl) savedTextareaEl.value = savedTextareaValue;
 }
