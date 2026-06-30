@@ -2219,15 +2219,25 @@ function printSection(section, mode){
   document.title = '英検準2級 Set1 ' + (labelMap[section]||section) + ' ' + modeLabel;
 
   // 解答・解説モードのとき body にクラスを付けて問題部分を非表示
+  let savedPanelChildrenDisplay = [];
   if(mode === 'answer'){
     document.body.classList.add('print-answer-only');
     // CSS優先順位に依存せず、JSで直接表示を強制
     if(resultArea) resultArea.style.setProperty('display', 'block', 'important');
-    // result-areaの親パネル（panel-type/panel6-type）がdisplay:noneだと子要素も表示されないため強制表示
+    // result-areaの親パネル（panel-type/panel6-type）はdisplay:blockにするが、
+    // その兄弟要素（テキストエリア・action-rowなど、result-area以外）は個別に非表示にする
     if(section === 'q5' || section === 'q6'){
       const panelId = section === 'q5' ? 'panel-type' : 'panel6-type';
       const panelEl = document.getElementById(panelId);
-      if(panelEl) panelEl.style.setProperty('display', 'block', 'important');
+      if(panelEl){
+        panelEl.style.setProperty('display', 'block', 'important');
+        Array.from(panelEl.children).forEach(child => {
+          if(child.id !== (section + '-result')){
+            savedPanelChildrenDisplay.push({el: child, prev: child.style.display});
+            child.style.setProperty('display', 'none', 'important');
+          }
+        });
+      }
     }
   } else {
     // 問題用紙モードでは確実に非表示にする
@@ -2248,6 +2258,10 @@ function printSection(section, mode){
     const panelEl = document.getElementById(panelId);
     if(panelEl) panelEl.style.removeProperty('display');
   }
+  savedPanelChildrenDisplay.forEach(item => {
+    item.el.style.removeProperty('display');
+    if(item.prev) item.el.style.display = item.prev;
+  });
 }
 
 // =========================================================
