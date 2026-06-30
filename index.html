@@ -327,9 +327,13 @@ button ruby rt{color:inherit}
   body.print-answer-only #q4-send-bottom,
   body.print-answer-only #tab-type,
   body.print-answer-only #tab-photo,
+  body.print-answer-only #tab6-type,
+  body.print-answer-only #tab6-photo,
   body.print-answer-only .action-row,
   body.print-answer-only #panel-type,
-  body.print-answer-only #panel-photo {
+  body.print-answer-only #panel-photo,
+  body.print-answer-only #panel6-type,
+  body.print-answer-only #panel6-photo {
     display:none!important;
   }
   body.print-answer-only .result-area,
@@ -2180,6 +2184,17 @@ function printSection(section, mode){
     }
   }
 
+  // 問題用紙モード：q5/q6のテキストエリアを一時的に空にする（解答済みでも空欄で印刷）
+  let savedTextareaValue = null;
+  let savedTextareaEl = null;
+  if(mode === 'question' && (section === 'q5' || section === 'q6')){
+    savedTextareaEl = document.getElementById(section + '-textarea');
+    if(savedTextareaEl){
+      savedTextareaValue = savedTextareaEl.value;
+      savedTextareaEl.value = '';
+    }
+  }
+
   // 対象外ページを隠す・対象ページを表示
   pages.forEach(p => {
     if(p !== targetPage) p.setAttribute('data-print-hide','1');
@@ -2204,6 +2219,7 @@ function printSection(section, mode){
   document.title = origTitle;
   pages.forEach(p => p.removeAttribute('data-print-hide'));
   if(resultWasShown && resultArea) resultArea.classList.add('show');
+  if(savedTextareaEl) savedTextareaEl.value = savedTextareaValue;
 }
 
 // =========================================================
