@@ -2192,6 +2192,10 @@ function printSection(section, mode){
     if(savedTextareaEl){
       savedTextareaValue = savedTextareaEl.value;
       savedTextareaEl.value = '';
+      savedTextareaEl.textContent = '';
+      savedTextareaEl.setAttribute('value', '');
+      // 強制的に再レイアウトさせる
+      void savedTextareaEl.offsetHeight;
     }
   }
 
