@@ -276,21 +276,26 @@ button ruby rt{color:inherit}
 .print-sep{width:100%;border:none;border-top:1px dashed #e0c050;margin:.65rem 0;}
 
 /* ===== @media print ===== */
-@media print {
-  /* 現在表示中のページのみ印刷 */
-  .page { display: none !important; }
-  .page.active { display: block !important; }
-  /* ナビゲーション・ヘッダー・フッター・ホーム画面を非表示 */
-  .nav-bar, .score-header, .tab-bar, #page-home, #page-admin { display: none !important; }
-  /* 印刷時のレイアウト調整 */
-  body { background: #fff !important; }
-  .q-block { break-inside: avoid; }
-}
+@media print{
+  /* 印刷時に非表示にするUI */
+  .nav,
+  .login-overlay,
+  .back-btn,
+  .action-row,
+  .prog-wrap,
+  .prog-label,
+  .restore-msg,
+  .print-section,
+  .photo-submit-box,
+  #restore-msg,
+  .site-footer{display:none!important;}
 
   /* ページ全体 */
   body{background:#fff;font-size:12px;color:#000;}
   .page{display:block!important;max-width:100%;padding:.5rem 1rem 1rem;margin:0;}
 
+  /* 現在表示中のページのみ印刷（ナビゲーションとホームは非表示） */
+  #page-home, #page-admin { display: none !important; }
   /* 印刷対象以外の大問ページを隠す */
   .page[data-print-hide]{display:none!important;}
 
