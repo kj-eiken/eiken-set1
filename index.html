@@ -276,19 +276,16 @@ button ruby rt{color:inherit}
 .print-sep{width:100%;border:none;border-top:1px dashed #e0c050;margin:.65rem 0;}
 
 /* ===== @media print ===== */
-@media print{
-  /* 印刷時に非表示にするUI */
-  .nav,
-  .login-overlay,
-  .back-btn,
-  .action-row,
-  .prog-wrap,
-  .prog-label,
-  .restore-msg,
-  .print-section,
-  .photo-submit-box,
-  #restore-msg,
-  .site-footer{display:none!important;}
+@media print {
+  /* 現在表示中のページのみ印刷 */
+  .page { display: none !important; }
+  .page.active { display: block !important; }
+  /* ナビゲーション・ヘッダー・フッター・ホーム画面を非表示 */
+  .nav-bar, .score-header, .tab-bar, #page-home, #page-admin { display: none !important; }
+  /* 印刷時のレイアウト調整 */
+  body { background: #fff !important; }
+  .q-block { break-inside: avoid; }
+}
 
   /* ページ全体 */
   body{background:#fff;font-size:12px;color:#000;}
@@ -1101,10 +1098,10 @@ const PART_DESC_LIS = {
 // =========================================================
 // ★ 大問1〜6 既存ロジック
 // =========================================================
-const Q1_TEXTS=['A: Sophie, this sunset is (　) amazing! I\'ve never seen the sky look like this before.<br>B: I know! I\'m so glad we came up to the rooftop.','Olivia was recently (　) to her company\'s Seattle branch. She is excited about the move, but she will miss her old coworkers.','In science class, Ms. Bennett explained the (　) of using a phone while charging it overnight. Several students were surprised to learn about the risks.','A: Why did you decide to buy that bicycle, Noah?<br>B: It had great reviews, and the price was (　) compared to the other models at the shop.','Before practice started, Coach Diaz made an (　). She told the team that the next game had been moved to Saturday morning.','The town library is holding a contest where students can create (　) out of recycled paper and cardboard. The winning pieces will be displayed in the lobby.','Whenever Nathan buys parts for his bicycle, he always keeps the (　) in a small folder. That way, he can exchange a part if something is wrong with it.','People who (　) their neighbors often find it easier to ask for help during emergencies, such as storms or power outages.','A: How did you (　) in the English speech contest, Mia?<br>B: Not great. I was too nervous and forgot half of my speech.','After practicing the piano for three hours straight, Maya\'s wrists started to (　). She decided to take a short break and stretch her hands.','Every member of the choir had already picked up the new sheet music, (　) one student who had forgotten to stop by the music room.','A: (　)! There\'s a bicycle coming around the corner!<br>B: Oh, thanks! I didn\'t notice it at all.','A: Dad, can I go to the late movie with my friends tonight?<br>B: That\'s (　), Leo. You have a math test first thing tomorrow morning.','A: Have you decided which university\'s open campus to visit, Ella?<br>B: Not yet. I just can\'t (　). Both schools seem really appealing.','Before buying a new backpack for the school trip, you should (　) a few different brands. That way, you can compare the price and quality.'];
+const Q1_TEXTS=['A: Sophie, this sunset is (　) amazing! I\'ve never seen the sky look like this before.<br>B: I know! I\'m so glad we came up to the rooftop.','Olivia was recently (　) to her company\'s Seattle branch. She is excited about the move, but she will miss her old coworkers.','In science class, Ms. Bennett explained the (　) of using a phone while charging it overnight. Several students were surprised to learn about the risks.','A: Why did you decide to buy that bicycle, Noah?<br>B: It had great reviews, and the price was (　) compared to the other models at the shop.','Before practice started, Coach Diaz made an (　). She told the team that the next game had been moved to Saturday morning.','The town library is holding a contest where students can create (　) out of recycled paper and cardboard. The winning pieces will be displayed in the lobby.','Whenever Nathan buys parts for his bicycle, he always keeps the (　) in a small folder. That way, he can exchange a part if something is wrong with it.','People who (　) their neighbors often find it easier to ask for help during emergencies, such as storms or power outages.','A: How did you (　) in the English speech contest, Mia?<br>B: Not great. I was too nervous and forgot half of my speech.','After practicing the piano for three hours straight, Maya\'s wrists started to (　). She decided to take a short break and stretch her hands and wrists.','Every member of the choir had already picked up the new sheet music, (　) one student who had forgotten to stop by the music room.','A: (　)! There\'s a bicycle coming around the corner!<br>B: Oh, thanks! I didn\'t notice it at all.','A: Dad, can I go to the late movie with my friends tonight?<br>B: That\'s (　), Leo. You have a math test first thing tomorrow morning.','A: Have you decided which university\'s open campus to visit, Ella?<br>B: Not yet. I just can\'t (　). Both schools seem really appealing.','Before buying a new backpack for the school trip, you should (　) a few different brands. That way, you can compare the price and quality.'];
 const Q1_LABELS=['(1)','(2)','(3)','(4)','(5)','(6)','(7)','(8)','(9)','(10)','(11)','(12)','(13)','(14)','(15)'];
 const Q1_IDS=['q1-1','q1-2','q1-3','q1-4','q1-5','q1-6','q1-7','q1-8','q1-9','q1-10','q1-11','q1-12','q1-13','q1-14','q1-15'];
-const Q2_DEF=[{qid:'q2-16',label:'(16)',type:'single',conv:[['A',"Excuse me. Could you tell me how to get to Riverside Stadium?"],['B',"Sure. Walk along this road until you reach the bridge, then cross it and turn left. It's about ten minutes from here."],['A',"Thanks. I'm afraid I might get lost on the way, though."],['B',"Don't worry. I'm heading that way myself, so (　16　). Just follow me."]]},{qid:'q2-17',label:'(17)',type:'single',conv:[['A',"Emma, do you know any good swimming pools around here? I want to start swimming regularly."],['B',"Actually, yes! I usually go to the one near the train station, but there's a newer one not far from your apartment."],['A',"Oh really? Where exactly is it?"],['B',"It's right next to the community center. It's (　17　). I haven't tried it myself, but my coworker says the pool is really clean."]]},{qid:'q2-18',label:'(18)',type:'single',conv:[['A',"Hi there. I saw your flyer about volunteer opportunities this fall. I'd like to apply."],['B',"Wonderful! Could you tell me (　18　)? We're running several projects right now."],['A',"Of course. Is the river cleanup project still accepting volunteers? I heard it starts on October 3."],['B',"Let me check... Yes, there's still room. I'll send you the registration form."]]},{type:'pair',label:'(19)・(20)',subQids:['q2-19','q2-20'],subLabels:['(19)','(20)'],conv:[['A',"Mom, have you seen my soccer cleats? I need them for practice after school."],['B',"Cleats? Wait, didn't practice get cancelled this week? I thought you (　19　)."],['A',"No, that was last week. The coach sent a message saying the field is being repaired starting today, so we're practicing at the gym instead, but we still need our shoes."],['B',"Oh, I must have missed that message. Did you already check the closet by the front door?"],['A',"Yeah, they're not there. Could you (　20　) before I leave?"],['B',"Sure, give me a minute. I think I saw them in the laundry room."]]}];
+const Q2_DEF=[{qid:'q2-16',label:'(16)',type:'single',conv:[['A',"Excuse me. Could you tell me how to get to Riverside Stadium?"],['B',"Sure. Walk along this road until you reach the bridge, then cross it and turn left. It's about ten minutes from here."],['A',"Thanks. I'm afraid I might get lost on the way, though."],['B',"Don't worry. I'm heading that way myself, so (　16　). Just follow me."]]},{qid:'q2-17',label:'(17)',type:'single',conv:[['A',"Emma, do you know any good swimming pools around here? I want to start swimming regularly."],['B',"Actually, yes! I usually go to the one near the train station, but there's a newer one not far from your apartment."],['A',"Oh really? Where exactly is it?"],['B',"It's right next to the community center. It's (　17　). I haven't tried it myself, but my coworker says the pool is really clean."]]},{qid:'q2-18',label:'(18)',type:'single',conv:[['A',"Hi there. I saw your flyer about volunteer opportunities this fall. I'd like to apply."],['B',"Wonderful! Could you tell me (　18　)? We're running several projects right now."],['A',"Of course. Is the river cleanup project still accepting volunteers? I heard it starts on October 3."],['B',"Let me check... Yes, there's still room. I'll send you the registration form."]]},{type:'pair',label:'(19)・(20)',subQids:['q2-19','q2-20'],subLabels:['(19)','(20)'],conv:[['A',"Mom, have you seen my soccer shoes? I need them for practice after school."],['B',"Cleats? Wait, didn't practice get cancelled this week? I thought you (　19　)."],['A',"No, that was last week. The coach sent a message saying the field is being repaired starting today, so we're practicing at the gym instead, but we still need our shoes."],['B',"Oh, I must have missed that message. Did you already check the closet by the front door?"],['A',"Yeah, they're not there. Could you (　20　)?"],['B',"Sure, give me a minute. I think I saw them in the laundry room."]]}];
 const Q3_IDS=['q3-21','q3-22'];
 const Q3_LABELS=['(21)','(22)'];
 const Q4A_DEF=[{qid:'q4-23',label:'(23)',text:"Why is Sophie writing this email to Chloe?"},{qid:'q4-24',label:'(24)',text:"What does Sophie suggest as a gift for Mr. Evans?"},{qid:'q4-25',label:'(25)',text:"What is one thing Sophie asks Chloe to do?"}];
@@ -1883,6 +1880,33 @@ function loadState(){
     if(state.lisIdx!==undefined)lisIdx=state.lisIdx;
     if(state.lisSubmitted!==undefined)lisSubmitted=state.lisSubmitted;
     if(state.lisScores)Object.assign(lisScores,state.lisScores);
+    // リスニング全体結果を復元
+    if(lisSubmitted){
+      const result=document.getElementById('lis-result');
+      const total=lisScores.p1+lisScores.p2+lisScores.p3;
+      const pct=Math.round(total/30*100);
+      let msg='';
+      if(pct>=80)msg='🎉 素晴らしい成績です！合格ラインを十分クリアしています。';
+      else if(pct>=60)msg='👍 もう少しで合格ライン！苦手な問題を復習しましょう。';
+      else msg='📚 復習が大切です。音声をくり返し聴いてみましょう。';
+      result.innerHTML=`
+        <div class="lis-result-card">
+          <p style="text-align:center;font-size:1.1rem;font-weight:700;color:#1a4a8a;margin-bottom:14px;">🏆 リスニング 全体結果</p>
+          <div class="score-circle"><span class="sc-n">${total}</span><span class="sc-d">/ 30</span></div>
+          <div class="section-scores">
+            <div class="ss-item"><div class="ss-l">第1部</div><div class="ss-v">${lisScores.p1}/10</div></div>
+            <div class="ss-item"><div class="ss-l">第2部</div><div class="ss-v">${lisScores.p2}/10</div></div>
+            <div class="ss-item"><div class="ss-l">第3部</div><div class="ss-v">${lisScores.p3}/10</div></div>
+          </div>
+          <p style="text-align:center;font-size:.88rem;color:var(--muted);line-height:1.7;">${msg}</p>
+        </div>
+        <button onclick="sendResults('listening')" class="send-btn-blue">📩 リスニング全体の結果を送信する</button>
+        <button onclick="restartListening()" style="width:100%;padding:10px;background:var(--surface);color:var(--muted);border:1px solid var(--border2);border-radius:var(--rsm);font-size:.85rem;cursor:pointer;">🔄 もう一度挑戦する</button>
+      `;
+      result.style.display='block';
+      document.getElementById('lis-quiz').style.display='none';
+      document.getElementById('lis-start').style.display='none';
+    }
 
     // 途中再開ボタン
     const answered=lisAnswered.filter(a=>a!==null).length;
@@ -1894,11 +1918,20 @@ function loadState(){
     ['q1','q2','q3','q4'].forEach(sk=>{
       if(!submitted[sk])return;
       const btn=document.getElementById(sk+'-submit');if(btn)btn.disabled=true;
+      const bottomSend=document.getElementById(sk+'-send-bottom');if(bottomSend)bottomSend.style.display='block';
       getAllQids(sk).forEach(qid=>{
         const d=QD[qid];const ans=(sel[sk]||{})[qid];
         const cel=document.getElementById('ch-'+qid+'-'+d.correct);if(cel)cel.classList.add('show-ans');
         if(ans&&ans!==d.correct){const wel=document.getElementById('ch-'+qid+'-'+ans);if(wel)wel.classList.add('wrong');}
       });
+      // 解答解説カードを復元
+      const all=getAllQids(sk);
+      let correct=0;all.forEach(qid=>{const ans=(sel[sk]||{})[qid],d=QD[qid];if(ans===d.correct)correct++;});
+      const pct=Math.round(correct/all.length*100);const bc=pct===100?'perfect':pct>=60?'partial':'low';
+      const msg=pct===100?`<ruby>全問<rt>ぜんもん</rt></ruby><ruby>正解<rt>せいかい</rt></ruby>！<ruby>素晴<rt>すば</rt></ruby>らしい！`:`${correct}/${all.length}<ruby>問<rt>もん</rt></ruby><ruby>正解<rt>せいかい</rt></ruby>。<ruby>解説<rt>かいせつ</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>しよう。`;
+      let rhtml=`<div class="score-banner ${bc}">${msg}</div>`;
+      all.forEach(qid=>{rhtml+=resultCardHtml(qid,(sel[sk]||{})[qid],getLabel(sk,qid));});
+      const ra=document.getElementById(sk+'-result');if(ra){ra.innerHTML=rhtml;ra.classList.add('show');}
     });
     if(submitted.q5){
       const b=document.getElementById('q5-submit');if(b)b.disabled=true;
