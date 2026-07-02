@@ -1323,6 +1323,14 @@ function getPartRange(part){
 
 function startListening(part){
   part=part||0;
+  // 解答解説表示中（完了済み）の場合は該当部の結果を再表示してリセットしない
+  if(lisSubmitted){
+    // 全体結果または該当部の結果を再表示
+    showLisAllResult();
+    document.getElementById('lis-quiz').style.display='none';
+    document.getElementById('lis-start').style.display='none';
+    return;
+  }
   lisMode=part;
   lisRange=getPartRange(part);
   lisIdx=lisRange[0];
