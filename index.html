@@ -576,9 +576,9 @@ button ruby rt{color:inherit}
     <!-- サブタブ：リスニング -->
     <div class="nav-subtabs hidden" id="subtabs-listening">
       <button class="nav-subtab listening" id="subtab-lis" onclick="goPage('listening')">▶ <ruby>全部<rt>ぜんぶ</rt></ruby></button>
-      <button class="nav-subtab listening" onclick="goPage('listening');setTimeout(()=>startListening(0),100)"><ruby>第<rt>だい</rt></ruby>1<ruby>部<rt>ぶ</rt></ruby></button>
-      <button class="nav-subtab listening" onclick="goPage('listening');setTimeout(()=>startListening(10),100)"><ruby>第<rt>だい</rt></ruby>2<ruby>部<rt>ぶ</rt></ruby></button>
-      <button class="nav-subtab listening" onclick="goPage('listening');setTimeout(()=>startListening(20),100)"><ruby>第<rt>だい</rt></ruby>3<ruby>部<rt>ぶ</rt></ruby></button>
+      <button class="nav-subtab listening" onclick="goPage('listening');setTimeout(()=>startListening(1),100)"><ruby>第<rt>だい</rt></ruby>1<ruby>部<rt>ぶ</rt></ruby></button>
+      <button class="nav-subtab listening" onclick="goPage('listening');setTimeout(()=>startListening(2),100)"><ruby>第<rt>だい</rt></ruby>2<ruby>部<rt>ぶ</rt></ruby></button>
+      <button class="nav-subtab listening" onclick="goPage('listening');setTimeout(()=>startListening(3),100)"><ruby>第<rt>だい</rt></ruby>3<ruby>部<rt>ぶ</rt></ruby></button>
     </div>
   </div>
 </nav>
@@ -1323,14 +1323,21 @@ function getPartRange(part){
 
 function startListening(part){
   part=part||0;
-  // 解答解説表示中（完了済み）の場合は該当部の結果を再表示してリセットしない
+
+  // ===== 解答解説表示中（全部完了済み）：リセットせず結果を再表示 =====
   if(lisSubmitted){
-    // 全体結果または該当部の結果を再表示
     showLisAllResult();
     document.getElementById('lis-quiz').style.display='none';
     document.getElementById('lis-start').style.display='none';
     return;
   }
+
+  // ===== 解答中（一部回答済み）：確認 =====
+  const answered = lisAnswered.filter(a=>a!==null).length;
+  if(answered > 0){
+    if(!confirm('学習中のデータがリセットされます。よろしいですか？')){return;}
+  }
+
   lisMode=part;
   lisRange=getPartRange(part);
   lisIdx=lisRange[0];
