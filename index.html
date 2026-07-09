@@ -297,6 +297,15 @@ button ruby rt{color:inherit}
   #page-listening #lis-result{display:block!important;}
 
   /* 解答解説モード（beforeprintで自動付与） */
+  /* ①問題用紙モード：ボタン類を非表示 */
+  body.print-question-only .action-row,
+  body.print-question-only #q1-send-bottom,
+  body.print-question-only #q2-send-bottom,
+  body.print-question-only #q3-send-bottom,
+  body.print-question-only #q4-send-bottom,
+  body.print-question-only .retry-btn{display:none!important;}
+
+  /* ②解答解説モード：問題部分を非表示 */
   body.print-answer-only .sec-hdr,
   body.print-answer-only .q-block,
   body.print-answer-only .passage-box,
@@ -317,9 +326,14 @@ button ruby rt{color:inherit}
   body.print-answer-only #panel-photo,
   body.print-answer-only #panel6-type,
   body.print-answer-only #panel6-photo{display:none!important;}
-  .result-area{display:none!important;}
+  /* ①問題用紙モード：解答解説を非表示 */
+  body.print-question-only .result-area{display:none!important;}
+  /* ②解答解説モード：解答解説のみ表示 */
   body.print-answer-only .result-area,
   body.print-answer-only .result-area.show{display:block!important;}
+  /* ③画面印刷：result-areaはshowクラスがあれば表示、なければ非表示（画面状態そのまま） */
+  body:not(.print-question-only):not(.print-answer-only) .result-area:not(.show){display:none!important;}
+  body:not(.print-question-only):not(.print-answer-only) .result-area.show{display:block!important;}
 
   /* 著作権ヘッダー・フッター（印刷時のみ表示） */
   .print-header{display:block!important;border-bottom:2px solid #1a3a6e;padding-bottom:.4rem;margin-bottom:.8rem;}
@@ -1061,7 +1075,7 @@ const PART_DESC_LIS = {
 const Q1_TEXTS=['A: Sophie, this sunset is (　) amazing! I\'ve never seen the sky look like this before.<br>B: I know! I\'m so glad we came up to the rooftop.','Olivia was recently (　) to her company\'s Seattle branch. She is excited about the move, but she will miss her old coworkers.','In science class, Ms. Bennett explained the (　) of using a phone while charging it overnight. Several students were surprised to learn about the risks.','A: Why did you decide to buy that bicycle, Noah?<br>B: It had great reviews, and the price was (　) compared to the other models at the shop.','Before practice started, Coach Diaz made an (　). She told the team that the next game had been moved to Saturday morning.','The town library is holding a contest where students can create (　) out of recycled paper and cardboard. The winning pieces will be displayed in the lobby.','Whenever Nathan buys parts for his bicycle, he always keeps the (　) in a small folder. That way, he can exchange a part if something is wrong with it.','People who (　) their neighbors often find it easier to ask for help during emergencies, such as storms or power outages.','A: How did you (　) in the English speech contest, Mia?<br>B: Not great. I was too nervous and forgot half of my speech.','After practicing the piano for three hours straight, Maya\'s wrists started to (　). She decided to take a short break and stretch her hands and wrists.','Every member of the choir had already picked up the new sheet music, (　) one student who had forgotten to stop by the music room.','A: (　)! There\'s a bicycle coming around the corner!<br>B: Oh, thanks! I didn\'t notice it at all.','A: Dad, can I go to the late movie with my friends tonight?<br>B: That\'s (　), Leo. You have a math test first thing tomorrow morning.','A: Have you decided which university\'s open campus to visit, Ella?<br>B: Not yet. I just can\'t (　). Both schools seem really appealing.','Before buying a new backpack for the school trip, you should (　) a few different brands. That way, you can compare the price and quality.'];
 const Q1_LABELS=['(1)','(2)','(3)','(4)','(5)','(6)','(7)','(8)','(9)','(10)','(11)','(12)','(13)','(14)','(15)'];
 const Q1_IDS=['q1-1','q1-2','q1-3','q1-4','q1-5','q1-6','q1-7','q1-8','q1-9','q1-10','q1-11','q1-12','q1-13','q1-14','q1-15'];
-const Q2_DEF=[{qid:'q2-16',label:'(16)',type:'single',conv:[['A',"Excuse me. Could you tell me how to get to Riverside Stadium?"],['B',"Sure. Walk along this road until you reach the bridge, then cross it and turn left. It's about ten minutes from here."],['A',"Thanks. I'm afraid I might get lost on the way, though."],['B',"Don't worry. I'm heading that way myself, so (　16　). Just follow me."]]},{qid:'q2-17',label:'(17)',type:'single',conv:[['A',"Emma, do you know any good swimming pools around here? I want to start swimming regularly."],['B',"Actually, yes! I usually go to the one near the train station, but there's a newer one not far from your apartment."],['A',"Oh really? Where exactly is it?"],['B',"It's right next to the community center. It's (　17　). I haven't tried it myself, but my coworker says the pool is really clean."]]},{qid:'q2-18',label:'(18)',type:'single',conv:[['A',"Hi there. I saw your flyer about volunteer opportunities this fall. I'd like to apply."],['B',"Wonderful! Could you tell me (　18　)? We're running several projects right now."],['A',"Of course. Is the river cleanup project still accepting volunteers? I heard it starts on October 3."],['B',"Let me check... Yes, there's still room. I'll send you the registration form."]]},{type:'pair',label:'(19)・(20)',subQids:['q2-19','q2-20'],subLabels:['(19)','(20)'],conv:[['A',"Mom, have you seen my soccer shoes? I need them for practice after school."],['B',"Cleats? Wait, didn't practice get cancelled this week? I thought you (　19　)."],['A',"No, that was last week. The coach sent a message saying the field is being repaired starting today, so we're practicing at the gym instead, but we still need our shoes."],['B',"Oh, I must have missed that message. Did you already check the closet by the front door?"],['A',"Yeah, they're not there. Could you (　20　)?"],['B',"Sure, give me a minute. I think I saw them in the laundry room."]]}];
+const Q2_DEF=[{qid:'q2-16',label:'(16)',type:'single',conv:[['A',"Excuse me. Could you tell me how to get to Riverside Stadium?"],['B',"Sure. Walk along this road until you reach the bridge, then cross it and turn left. It's about ten minutes from here."],['A',"Thanks. I'm afraid I might get lost on the way, though."],['B',"Don't worry. I'm heading that way myself, so (　16　). Just follow me."]]},{qid:'q2-17',label:'(17)',type:'single',conv:[['A',"Emma, do you know any good swimming pools around here? I want to start swimming regularly."],['B',"Actually, yes! I usually go to the one near the train station, but there's a newer one that just opened."],['A',"Oh really? Where exactly is it?"],['B',"It's right next to the community center. It's (　17　). I haven't tried it myself, but my coworker says the pool is really clean."]]},{qid:'q2-18',label:'(18)',type:'single',conv:[['A',"Hi there. I saw your flyer about volunteer opportunities this fall. I'd like to apply."],['B',"Wonderful! Could you tell me (　18　)? We're running several projects right now."],['A',"Of course. Is the river cleanup project still accepting volunteers? I heard it starts on October 3."],['B',"Let me check... Yes, there's still room. I'll send you the registration form."]]},{type:'pair',label:'(19)・(20)',subQids:['q2-19','q2-20'],subLabels:['(19)','(20)'],conv:[['A',"Mom, have you seen my soccer shoes? I need them for practice after school."],['B',"Soccer shoes? Wait, didn't practice get cancelled this week? I thought you (　19　)."],['A',"No, that was last week. The coach sent a message saying the field is being repaired starting today, so we're practicing at the gym instead, but we still need our shoes."],['B',"Oh, I must have missed that message. Did you already check the closet by the front door?"],['A',"Yeah, they're not there. Could you (　20　)?"],['B',"Sure, give me a minute. I think I saw them in the laundry room."]]}];
 const Q3_IDS=['q3-21','q3-22'];
 const Q3_LABELS=['(21)','(22)'];
 const Q4A_DEF=[{qid:'q4-23',label:'(23)',text:"Why is Sophie writing this email to Chloe?"},{qid:'q4-24',label:'(24)',text:"What does Sophie suggest as a gift for Mr. Evans?"},{qid:'q4-25',label:'(25)',text:"What is one thing Sophie asks Chloe to do?"}];
@@ -2338,8 +2352,15 @@ function printSection(section, mode){
   }
 
   // 対象外ページを隠す・対象ページを表示
+  const prevActive = [];
   pages.forEach(p => {
-    if(p !== targetPage) p.setAttribute('data-print-hide','1');
+    if(p !== targetPage){
+      p.setAttribute('data-print-hide','1');
+      if(p.classList.contains('active')){
+        prevActive.push(p);
+        p.classList.remove('active');
+      }
+    }
   });
   targetPage.classList.add('active');
 
@@ -2372,8 +2393,8 @@ function printSection(section, mode){
         }
       }
     } else {
-      // 問題用紙モードでは確実に非表示にする
-      if(resultArea) resultArea.style.setProperty('display', 'none', 'important');
+      // ①問題用紙モード
+      document.body.classList.add('print-question-only');
     }
 
     window.print();
@@ -2381,8 +2402,11 @@ function printSection(section, mode){
     // 印刷ダイアログがキャンセルされた場合や例外が起きた場合でも、
     // 必ず元の表示状態に復元する（このブロックは確実に実行される）
     document.body.classList.remove('print-answer-only');
+    document.body.classList.remove('print-question-only');
     document.title = origTitle;
     pages.forEach(p => p.removeAttribute('data-print-hide'));
+    prevActive.forEach(p => p.classList.add('active'));
+    targetPage.classList.remove('active');
     if(resultArea) resultArea.style.removeProperty('display');
     if(resultWasShown && resultArea) resultArea.classList.add('show');
     if(savedTextareaEl) savedTextareaEl.value = savedTextareaValue;
@@ -3238,11 +3262,8 @@ window.addEventListener('beforeprint', function() {
       document.body.classList.add('print-answer-only');
     }
   } else if (pageId && pageId.startsWith('page-q')) {
-    // 大問1〜6：result-area が show クラスを持っていれば解答解説モード
-    const resultArea = activePage.querySelector('.result-area');
-    if (resultArea && resultArea.classList.contains('show')) {
-      document.body.classList.add('print-answer-only');
-    }
+    // 大問1〜6：Ctrl+Pは問題＋解答解説をそのまま印刷（print-answer-onlyは付けない）
+    // ※ 印刷ボタンからの場合はprintSection()内でクラスを制御するため、ここでは何もしない
   }
   // ホーム・管理画面は何もしない（そのまま印刷）
 });
