@@ -1319,20 +1319,28 @@ function startListening(part){
     document.getElementById('lis-start').style.display='none';
     return;
   }
-  // ===== 各部が送信済み：その部の解答解説を再表示（別の部から来た場合のみ） =====
+  // ===== 遷移先の部がすでに送信済み：確認なしでその部の解答解説を再表示 =====
   const partSentMap={1:'lp1',2:'lp2',3:'lp3'};
-  if(part>0 && sentScores[partSentMap[part]] && part===lisMode){
+  if(part>0 && sentScores[partSentMap[part]]){
+    lisMode=part;
+    lisRange=getPartRange(part);
     showLisPartResultForPart(part);
     document.getElementById('lis-quiz').style.display='none';
     document.getElementById('lis-start').style.display='none';
+    saveState();
     return;
   }
 
-  // ===== 解答中（一部回答済み）：確認（同じ部の再選択はスキップ）=====
-  const answered = lisAnswered.filter(a=>a!==null).length;
+  // ===== 現在進行中の部に未送信の解答が残っている場合のみ確認 =====
   const isSamePart = (part === lisMode);
-  if(answered > 0 && !isSamePart){
-    if(!confirm('学習中のデータがリセットされます。よろしいですか？')){return;}
+  if(!isSamePart){
+    const curRange = lisMode>0 ? getPartRange(lisMode) : [0,29];
+    const curSentKey = partSentMap[lisMode];
+    const curAlreadySent = lisMode>0 ? !!sentScores[curSentKey] : false;
+    const curAnswered = lisAnswered.slice(curRange[0],curRange[1]+1).filter(a=>a!==null).length;
+    if(curAnswered>0 && !curAlreadySent){
+      if(!confirm('学習中のデータがリセットされます。よろしいですか？')){return;}
+    }
   }
 
   lisMode=part;
@@ -1340,7 +1348,8 @@ function startListening(part){
   lisIdx=lisRange[0];
   lisSubmitted=false;
   lisScores={p1:0,p2:0,p3:0,total:0};
-  for(let i=0;i<30;i++){lisAnswered[i]=null;lisPlayCount[i]=0;}
+  // ★ 開始する部の解答のみクリアする（他の部の解答・送信済み状態は保持）
+  for(let i=lisRange[0];i<=lisRange[1];i++){lisAnswered[i]=null;lisPlayCount[i]=0;}
   document.getElementById('lis-start').style.display='none';
   document.getElementById('lis-quiz').style.display='block';
   document.getElementById('lis-result').style.display='none';
@@ -1355,6 +1364,7 @@ function startListening(part){
     currentAudio=introAudio;
   }
   renderLisQ();
+  saveState();
 }
 function goListening(part){
   goPage('listening');
@@ -1577,6 +1587,7 @@ function showLisPartResultForPart(part){
 
   const sendMode=part===1?'listening-p1':part===2?'listening-p2':'listening-p3';
   const partLabel=['','第1部','第2部','第3部'][part];
+  const nextPartLabel=part===1?'第2部へ進む →':part===2?'第3部へ進む →':'';
   const otherPartsHTML=`
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:.6rem;">
       <button onclick="startListening(1)" style="padding:9px 4px;background:${part===1?'#1a4a8a':'#fff'};color:${part===1?'#fff':'#1a4a8a'};border:2px solid #2563c0;border-radius:var(--rsm);font-size:.82rem;font-weight:700;cursor:pointer;">第1部</button>
@@ -1594,6 +1605,9 @@ function showLisPartResultForPart(part){
       <p style="text-align:center;font-size:.88rem;color:var(--muted);margin-bottom:1rem;">${msg}</p>
       <div style="margin-top:1rem;">${reviewHTML}</div>
     </div>
+    ${!isLast&&!sentScores[{1:'lp2',2:'lp3'}[part]]?`<button onclick="startListening(${part+1})" style="width:100%;padding:13px;background:linear-gradient(135deg,#1a4a8a,#2563c0);color:#fff;border:none;border-radius:var(--rsm);font-size:.95rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(37,99,192,.35);margin-bottom:.6rem;">${nextPartLabel}</button>`:''}
+    ${!isLast&&sentScores[{1:'lp2',2:'lp3'}[part]]?`<button onclick="startListening(${part+1})" style="width:100%;padding:13px;background:var(--surface);color:#1a4a8a;border:2px solid #2563c0;border-radius:var(--rsm);font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:.6rem;">${nextPartLabel.replace('進む','結果を見る')}</button>`:''}
+    ${isLast?`<button onclick="showLisAllResult()" style="width:100%;padding:13px;background:linear-gradient(135deg,#1a4a8a,#2563c0);color:#fff;border:none;border-radius:var(--rsm);font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:.6rem;">🏆 <ruby>全体<rt>ぜんたい</rt></ruby>の<ruby>結果<rt>けっか</rt></ruby>を<ruby>見<rt>み</rt></ruby>る</button>`:''}
     <button onclick="resetListeningPart()" style="width:100%;padding:10px;background:var(--surface);color:var(--muted);border:1px solid var(--border2);border-radius:var(--rsm);font-size:.85rem;cursor:pointer;margin-top:.4rem;">🔄 もう一度</button>
   `;
 }
@@ -1714,11 +1728,13 @@ function startNextPart(currentPart){
   const nextPart=currentPart+1;
   const nextStart=LIS_Q.findIndex(q=>q.part===nextPart);
   const nextEnd=LIS_Q.map((q,i)=>q.part===nextPart?i:-1).filter(i=>i>=0).pop();
+  lisMode=nextPart;
   lisRange=[nextStart,nextEnd];
   lisIdx=nextStart;
   document.getElementById('lis-result').style.display='none';
   document.getElementById('lis-quiz').style.display='block';
   renderLisQ();window.scrollTo(0,0);
+  saveState();
 }
 
 // TTS用テキストマップ（第1・2部の会話内容）
@@ -1866,7 +1882,8 @@ function lisPlayAudio(idx,speed){
     // 第1部：会話文の後に選択肢4つを読み上げる（応答選択形式のため）
     let allLines;
     if(q.part===1){
-      const choiceLines = (q.choices||[]).map(c=>c.replace(/<[^>]+>/g,''));
+      const numberWords=['Number one.','Number two.','Number three.','Number four.'];
+      const choiceLines = (q.choices||[]).map((c,ci)=>(numberWords[ci]||('Number '+(ci+1)+'.'))+' '+c.replace(/<[^>]+>/g,''));
       allLines = [...lines, ...choiceLines];
     } else if(q.question){
       allLines = [...lines, q.question.replace(/<[^>]+>/g,'')];
@@ -1981,7 +1998,7 @@ function saveState(){
       sel,submitted,scores,
       q5text:q5t?q5t.value:'',q6text:q6t?q6t.value:'',
       lisAnswered:[...lisAnswered],lisPlayCount:[...lisPlayCount],
-      lisIdx,lisSubmitted,lisScores,
+      lisIdx,lisSubmitted,lisScores,lisMode,
       savedAt:new Date().toISOString()
     };
     localStorage.setItem(LS_KEY,JSON.stringify(state));
@@ -2007,6 +2024,7 @@ function loadState(){
     if(state.lisIdx!==undefined)lisIdx=state.lisIdx;
     if(state.lisSubmitted!==undefined)lisSubmitted=state.lisSubmitted;
     if(state.lisScores)Object.assign(lisScores,state.lisScores);
+    if(state.lisMode!==undefined)lisMode=state.lisMode;
     // リスニング全体結果を復元
     if(lisSubmitted){
       const result=document.getElementById('lis-result');
@@ -2035,11 +2053,20 @@ function loadState(){
       document.getElementById('lis-start').style.display='none';
     }
 
-    // 途中再開ボタン
-    const answered=lisAnswered.filter(a=>a!==null).length;
-    if(answered>0&&!lisSubmitted){
-      document.getElementById('lis-continue-btn').style.display='block';
-      document.getElementById('lis-continue-no').textContent=(lisIdx+1);
+    // 送信済みの部がある場合はその結果画面を復元、それ以外は途中再開ボタンを表示
+    if(!lisSubmitted){
+      const partSentMap2={1:'lp1',2:'lp2',3:'lp3'};
+      const curSentKey=partSentMap2[lisMode];
+      if(lisMode>0 && sentScores[curSentKey]){
+        showLisPartResultForPart(lisMode);
+      } else {
+        const curRange=lisMode>0?getPartRange(lisMode):[0,29];
+        const curAnswered=lisAnswered.slice(curRange[0],curRange[1]+1).filter(a=>a!==null).length;
+        if(curAnswered>0){
+          document.getElementById('lis-continue-btn').style.display='block';
+          document.getElementById('lis-continue-no').textContent=(lisIdx+1);
+        }
+      }
     }
 
     ['q1','q2','q3','q4'].forEach(sk=>{
