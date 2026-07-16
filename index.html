@@ -1885,6 +1885,9 @@ function lisPlayAudio(idx,speed){
       const numberWords=['Number one.','Number two.','Number three.','Number four.'];
       const choiceLines = (q.choices||[]).map((c,ci)=>(numberWords[ci]||('Number '+(ci+1)+'.'))+' '+c.replace(/<[^>]+>/g,''));
       allLines = [...lines, ...choiceLines];
+      // 選択肢は会話の最後の発言者の「相手」の声で読む
+      const lastSpeakerLine = [...lines].reverse().find(l=>l.startsWith('M:')||l.startsWith('F:'));
+      const choiceVoicePrefix = lastSpeakerLine?.startsWith('M:') ? 'F:' : 'M:';
     } else if(q.question){
       allLines = [...lines, q.question.replace(/<[^>]+>/g,'')];
     } else {
@@ -1894,8 +1897,8 @@ function lisPlayAudio(idx,speed){
     function speakNextLine(){
       if(lineIdx>=allLines.length){onEnd();return;}
       const line=allLines[lineIdx];
-      const isMale=line.startsWith('M:');
-      const isFemale=line.startsWith('F:');
+      const isMale=line.startsWith('M:') || (q.part===1 && line.startsWith('Number') && choiceVoicePrefix==='M:');
+      const isFemale=line.startsWith('F:') || (q.part===1 && line.startsWith('Number') && choiceVoicePrefix==='F:');
       const text=line.replace(/^[MF]:\s*/,'');
       const utter=new SpeechSynthesisUtterance(text);
       currentUtterance=utter;
@@ -3483,4 +3486,4 @@ window.addEventListener('afterprint', function() {
   </div>
 </footer>
 </body>
-</html> 
+</html>
